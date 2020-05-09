@@ -1,48 +1,30 @@
-# INSTALL
+# 🏗️ INSTALL
 
 How to download, test and run.
 
 ## Download
 
+You need a client of `git`:
 ```bash
 git clone https://github.com/helvm/helpa.git
 cd helpa
 ```
 
-## HLint
+## Compile
 
+To compile you need `cabal`:
 ```bash
-curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s .
-```
-
-## Cabal
-
-Compile and run with `cabal`:
-```bash
-cabal update 
+cabal update
 cabal clean && cabal build && cabal test
 cabal new-test --test-show-details=streaming
-cabal run helpa
 ```
 
-## Etlas
+## Run
 
-Compile and run with `etlas`:
+You can run Helpa by `cabal` or directly:
 ```bash
-etlas clean && etlas build && etlas test
-etlas run helpa
-```
-
-## Gradle
-
-Compile and run with `gradlew`:
-```bash
-./gradlew clean -PetaSendMetrics=true
-./gradlew compileEta
-./gradlew compileTestEta
-./gradlew test
-./gradlew run
-./gradlew shadowJar
+cabal run helpa assembler_file library_dictionary
+dist-newstyle/build/x86_64-osx/ghc-8.10.1/helpa-0.1.0.0/x/helpa/build/helpa/helpa assembler_file library_dictionary
 ```
 
 ## Other

@@ -1,4 +1,4 @@
-# ROADMAP
+# 🛣️ ROADMAP
 
 **Planned features.**
 
@@ -14,3 +14,8 @@ For short version see [TODO](TODO.md).
 * **W Machine Assembler**
 * [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
 
+The ultimate goal is implementation of **HAPAPL** - High Abstract Para Assembly Programing Language is a kind of [Low Level] [Second-generation] [Assembly Language] for Esoteric Languages
+
+[Low Level]:         https://en.wikipedia.org/wiki/Low-level_programming_language
+[Second-generation]: https://en.wikipedia.org/wiki/Second-generation_programming_language
+[Assembly Language]: https://en.wikipedia.org/wiki/Assembly_language
