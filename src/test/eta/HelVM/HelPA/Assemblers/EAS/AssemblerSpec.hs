@@ -13,23 +13,23 @@ import Test.Hspec
 spec :: Spec
 spec = do
   describe "Files" $ do
-    trueEither     <- parseFromFile "true"
-    helloEither    <- parseFromFile "hello"
-    pipEither      <- parseFromFile "pip"
-    pip2Either     <- parseFromFile "pip2"
-    reverseEither  <- parseFromFile "reverse"
-    functionEither <- parseFromFile "function"
-    addEither      <- parseFromFile "add"
-    writeStrEither <- parseFromFile "writeStr"
-    hello2Either   <- parseFromFile "hello2"
-    hello3Either   <- parseFromFile "hello3"
-    hello4Either   <- parseFromFile "hello4"
-    writeNumEither <- parseFromFile "writenum"
-    multiplyEither <- parseFromFile "multiply"
-    readNumEither  <- parseFromFile "readnum"
-    factEither     <- parseFromFile "fact"
-    bottlesEither  <- parseFromFile "bottles"
-    euclidEither   <- parseFromFile "euclid"
+    trueEither     <- assemblyFile "true"
+    helloEither    <- assemblyFile "hello"
+    pipEither      <- assemblyFile "pip"
+    pip2Either     <- assemblyFile "pip2"
+    reverseEither  <- assemblyFile "reverse"
+    functionEither <- assemblyFile "function"
+    addEither      <- assemblyFile "add"
+    writeStrEither <- assemblyFile "writeStr"
+    hello2Either   <- assemblyFile "hello2"
+    hello3Either   <- assemblyFile "hello3"
+    hello4Either   <- assemblyFile "hello4"
+    writeNumEither <- assemblyFile "writenum"
+    multiplyEither <- assemblyFile "multiply"
+    readNumEither  <- assemblyFile "readnum"
+    factEither     <- assemblyFile "fact"
+    bottlesEither  <- assemblyFile "bottles"
+    euclidEither   <- assemblyFile "euclid"
 
     it "true"     $ do trueEither     `shouldBe` Right trueETA
     it "hello"    $ do helloEither    `shouldBe` Right helloETA
@@ -48,4 +48,4 @@ spec = do
     it "bottles"  $ do bottlesEither  `shouldBe` Right bottlesETA
     it "euclid"   $ do euclidEither   `shouldBe` Right euclidETA
 
-parseFromFile name = runIO $ assemblyIO "src/test/resources/eas/" $ name ++ ".eas"
+assemblyFile name = runIO $ assemblyIO "src/test/resources/eas/" $ "src/test/resources/eas/" ++ name ++ ".eas"

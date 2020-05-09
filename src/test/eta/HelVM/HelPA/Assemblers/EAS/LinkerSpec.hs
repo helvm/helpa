@@ -48,4 +48,4 @@ spec = do
 --    it "bottles"  $ do bottlesEither  `shouldBe` Right bottlesIL
     it "euclid"   $ do euclidEither   `shouldBe` Right euclidIL
 
-linkFile name = runIO $ linkIO "src/test/resources/eas/" $ name ++ ".eas"
+linkFile name = runIO $ linkLibIO "src/test/resources/eas/" $ name ++ ".eas"

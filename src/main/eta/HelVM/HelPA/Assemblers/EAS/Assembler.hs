@@ -10,10 +10,10 @@ import Control.Monad.Except
 import qualified Data.Text as T
 
 assemblyIO :: String -> String -> IO (Either String String)
-assemblyIO dirName fileName = runExceptT $ assembly dirName fileName
+assemblyIO dirPath filePath = runExceptT $ assembly dirPath filePath
 
 assembly :: String -> String -> ExceptT String IO String
-assembly dirName fileName = generateCode . reduce <$> link dirName fileName
+assembly dirPath filePath = generateCode . reduce <$> link dirPath filePath
 
 singleAssembly :: T.Text -> Either String String
 singleAssembly t = generateCode . reduce <$> parseAssembler t

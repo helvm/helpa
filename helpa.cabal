@@ -34,6 +34,14 @@ library
         HelVM.HelPA.Assemblers.EAS.Linker
         HelVM.HelPA.Assemblers.EAS.Reducer
 
+        HelVM.HelPA.Assemblers.WSA.AsmParser
+        HelVM.HelPA.Assemblers.WSA.Assembler
+        HelVM.HelPA.Assemblers.WSA.CodeGenerator
+        HelVM.HelPA.Assemblers.WSA.Instruction
+        HelVM.HelPA.Assemblers.WSA.Linker
+        HelVM.HelPA.Assemblers.WSA.Reducer
+        HelVM.HelPA.Assemblers.WSA.Token
+
         HelVM.HelPA.Common.AsmParserUtil
         HelVM.HelPA.Common.OrError
         HelVM.HelPA.Common.Util
@@ -44,6 +52,7 @@ library
     , attoparsec
     , containers
     , mtl
+    , sort
     , split
     , text
   hs-source-dirs:      src/main/eta
@@ -61,12 +70,19 @@ test-suite spec
         HelVM.HelPA.Assemblers.EAS.TestData
         HelVM.HelPA.Assemblers.EAS.ReducerSpec
 
+        HelVM.HelPA.Assemblers.WSA.AsmParserSpec
+        HelVM.HelPA.Assemblers.WSA.AssemblerSpec
+        HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.WSA.LinkerSpec
+        HelVM.HelPA.Assemblers.WSA.ReducerSpec
+        HelVM.HelPA.Assemblers.WSA.TestData
   other-extensions:
   build-depends:
       base
     , attoparsec
     , containers
     , mtl
+    , sort
     , split
     , text
     , helpa
@@ -90,6 +106,14 @@ executable helpa
         HelVM.HelPA.Assemblers.EAS.Instruction
         HelVM.HelPA.Assemblers.EAS.Linker
         HelVM.HelPA.Assemblers.EAS.Reducer
+
+        HelVM.HelPA.Assemblers.WSA.AsmParser
+        HelVM.HelPA.Assemblers.WSA.Assembler
+        HelVM.HelPA.Assemblers.WSA.CodeGenerator
+        HelVM.HelPA.Assemblers.WSA.Instruction
+        HelVM.HelPA.Assemblers.WSA.Linker
+        HelVM.HelPA.Assemblers.WSA.Reducer
+        HelVM.HelPA.Assemblers.WSA.Token
 
         HelVM.HelPA.Common.AsmParserUtil
         HelVM.HelPA.Common.OrError

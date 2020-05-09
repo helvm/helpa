@@ -16,23 +16,29 @@ optionParser = AppOptions
                    <> value (show HAPAPL)
                    <> showDefault
                    )
+  <*> switch       (  long    "debug"
+                   <> short   'D'
+                   <> help    "Debug"
+                   <> showDefault
+                   )
   <*> argument str (  metavar "DIR")
   <*> argument str (  metavar "FILE")
                      
 
 data AppOptions = AppOptions
   { lang         :: String --Lang
+  , debug        :: Bool
   , dir          :: String
   , file         :: String
   }
 
 ----
 
-data Lang = HAPAPL | EAS
+data Lang = HAPAPL | EAS | WSA
   deriving (Eq, Read, Show)
 
 langs :: [Lang]
-langs = [HAPAPL, EAS]
+langs = [HAPAPL, EAS, WSA]
 
 computeLang :: String -> Lang
 computeLang raw = valid $ readMaybe raw where

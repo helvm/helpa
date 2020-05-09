@@ -27,3 +27,5 @@ cabal.project.local~
 
 Gemfile.lock
 _site
+
+.hlint-*/

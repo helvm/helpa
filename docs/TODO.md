@@ -8,7 +8,7 @@ Features to do:
 * [ ] 💛 Funge Assembler
 * [ ] 💚 Piet Assembler
 * [ ] 💙 SubLeq Assembler
-* [ ] 🤍 WhiteSpace Assembler
+* [x] 🤍 WhiteSpace Assembler
 * [ ] 🖤 WMachine Assembler 
 
 You can propose feature by [GitHub](https://github.com/helvm/helap/issues).

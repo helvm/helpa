@@ -5,6 +5,7 @@ module Main where
 import HelVM.HelPA.Common.Util
 
 import qualified HelVM.HelPA.Assemblers.EAS.Assembler as EAS
+import qualified HelVM.HelPA.Assemblers.WSA.Assembler as WSA
 
 import AppOptions
 
@@ -19,12 +20,13 @@ main = run =<< execParser opts where
      <> progDesc "" )
 
 run :: AppOptions -> IO ()
-run AppOptions{lang, dir, file} = do
-  eval (computeLang lang) dir file
+run AppOptions{lang, debug, dir, file} = do
+  eval (computeLang lang) debug dir file
   
-eval :: Lang -> String -> String -> IO ()
-eval EAS    dir file = putExcept $ EAS.assemblyIO dir file
-eval HAPAPL dir file = hapapl dir file
+eval :: Lang -> Bool -> String -> String -> IO ()
+eval EAS    _     dir file = putExcept $ EAS.assemblyIO dir file
+eval WSA    debug dir file = putExcept $ WSA.assemblyIO debug dir file
+eval HAPAPL _     dir file = hapapl dir file
 
 putExcept :: IO (Either String String) -> IO ()
 putExcept io = putStrLn . output =<< io
