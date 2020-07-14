@@ -1,0 +1,113 @@
+include io
+
+label st
+
+; get prim numbers
+
+pushs "prim numbers [2-100]"
+call printsln
+
+
+
+push 0
+;for loop
+label f_start_1
+test 100
+jumpz f_finished_1
+
+		doub
+	add 100
+	push 1
+store
+
+add 1
+jump f_start_1
+
+label f_finished_1
+pop
+
+;debug_printstack
+;debug_printheap
+
+push 2
+;for loop
+label f_start_2
+test 11
+jumpz f_finished_2
+
+
+
+	push 2
+	;for loop
+	label f_start_3
+	test 100
+	jumpz f_finished_3
+
+			doub
+			push 1
+		swap
+	store
+
+	swap
+
+			doub
+			push 2
+		swap
+	store
+
+	swap
+
+				retrive 1
+				retrive 2
+			mul
+		add 100
+
+		push 0
+	store
+
+	add 1
+
+	jump f_start_3
+	label f_finished_3
+	pop
+
+
+add 1
+
+jump f_start_2
+label f_finished_2
+pop
+
+
+
+push 2
+;for loop
+label f_start_4
+test 100
+jumpz f_finished_4
+
+  	doub
+	add 100
+retrive
+jumpz nodraw
+
+doub
+outN
+
+pushs " "
+call prints
+
+label nodraw
+
+add 1
+jump f_start_4
+
+label f_finished_4
+pop
+
+push 0
+call printsln
+
+exit
+
+	

@@ -1,0 +1,30 @@
+# fact.eas -- factorial, via recursion
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.fact.eas	1.1")
+
+# Caller
+A N1 N<READNUM T	# obtain argument
+A N1 N<FACT T		# call factorial function
+A N1 N<WRITENUM T	# print result
+N10 O N1 N0 T		# print a newline and exit
+
+# One input arg: function prologue
+>FACT: N1 H		# roll argument above return address	# ... addr arg
+
+# Function body
+# Factorial of 1 is just 1
+N0 H			# duplicate top for test		# ... addr arg arg
+N1 S A N0 N1 S S T	# skip if non-zero (ie. top wasn't 1)	# ... addr arg arg-1 here+1 T
+N1 N<FACTdone T		# argument _was_ 1: we're finished	# ... addr arg
+N0 H			# dup					# ... addr arg arg
+N1 S			# stack is now: ... addr n n-1		# ... addr arg arg-1
+A N1 N<FACT T		# recursive call (tail recursion!)	# ... addr arg fact(arg-1)
+A N1 N<MULTIPLY T	# multiply Nby fact(n-1)		# ... addr arg*fact(arg-1)
+# result is on the stack: fall through to the epilogue
+
+# Finished: function epilogue
+>FACTdone: N1 N2 H T
+
+*readnum.eas
+*writenum.eas
+*multiply.eas
+*writestr.eas

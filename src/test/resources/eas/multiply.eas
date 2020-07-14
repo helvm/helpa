@@ -1,0 +1,34 @@
+# multiply.eas -- multiply two numbers
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.multiply.eas	1.1")
+#
+# Caveat callor: since this loops on the second argument to be pushed,
+# it should be minimised where possible: it's (roughly) a hundred
+# times faster to multiply 200*2 than 2*200.
+
+# Prologue for a function of two arguments
+# Initial state:		# ... x y addr
+>MULTIPLY: N2 H N2 H		# ... addr x y
+
+# Create an accumulator (initially zero), push it below the working numbers.
+N0				# ... addr x y acc
+N2 Halibut			# ... addr y acc x
+N2 Halibut			# ... addr acc x y
+
+# Loop invariant: stack is of the form: ... addr acc x y'
+# Where y' is gradually decremented, and acc increases by x each time.
+>MULTIPLYloop: N0 Halibut	# dup
+A N0 N1 S S T			# if not done, skip a line
+N1 N<MULTIPLYdone Transfer	# done: jump to end
+N1 Subtract			# ... addr acc x y  (but y--)
+N2 Halibut			# ... addr x y acc
+N0 N0 N3 Subtract Halibut	# ... addr x y acc 0 x
+Subtract Subtract		# ... addr x y acc  (but acc+=x)
+N2 Halibut			# ... addr y acc x
+N2 Halibut			# ... addr acc x y
+N1 N<MULTIPLYloop Transfer	# next
+
+# Stack is: ... addr acc x y(=0); we have to discard two values
+>MULTIPLYdone: N1 H T		# ... addr acc
+
+# Standard function-call epilogue.
+N1 N2 H T

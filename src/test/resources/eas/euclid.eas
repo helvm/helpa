@@ -1,0 +1,26 @@
+# euclid.eas - highest common factor
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.euclid.eas	1.1")
+#
+#   ###	NOT FINISHED
+
+# This is a function of two arguments, so if the caller adheres to the
+# standard calling convention, the stack at the point of our first
+# instruction will be: a b addr.
+
+# Prologue: roll addr under arguments
+>EUCLID: N2 H N2 H				# (... addr) a b
+
+# Body of loop
+>EUCLIDloop: N0 H				# a b b
+A N0 N1 S S T		# (skip if not done)	# a b
+N1 N<EUCLIDdone T	# (jump to end)		# a b(=0)
+N0 N1 S H					# a b a
+E						# a b/a b%a
+N0 N2 H T					# a b%a		# discard b/a
+N1 H						# b%a a
+N1 N<EUCLIDloop T
+
+# Epilogue: discard junk, roll addr above return value
+>EUCLIDdone: N0 T				# (... addr) a
+N1 N2 H						# ... a 1 addr
+T

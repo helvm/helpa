@@ -1,0 +1,235 @@
+;memcopy
+; copys memory from one place to another the places may overlap
+; parameter
+; 3: source
+; 2: dest
+; 1: length
+; local variables
+; 1: source pointer
+; 2: dest pointer
+; 3: left count
+label memcopy
+label mem_copy
+label mem_move
+
+  	push 3
+  swap
+store
+; left count
+
+  	push 2
+  swap
+store
+; dest pointer
+
+		push 1
+	swap
+store
+; source pointer
+
+
+  retrive 3
+jumpnz memcopy_end ;no more left
+
+  retrive 1
+  retrive 2
+sub
+
+jumpz memcopy_end ;source = dest
+
+  retrive 1
+  retrive 2
+sub
+
+jumpn memcopy_loop_dest_greater_source_begin
+jump  memcopy_loop_source_greater_dest
+
+
+label memcopy_loop_source_greater_dest
+    push 2
+  retrive
+      push 1
+    retrive
+  retrive
+store
+
+    push 2
+        push 2
+      retrive
+      push 1
+    add
+store
+
+    push 1
+        push 1
+      retrive
+      push 1
+    add
+store
+
+    push 3
+        push 3
+      retrive
+      push 1
+    sub
+store
+
+retrive 3
+
+jumpz memcopy_end
+jump memcopy_loop_source_greater_dest
+
+
+
+label memcopy_loop_dest_greater_source_begin
+; dest > source so we need to go backwards throug the memory
+        push 2
+            push 2
+          retrive
+            push 3
+          retrive
+        add
+        push 1
+    sub
+store
+
+        push 1
+            push 1
+          retrive
+            push 3
+          retrive
+        add
+        push 1
+    sub
+store
+
+label memcopy_loop_dest_greater_source
+    push 2
+  retrive
+      push 1
+    retrive
+  retrive
+store
+
+    push 2
+        push 2
+      retrive
+      push 1
+    sub
+store
+
+    push 1
+        push 1
+      retrive
+      push 1
+    sub
+store
+
+    push 3
+        push 3
+      retrive
+      push 1
+    sub
+store
+
+retrive 3
+
+jumpz memcopy_end
+jump memcopy_loop_dest_greater_source
+
+
+label memcopy_end
+
+ret
+
+
+
+
+
+
+
+; parameter
+; [1] from
+; [2] count
+
+label mem_zero
+
+label mem_zero_start
+;from->count
+doub
+jumpz mem_zero_end
+
+swap ;count->from
+
+  doub
+  push 0
+store
+
+  push 1
+add
+
+swap ;from->count
+
+  push 1
+sub
+jump mem_zero_start
+
+label mem_zero_end
+pop
+pop
+ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; nummeriere speicher von [1] - [2] // for debuging
+label numeriere
+    push 2
+  swap
+store
+
+    push 1
+  swap
+store
+
+  push 1
+retrive
+
+label numeriere_start
+
+    doub
+    doub
+  store
+
+  push 1
+add
+
+  doub
+
+    push 2
+  retrive
+sub
+
+jumpz numeriere_end
+
+jump numeriere_start
+
+label numeriere_end
+pop
+ret
+
+
+
+
+

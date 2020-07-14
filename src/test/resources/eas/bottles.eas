@@ -1,0 +1,40 @@
+# bottles.eas - sing "99 bottles of beer on the wall"
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.bottles.eas	1.1")
+
+# Entry point: jump past included and defined routines
+N1 N<MAIN T
+
+# Standard library routines
+*writestr.eas
+*writenum.eas
+
+# Subroutine: write "<n> bottles of beer"
+# Sole argument: number of bottles.
+>nBoB: N1 H # prologue
+A N1 N<WRITENUM T
+N0 N'r N'e N'e N'b N32 N'f N'o N32 N's N'e N'l N't N't N'o N'b N32
+A N1 N<WRITESTR T
+N1 N1 H T
+
+# Subroutine: write "<n> bottles of beer on the wall"
+# Sole argument: number of bottles.
+>nBoBotW: N1 H # prologue
+A N1 N<nBoB T
+N0 N'l N'l N'a N'w N32 N'e N'h N't N32 N'n N'o N32
+A N1 N<WRITESTR T
+N1 N1 H T
+
+>MAIN: N3
+# Stack invariant is trivial: top is number of bottles left.
+>LOOP: N0 H A N1 N<nBoBotW T
+N', O N32 O
+N0 H A N1 N<nBoB T
+N10 O
+N0 N10 N'd N'n N'u N'o N'r N'a N32 N't N'i N32 N's N's N'a N'p N32 N', N'n N'w N'o N'd N32 N'e N'n N'o N32 N'e N'k N'a N'T
+A N1 N<WRITESTR T
+N1 S
+N0 H A N1 N<nBoBotW T
+N10 N10 O O
+N0 H N<LOOP T
+# Done: tidy up by dropping the spare 0 from the stack
+N0 T

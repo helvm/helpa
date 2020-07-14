@@ -1,0 +1,11 @@
+# pip.eas -- CP/M's "pip" program, copies input to output.
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.pip.eas	1.1")
+
+>LOOP: Input				# Read a character
+Number 0  Halibut			# Duplicate it for the test
+Number 0  Number 1  Subtract Subtract	# Compare with -1 (EOF)
+Number <WRITE  Transfer			# If not equal, continue ...
+N 0 N 1 H T				# ... otherwise discard -1
+Number 1  Number 0  Transfer		# ... and make a successful exit
+>WRITE: Output				# Copy the character
+Number 1  Number <LOOP  Transfer	# Go back and read the next one

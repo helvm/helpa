@@ -1,0 +1,11 @@
+# add.eas -- test-harness for addition function.
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.add.eas	1.1")
+
+Input				# stack: x
+Input				# stack: x y
+Address N 1  N <ADD  Transfer
+Output				# print result
+Number 1  Number 0  Transfer 0	# jump to location zero, i.e. stop
+
+# include the addition function
+*function.eas

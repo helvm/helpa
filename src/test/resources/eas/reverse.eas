@@ -1,0 +1,14 @@
+# reverse.eas -- write out a reversed version of input
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.reverse.eas	1.1")
+
+# Accumulate input file on stack
+N0 N1 S					# Push -1 end-marker on stack
+>READ: Input				# Read next character
+N0 H   N0 N1 S   S   N<READ T		# Loop if input isn't EOF (-1)
+
+N0 N1 H T				# Discard spare EOF from top of stack
+
+# Play out the accumulated string
+>WRITE: N0 H   N0 N1 S   S   A N0 N1 S S T	# Skip if top isn't -1
+N0 N1 H T   N1 N0 T			# Reached the end: discard -1 and exit
+Output   N1 N<WRITE T			# Output and loop

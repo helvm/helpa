@@ -9,11 +9,18 @@ git clone https://github.com/helvm/helpa.git
 cd helpa
 ```
 
+## HLint
+
+```bash
+curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s .
+```
+
 ## Cabal
 
 Compile and run with `cabal`:
 ```bash
-cabal clean && cabal build && cabal test
+cabal update && cabal clean && cabal build && cabal test
+cabal new-test --test-show-details=streaming
 cabal run helpa
 ```
 

@@ -22,37 +22,83 @@ cabal-version:       >=1.10
 
 source-repository head
   type:              git
-  location:          https://github.com/helvm/helcam
+  location:          https://github.com/helvm/helpa
 
 library
   other-modules:
   exposed-modules:
+        HelVM.HelPA.Assemblers.EAS.AsmParser
+        HelVM.HelPA.Assemblers.EAS.Assembler
+        HelVM.HelPA.Assemblers.EAS.CodeGenerator
+        HelVM.HelPA.Assemblers.EAS.Instruction
+        HelVM.HelPA.Assemblers.EAS.Parser
+        HelVM.HelPA.Assemblers.EAS.Translator
+        HelVM.HelPA.Assemblers.LMS
+        HelVM.HelPA.Assemblers.LPA
+        HelVM.HelPA.Assemblers.WSA.AsmParser
+        HelVM.HelPA.Assemblers.WSA.Instruction
+        HelVM.HelPA.Assemblers.WSA.Parser
+        HelVM.HelPA.Common.AsmParserUtil
+        HelVM.HelPA.Common.ParserUtil
+        HelVM.HelPA.Common.Util
+        HelVM.HelPA.Common.Value
   other-extensions:
-  build-depends:       base >=4.11
+  build-depends:
+      base >=4.8
+    , text
+    , parser-combinators
+    , megaparsec
+    , attoparsec
+    , split
+    , containers
   hs-source-dirs:      src/main/eta
   default-language:    Haskell2010
   ghc-options:         -Wall
 
-test-suite helpa-test
+test-suite spec
   type:                exitcode-stdio-1.0
-  main-is:             Test.hs
+  main-is:             Spec.hs
   other-modules:
-  exposed-modules:
+        HelVM.HelPA.Assemblers.EAS.AsmParserSpec
+        HelVM.HelPA.Assemblers.EAS.AssemblerSpec
+        HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.EAS.ParserSpec
+        HelVM.HelPA.Assemblers.EAS.TestData
+        HelVM.HelPA.Assemblers.EAS.TranslatorSpec
+        HelVM.HelPA.Assemblers.LMSSpec
+        HelVM.HelPA.Assemblers.LPASpec
+        HelVM.HelPA.Assemblers.WSA.AsmParserSpec
+        HelVM.HelPA.Assemblers.WSA.TestData
   other-extensions:
   build-depends:
       base >=4.11
+    , text
+    , parser-combinators
+    , megaparsec
+    , attoparsec
     , helpa
-    , HUnit
+    , hspec
+    , hspec-attoparsec
+    , hspec-megaparsec
+    , QuickCheck
+    , smallcheck
   hs-source-dirs:      src/test/eta
   default-language:    Haskell2010
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-tool-depends: hspec-discover:hspec-discover == 2.*
 
 executable helpa
   main-is:             Main.hs
   other-modules:
-  exposed-modules:
   other-extensions:
-  build-depends:       base >=4.11
+  build-depends:
+      base >=4.8
+    , megaparsec
+    , parser-combinators
+    , attoparsec
+    , text
+    , optparse-applicative
+    , pretty-simple
   hs-source-dirs:      src/main/eta
   default-language:    Haskell2010
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
