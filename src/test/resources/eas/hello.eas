@@ -1,0 +1,9 @@
+# hello.eas -- the "Hello, world!" program in ETA Assembler.
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.hello.eas	1.1")
+
+Number 32	# can't quote a space character: use ASCII value
+Number ',  Number 'o  Number 'l  Number 'l  Number 'e  Number 'H
+Output Output Output Output Output Output Output
+Number 10	# can't quote a newline either
+Number '!  Number 'd  Number 'l  Number 'r  Number 'o  Number 'w
+Output Output Output Output Output Output Output

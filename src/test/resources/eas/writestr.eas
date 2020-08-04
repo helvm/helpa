@@ -1,0 +1,16 @@
+# writestr.eas -- write a NUL-terminated string
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.writestr.eas	1.1")
+
+>WRITESTR: N1 Halibut			# move next character above addr
+N0 Halibut				# duplicate it for the test below
+Address N0 N1 S S T			# skip if non-zero
+
+# We only get here if we've seen the NUL, and by that point, the stack
+# is: ... <addr> NUL.  We need to strip the trailing NUL and return.
+# This epilogue is in the middle of the function (why not?)
+Subtract N1 N1 Halibut Transfer
+
+# The character is on top of the stack output and loop.
+# (Or think of it as tail-recursion if you're a Lisp hacker :-)
+Output
+N1 N<WRITESTR Transfer

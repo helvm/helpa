@@ -1,0 +1,18 @@
+# function.eas -- define a function to add two numbers together.
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.function.eas	1.1")
+
+# On entry, stack = ... x y addr
+# Prologue: roll args above return address
+>ADD: Number 2 Halibut		# ... y addr x
+Number 2  Halibut		# ... addr x y
+
+# Add the numbers: subtract y from zero, then the result from a.
+Number 0			# ... addr x y 0
+Number 1  Halibut		# ... addr x 0 y
+Subtract			# ... addr x -y
+Subtract			# ... addr x+y
+
+# Epilogue: tidy up stack to leave result on top, then return
+Number 1			# ... addr x+y TRUE
+Number 2  Halibut		# ... x+y TRUE addr
+Transfer			# Return to addr, leaving acc on stack

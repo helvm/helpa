@@ -1,0 +1,29 @@
+# writenum.eas -- write a decimal integer
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.writenum.eas	1.2")
+#
+# Requires: WRITESTR
+
+# Prologue (called with arg).
+# Start state				# ... arg addr
+>WRITENUM: N0 N2 Halibut		# ... addr NUL arg
+
+N0 H A N0 N1 S S T			# skip to real start if non-zero
+N'0 O T N1 N1 Halibut Transfer		# special case for arg=0
+
+# Invariant: stack contains a NUL, then the ASCII codes of the digits
+# rendered so far (least significant first), then the remaining part
+# of the number being rendered.
+>WRITENUMloop: N0 Halibut		# ... addr NUL <digits> arg arg
+Address N0 N1 S S Transfer		# if not done, skip a line
+S N1 N<WRITENUMdone Transfer		# done: strip NUL, jump to output phase
+N10 dividE				# find next digit
+N0 N'0 Subtract Subtract		# calculate its ASCII code
+# Stack now contains \0 <digits> quotient ASCII(remainder)
+# We just need to swap the last two to attain the invariant above.
+N1 Halibut				# swap
+N1 N<WRITENUMloop Transfer		# next iteration
+
+# Call existing code to output the accumulated digits.
+>WRITENUMdone: A N1 N<WRITESTR Transfer
+# Epilogue: return to the stacked address
+N1 N1 Halibut Transfer

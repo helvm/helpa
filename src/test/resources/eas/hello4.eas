@@ -1,0 +1,9 @@
+# hello4.eas -- A better "Hello, world!" program, using an output function.
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.hello4.eas	1.1")
+
+0 10 "Hello, world!"
+Address 1 <WRITESTR Transfer
+1 0 T
+
+# include the string-output function
+*writestr.eas

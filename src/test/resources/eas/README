@@ -1,0 +1,37 @@
+Sample programs written in ETA and EASy (the Eta ASsembler)
+-----------------------------------------------------------
+
+true.eas	A reimplementation of the Unix utility /bin/true
+hello.eas	Print "Hello, world!" to stdout.
+pip.eas		CP/M's PIP: copy input to output unchanged.
+pip2.eas	(functionally identical, but all on two lines.)
+reverse.eas	Copy input to output, reversed		### NOT IN EAS.HTML
+function.eas	Function call-and-return, demonstrated using addition.
+add.eas		Test-harness for "function.eas": read, add and write.
+writestr.eas	A variadic function to print a NUL-terminated string.
+hello2.eas	A rewrite of "Hello, world!" using the string-printer.
+writenum.eas	Function to print the top of stack as a decimal integer.
+multiply.eas	Function to multiply two numbers together.
+readnum.eas	The converse of "printnum.eas".
+fact.eas	Recursive factorial function.
+bottles.eas	Print words to "99 bottes of beer".
+euclid.eas	Greatest common divisor of two numbers.	### NOT YET DEBUGGED
+test.eas	Transient stuff to test features: don't rely on this.
+temperat.c	Sample program from K&R second edition, section 1.2 p9
+temperat.eas	EAS re-write of the K&C version.	### NOT YET WRITTEN
+
+These programs are described in more detail in "../doc/easman.html"
+(You may need to "make" it from the source in "../doc/eas.html")
+
+
+What's NOT here?
+----------------
+
+Assembled and hand-tweaked ETA programs: these are in ../pit
+
+A regression-test suite -- this is a bad oversight.
+
+An additional, and very helpful, routine would be a routine to perform
+an inequality test: if a > b?  I can't think of any way to do this but
+the obvious, with a loop.  In fact, I can't offhand even see how to
+bound the loop.  Any ideas?

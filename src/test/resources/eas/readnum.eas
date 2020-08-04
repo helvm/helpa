@@ -1,0 +1,34 @@
+# readnum.eas -- read a decimal number
+# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.readnum.eas	1.1")
+#
+# Requires: MULTIPLY
+
+# No input args => no function prologue
+
+# Skip leading spaces
+>READNUM: >READNUMspace: Input
+N0 Halibut N32 Subtract			# duplicate input, compare to SPACE
+A N0 N1 S S Transfer			# Skip if non-zero (i.e. != ' ')
+N0 N1 T N<READNUMspace T		# discard NUL and loop
+
+# Initialise accumulator and push it below initial digit
+N0 N1 Halibut
+
+# Accumulate digits: we already have the first
+>READNUMloop: N'0' Subtract		# convert char to number
+N1 Halibut				# stack: num acc
+N10 A N1 N<MULTIPLY Transfer		# multiply by 10
+N0 N1 Halibut				# stack: num 0 10*acc
+Subtract Subtract			# add accumular back onto new digit
+Input
+N0 H N32 S N<READNUMnl T		# if not a space, continue
+N1 N<READNUMdone T			# it _was_ a space: out of here
+>READNUMnl: N0 H N10 S N<READNUMeof T	# if not a newline, continue
+N1 N<READNUMdone T			# it _was_ a newline: out of here
+>READNUMeof: N0 H N0 N1 S S N<READNUMloop T	# if not a EOF, loop
+
+# Otherwise, we're finished: discard spare space character
+>READNUMdone: N0 N1 H T
+
+# epilogue
+N1 N2 H T

@@ -4,7 +4,7 @@
 
 Features to do:
 * [ ] 🌈 BrainFuck Assembler
-* [ ] ❤️ ETA Assembler
+* [x] ❤️ ETA Assembler
 * [ ] 💛 Funge Assembler
 * [ ] 💚 Piet Assembler
 * [ ] 💙 SubLeq Assembler

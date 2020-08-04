@@ -32,20 +32,20 @@ library
         HelVM.HelPA.Assemblers.EAS.CodeGenerator
         HelVM.HelPA.Assemblers.EAS.Instruction
         HelVM.HelPA.Assemblers.EAS.Linker
-        HelVM.HelPA.Assemblers.EAS.Translator
-        HelVM.HelPA.Assemblers.WSA.AsmParser
-        HelVM.HelPA.Assemblers.WSA.Instruction
+        HelVM.HelPA.Assemblers.EAS.Reducer
+
         HelVM.HelPA.Common.AsmParserUtil
+        HelVM.HelPA.Common.OrError
         HelVM.HelPA.Common.Util
         HelVM.HelPA.Common.Value
   other-extensions:
   build-depends:
       base
-    , text
     , attoparsec
     , containers
     , mtl
     , split
+    , text
   hs-source-dirs:      src/main/eta
   default-language:    Haskell2010
   ghc-options:         -Wall
@@ -59,14 +59,16 @@ test-suite spec
         HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
         HelVM.HelPA.Assemblers.EAS.LinkerSpec
         HelVM.HelPA.Assemblers.EAS.TestData
-        HelVM.HelPA.Assemblers.EAS.TranslatorSpec
-        HelVM.HelPA.Assemblers.WSA.AsmParserSpec
-        HelVM.HelPA.Assemblers.WSA.TestData
+        HelVM.HelPA.Assemblers.EAS.ReducerSpec
+
   other-extensions:
   build-depends:
       base
-    , text
     , attoparsec
+    , containers
+    , mtl
+    , split
+    , text
     , helpa
     , hspec
     , hspec-attoparsec
@@ -80,15 +82,28 @@ test-suite spec
 executable helpa
   main-is:             Main.hs
   other-modules:
+        AppOptions
+
+        HelVM.HelPA.Assemblers.EAS.AsmParser
+        HelVM.HelPA.Assemblers.EAS.Assembler
+        HelVM.HelPA.Assemblers.EAS.CodeGenerator
+        HelVM.HelPA.Assemblers.EAS.Instruction
+        HelVM.HelPA.Assemblers.EAS.Linker
+        HelVM.HelPA.Assemblers.EAS.Reducer
+
+        HelVM.HelPA.Common.AsmParserUtil
+        HelVM.HelPA.Common.OrError
+        HelVM.HelPA.Common.Util
+        HelVM.HelPA.Common.Value
   other-extensions:
   build-depends:
       base
-    , megaparsec
-    , parser-combinators
     , attoparsec
+    , containers
+    , mtl
+    , split
     , text
     , optparse-applicative
-    , pretty-simple
   hs-source-dirs:      src/main/eta
   default-language:    Haskell2010
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
