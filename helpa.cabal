@@ -34,6 +34,13 @@ library
         HelVM.HelPA.Assemblers.EAS.Linker
         HelVM.HelPA.Assemblers.EAS.Reducer
 
+        HelVM.HelPA.Assemblers.SQ.AsmParser
+        HelVM.HelPA.Assemblers.SQ.Assembler
+        HelVM.HelPA.Assemblers.SQ.CodeGenerator
+        HelVM.HelPA.Assemblers.SQ.Instruction
+        HelVM.HelPA.Assemblers.SQ.Linker
+        HelVM.HelPA.Assemblers.SQ.Reducer
+
         HelVM.HelPA.Assemblers.WSA.AsmParser
         HelVM.HelPA.Assemblers.WSA.Assembler
         HelVM.HelPA.Assemblers.WSA.CodeGenerator
@@ -106,6 +113,13 @@ executable helpa
         HelVM.HelPA.Assemblers.EAS.Instruction
         HelVM.HelPA.Assemblers.EAS.Linker
         HelVM.HelPA.Assemblers.EAS.Reducer
+
+        HelVM.HelPA.Assemblers.SQ.AsmParser
+        HelVM.HelPA.Assemblers.SQ.Assembler
+        HelVM.HelPA.Assemblers.SQ.CodeGenerator
+        HelVM.HelPA.Assemblers.SQ.Instruction
+        HelVM.HelPA.Assemblers.SQ.Linker
+        HelVM.HelPA.Assemblers.SQ.Reducer
 
         HelVM.HelPA.Assemblers.WSA.AsmParser
         HelVM.HelPA.Assemblers.WSA.Assembler

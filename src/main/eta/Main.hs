@@ -6,6 +6,7 @@ import HelVM.HelPA.Common.Util
 
 import qualified HelVM.HelPA.Assemblers.EAS.Assembler as EAS
 import qualified HelVM.HelPA.Assemblers.WSA.Assembler as WSA
+import qualified HelVM.HelPA.Assemblers.SQ.Assembler as SQ
 
 import AppOptions
 
@@ -25,6 +26,7 @@ run AppOptions{lang, debug, dir, file} = do
   
 eval :: Lang -> Bool -> String -> String -> IO ()
 eval EAS    _     dir file = putExcept $ EAS.assemblyIO dir file
+eval SQ     _     dir file = putExcept $ SQ.assemblyIO dir file
 eval WSA    debug dir file = putExcept $ WSA.assemblyIO debug dir file
 eval HAPAPL _     dir file = hapapl dir file
 
