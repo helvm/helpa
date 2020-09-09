@@ -23,8 +23,8 @@ instructionParser =
   try zeroOperandInstructionParser
   <|> naturalNumberParser
   <|> unescapedStringParser
-  <|> labelParser
-  <|> includeParser
+  <|> labelDefinitionParser
+  <|> includeFileParser
   <|> lineBreakParser
   <|> commentParser
 
@@ -51,11 +51,11 @@ naturalNumberParser = N <$> (
 unescapedStringParser :: Parser Instruction
 unescapedStringParser = U <$> stringParser
 
-labelParser :: Parser Instruction
-labelParser = L <$> (char '>' *> identifierParser <* char ':')
+labelDefinitionParser :: Parser Instruction
+labelDefinitionParser = L <$> (char '>' *> identifierParser <* char ':')
 
-includeParser :: Parser Instruction
-includeParser = D <$> (char '*' *> fileNameParser <* char '\n')
+includeFileParser :: Parser Instruction
+includeFileParser = D <$> (char '*' *> fileNameParser <* char '\n')
 
 lineBreakParser :: Parser Instruction
 lineBreakParser = R <$ (skipMany1EndLine *> skipManyComment)
