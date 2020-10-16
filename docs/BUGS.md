@@ -1,4 +1,4 @@
-# BUGS
+# 🐛 BUGS
 
 **Know bugs.**
 

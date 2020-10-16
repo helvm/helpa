@@ -1,6 +1,6 @@
-# Welcome to HELPA
+# Welcome to 🧑‍🏭 HELPA 🌈 ❤️ 💛 💚 💙 🤍 🖤
 
-**HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta.
+🧑‍🏭 **HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta.
 
 **HAPAPL** - High Abstract Para Assembly Programing Language is a kind of [Low Level] [Second-generation] [Assembly Language] for Esoteric Languages
 
@@ -13,10 +13,11 @@ THAT is an Para Assembler to Esoteric Languages (EsoLangs)
 
 ## For User
 * [INSTALL](INSTALL.md) - How to download, test and run.
-* [TODO](TODO.md) - Features to do.
+* [TODO](TODO.md) - Features and assemblers to do 🌈 ❤️ 💛 💚 💙 🤍 🖤.
 * [NEWS](NEWS.md) - New features.
 * [BUGS](BUGS.md) - Know bugs to fix.
 * [FAQ](FAQ.md) -  Frequently Asked Questions & Frequently Given Answers.
+* [Blog](https://writeonly.github.io/projects/helpa/) - in Polish.
 
 ## For Developers
 
