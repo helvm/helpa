@@ -27,7 +27,7 @@ eval EAS    dir file = putExcept $ EAS.assemblyIO dir file
 eval HAPAPL dir file = hapapl dir file
 
 putExcept :: IO (Either String String) -> IO ()
-putExcept io = putStrLn =<< (output <$> io)
+putExcept io = putStrLn . output =<< io
 
 output :: Either String String -> String
 output (Right result) = result
