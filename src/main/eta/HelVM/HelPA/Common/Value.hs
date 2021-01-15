@@ -12,3 +12,11 @@ type IntegerValue = Value Integer
 type StringValue = Value String 
 
 type Identifier = String
+
+data PlusMinus = Plus | Minus
+  deriving (Eq, Show, Ord)
+
+toPlusMinus :: Char -> PlusMinus
+toPlusMinus '+' = Plus
+toPlusMinus '-' = Minus
+toPlusMinus c   = error $ "? " <> charToString c

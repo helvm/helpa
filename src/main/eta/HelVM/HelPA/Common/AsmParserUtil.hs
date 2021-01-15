@@ -51,6 +51,10 @@ alphaNumDot_ = satisfy isAlphaNumDot_
 skipAllToEndOfLine :: Parser ()
 skipAllToEndOfLine = skipWhile isNotEndOfLine
 
+pmParser :: Parser Bool
+pmParser = do
+  pm <- satisfy isAlphaNum_
+  
 ----
 
 asciiCIChoices :: [T.Text] -> Parser T.Text
@@ -64,3 +68,10 @@ isAlphaNum_ c = isAlphaNum c || '_' == c
 
 isAlphaNumDot_ :: Char -> Bool
 isAlphaNumDot_ c = isAlphaNum_ c || '.' == c
+
+isPlusMinus :: Char -> Bool
+isPlusMinus c = '+' == c || '-' == c
+
+----
+
+

@@ -26,6 +26,16 @@ parseAssembler = parseOnly instructionListParser
 --term 	:= ( -term | (expression) | const | id )
 --const	:= ( number | 'letter' | ? )
 
+--grammar
+--program	:= list of intructions
+--intruction := [.] list of items ( ';' | '\n' )
+--item 	:= [label:]expression
+--label	:= id
+--expression := ( term | term+expression | term-expression )
+--pm_expression := ( +expression | term-expression )
+
+--term 	:= ( -term | (expression) | const | id )
+--const	:= ( number | 'letter' | ? )
 
 instructionListParser :: Parser InstructionList
 instructionListParser = many instructionParser
@@ -57,4 +67,12 @@ pmExpressionParser = do
   expression <- expressionParser
   return $ PMExpression pm expression
   
-      
+termParser :: Parser Term
+termParser = 
+      mTermParser
+  <|> (char '(' *> expressionParser <* char ')'
+  <|> constParser
+  <|> naturalValueParser
+
+
+mTermParser ::     

@@ -32,3 +32,6 @@ unfoldl lambda value = check $ lambda value where
 
 toList :: ([k], v) -> [(k, v)]
 toList (keys, value) = (, value) <$> keys
+
+charToString :: Char -> String
+charToString = (:[])
