@@ -1,12 +1,9 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.EAS.AssemblerSpec where
 
 import HelVM.HelPA.Assemblers.EAS.Assembler
 import HelVM.HelPA.Assemblers.EAS.Instruction
 
 import HelVM.HelPA.Assemblers.EAS.TestData
-
-import qualified Data.Text as T
 
 import Test.Hspec
 

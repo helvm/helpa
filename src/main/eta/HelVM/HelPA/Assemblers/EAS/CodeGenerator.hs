@@ -6,7 +6,8 @@ import HelVM.HelPA.Common.Util
 import HelVM.HelPA.Common.Value
 
 import Data.List
-import Numeric.Natural
+
+import qualified Text.Show
 
 generateCode :: InstructionList -> String
 generateCode il = show . WhiteInstruction =<< il
@@ -14,7 +15,7 @@ generateCode il = show . WhiteInstruction =<< il
 newtype WhiteInstruction = WhiteInstruction Instruction
 
 instance Show WhiteInstruction where
-  show (WhiteInstruction (N (Literal  n))) = "N" ++ showValue n ++ "e"
+  show (WhiteInstruction (N (Literal  n))) = "N" <> showValue n <> "e"
   show (WhiteInstruction (N (Variable i))) = error $ show i
   show (WhiteInstruction (D i))            = error $ show i
   show (WhiteInstruction (U i))            = error $ show i

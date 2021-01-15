@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.EAS.AsmParser where
 
 import HelVM.HelPA.Assemblers.EAS.Instruction
@@ -6,13 +5,10 @@ import HelVM.HelPA.Assemblers.EAS.Instruction
 import HelVM.HelPA.Common.AsmParserUtil
 import HelVM.HelPA.Common.Value
 
-import Control.Applicative
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
 
-import qualified Data.Text as T
-
-parseAssembler :: T.Text -> Either String InstructionList
+parseAssembler :: Text -> Either String InstructionList
 parseAssembler = parseOnly instructionListParser
 
 instructionListParser :: Parser InstructionList
@@ -74,7 +70,7 @@ skipMany1EndLine = many1 (char '\n')
 
 ----
 
-endWordParser :: Parser T.Text
+endWordParser :: Parser Text
 endWordParser = takeTill isEndWord
 
 isEndWord :: Char -> Bool

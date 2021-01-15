@@ -4,8 +4,6 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 
 import HelVM.HelPA.Common.Value
 
-import Data.Char
-
 reduce :: InstructionList -> InstructionList
 reduce il = reduceInstruction =<< il
 

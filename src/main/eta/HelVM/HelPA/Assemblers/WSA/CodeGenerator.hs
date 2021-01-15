@@ -6,9 +6,6 @@ import HelVM.HelPA.Assemblers.WSA.Token
 import HelVM.HelPA.Common.Util
 import HelVM.HelPA.Common.Value
 
-import Data.Char
-import Numeric.Natural
-
 generateCode :: Bool -> InstructionList -> String
 generateCode debug il = showTL $ generateTL debug il
 
@@ -52,7 +49,7 @@ generateTLForInstruction True  DebugPrintStack    = [N,N,S,S,S]
 generateTLForInstruction True  DebugPrintHeap     = [N,N,S,S,T]
 generateTLForInstruction False DebugPrintStack    = []
 generateTLForInstruction False DebugPrintHeap     = []
-generateTLForInstruction _ i = error $ "Can not handle instruction " ++ show i
+generateTLForInstruction _ i = error $ "Can not handle instruction " <> show i
 
 valueToTL :: Integer -> TokenList
 valueToTL value = integerToTL value ++ [N]

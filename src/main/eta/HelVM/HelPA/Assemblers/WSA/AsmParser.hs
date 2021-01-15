@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.WSA.AsmParser (parseAssembler) where
 
 import HelVM.HelPA.Assemblers.WSA.Instruction
@@ -6,14 +5,10 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 import HelVM.HelPA.Common.AsmParserUtil
 import HelVM.HelPA.Common.Value
 
-import Control.Applicative
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
-import Data.Maybe
 
-import qualified Data.Text as T
-
-parseAssembler :: T.Text -> Either String InstructionList
+parseAssembler :: Text -> Either String InstructionList
 parseAssembler = parseOnly instructionListParser
 
 instructionListParser :: Parser InstructionList
@@ -86,7 +81,7 @@ pushSParser = PushS . Literal <$> (asciiCI "pushs" *> skipHorizontalSpace *> str
 skipComment :: Parser ()
 skipComment = char commentChar *> skipAllToEndOfLine
 
-endWordParser :: Parser T.Text
+endWordParser :: Parser Text
 endWordParser = takeTill isEndWord
 
 isEndWord :: Char -> Bool

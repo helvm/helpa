@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.WSA.AssemblerSpec where
 
 import HelVM.HelPA.Assemblers.WSA.Assembler
@@ -6,8 +5,6 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 import HelVM.HelPA.Assemblers.WSA.CodeGenerator
 
 import HelVM.HelPA.Assemblers.WSA.TestData
-
-import qualified Data.Text as T
 
 import Test.Hspec
 

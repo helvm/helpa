@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.WSA.AsmParserSpec (spec) where
 
 import HelVM.HelPA.Assemblers.WSA.AsmParser
@@ -8,11 +7,7 @@ import HelVM.HelPA.Assemblers.WSA.TestData
 
 import HelVM.HelPA.Common.Value
 
-
 import Data.List
-
-import qualified Data.Text as T
-import qualified Data.Text.IO as T
 
 import Test.Hspec
 
@@ -28,7 +23,6 @@ spec = do
     it "parse 'outc'" $ do parseAssembler "outc" `shouldBe` Right [OutputChar]
     it "parse 'inn'"  $ do parseAssembler "inn" `shouldBe` Right [InputNum]
     it "parse 'inc'"  $ do parseAssembler "inc" `shouldBe` Right [InputChar]
-
 
   describe "Commands with maybe natural operand" $ do
     it "parse 'add'" $ do parseAssembler "add" `shouldBe` Right [Add Nothing]
@@ -70,7 +64,6 @@ spec = do
     it "parse 'jumppz L'" $ do parseAssembler "jumppz L" `shouldBe` Right [BranchPZ "L"]
     it "parse 'include L'" $ do parseAssembler "include L" `shouldBe` Right [Include "L"]
 
-
   describe "Commands with natural operand" $ do
     it "parse 'push 0'" $ do parseAssembler "push 0" `shouldBe` Right [Push (Literal 0)]
     it "parse 'push 1'" $ do parseAssembler "push 1" `shouldBe` Right [Push (Literal 1)]
@@ -105,5 +98,5 @@ spec = do
     it "memory" $ do memoryEither `shouldBe` Right memoryIL
     it "prim"   $ do primEither   `shouldBe` Right (Include "io" : primIL)
 
-parseLibFromFile name = parseAssembler <$> runIO (T.readFile $ "src/test/resources/wsa/libs/" ++ name ++ ".wsa")
-parseFromFile    name = parseAssembler <$> runIO (T.readFile $ "src/test/resources/wsa/examples/" ++ name ++ ".wsa")
+parseLibFromFile name = parseAssembler <$> runIO (readFileText $ "src/test/resources/wsa/libs/" ++ name ++ ".wsa")
+parseFromFile    name = parseAssembler <$> runIO (readFileText $ "src/test/resources/wsa/examples/" ++ name ++ ".wsa")

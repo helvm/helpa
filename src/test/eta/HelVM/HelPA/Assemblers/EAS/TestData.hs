@@ -1,11 +1,8 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.EAS.TestData where
 
 import HelVM.HelPA.Assemblers.EAS.Instruction
 
 import HelVM.HelPA.Common.Value
-
-import qualified Data.Text as T
 
 trueIL :: InstructionList
 trueIL = []

@@ -1,5 +1,4 @@
 {-# Language NamedFieldPuns   #-}
-
 module Main where
 
 import HelVM.HelPA.Common.Util
@@ -10,7 +9,7 @@ import qualified HelVM.HelPA.Assemblers.WSA.Assembler as WSA
 import AppOptions
 
 import Options.Applicative
-import System.IO
+import qualified System.IO as IO
 
 main :: IO ()
 main = run =<< execParser opts where
@@ -33,7 +32,7 @@ putExcept io = putStrLn . output =<< io
 
 output :: Either String String -> String
 output (Right result) = result
-output (Left message) = error message
+output (Left message) = error $ toText message
 
 hapapl :: String -> String -> IO ()
 hapapl _ _ = putStrLn "HAPAPL is not supported now"

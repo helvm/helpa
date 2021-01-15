@@ -1,12 +1,9 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.WSA.LinkerSpec where
 
 import HelVM.HelPA.Assemblers.WSA.Linker
 import HelVM.HelPA.Assemblers.WSA.Instruction
 
 import HelVM.HelPA.Assemblers.WSA.TestData
-
-import qualified Data.Text as T
 
 import Test.Hspec
 

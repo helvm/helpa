@@ -7,21 +7,16 @@ import HelVM.HelPA.Common.Util
 import HelVM.HelPA.Common.Value
 
 import Data.List.Split
-import Data.Char
-
-import Numeric.Natural
-
-import qualified Data.Map.Strict as Map
 
 reduce :: InstructionList -> InstructionList
 reduce il = replaceStrings $ replaceLabels addresses il where addresses = addressOfLabels il
 
 ----
 
-type LabelAddresses = Map.Map String Natural
+type LabelAddresses = Map String Natural
 
 addressOfLabels :: InstructionList -> LabelAddresses
-addressOfLabels il = Map.fromList $ toList =<< zip (labelsToStrings2 il) [1..]
+addressOfLabels il = fromList $ setDefault =<< zip (labelsToStrings2 il) [1..]
 
 labelsToStrings2 :: InstructionList -> [[String]]
 labelsToStrings2 il = labelsToStrings <$> splitOn [R] il

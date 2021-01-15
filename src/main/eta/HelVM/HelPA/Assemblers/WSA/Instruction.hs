@@ -2,8 +2,6 @@ module HelVM.HelPA.Assemblers.WSA.Instruction where
 
 import HelVM.HelPA.Common.Value
 
-import Numeric.Natural
-
 data Instruction = 
 -- Stack instructions
     Push IntegerValue

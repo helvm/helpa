@@ -1,7 +1,9 @@
 module HelVM.HelPA.Assemblers.WSA.Token where
 
 import Data.Char
-import Numeric.Natural
+import Text.Read
+ 
+import qualified Text.Show
 
 data Token =  S | T | N
   deriving (Eq, Ord, Enum, Show, Read)

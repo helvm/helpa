@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module HelVM.HelPA.Assemblers.EAS.AsmParserSpec (spec) where
 
 import HelVM.HelPA.Assemblers.EAS.AsmParser
@@ -8,11 +7,7 @@ import HelVM.HelPA.Assemblers.EAS.TestData
 
 import HelVM.HelPA.Common.Value
 
-
 import Data.List
-
-import qualified Data.Text as T
-import qualified Data.Text.IO as T
 
 import Test.Hspec
 
@@ -173,4 +168,4 @@ spec = do
     it "bottles"  $ do bottlesEither  `shouldBe` Right bottlesIL
     it "euclid"   $ do euclidEither   `shouldBe` Right euclidIL
 
-parseFromFile name = parseAssembler <$> runIO (T.readFile $ "src/test/resources/eas/" ++ name ++ ".eas")
+parseFromFile name = parseAssembler <$> runIO (readFileText $ "src/test/resources/eas/" <> name <> ".eas")

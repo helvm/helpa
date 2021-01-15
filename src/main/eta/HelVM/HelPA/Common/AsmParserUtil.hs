@@ -3,14 +3,10 @@ module HelVM.HelPA.Common.AsmParserUtil where
 import HelVM.HelPA.Common.OrError
 import HelVM.HelPA.Common.Value
 
-import Control.Applicative
 import Control.Monad
 import Data.Attoparsec.Combinator
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
-import Numeric.Natural
-
-import qualified Data.Text as T
 
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser
@@ -53,7 +49,7 @@ skipAllToEndOfLine = skipWhile isNotEndOfLine
 
 ----
 
-asciiCIChoices :: [T.Text] -> Parser T.Text
+asciiCIChoices :: [Text] -> Parser Text
 asciiCIChoices = choice . map asciiCI
 
 isNotEndOfLine :: Char -> Bool
