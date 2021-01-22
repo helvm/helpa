@@ -3,7 +3,7 @@ cabal-version:       2.2
 --  see http://eta-lang.org/docs/
 
 name:                helpa
-version:             0.3.0.0
+version:             0.3.1.0
 
 synopsis:            HELPA - Heavenly Esoteric Little Para Assembler to esoteric languages implemented in Haskell/Eta
 description:         Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -14,7 +14,7 @@ license:             Apache-2.0
 license-file:        docs/LICENSE
 author:              Kamil Adam
 maintainer:          kamil.adam.zabinski@gmail.com
-copyright:           2020 WriteOnly Developers
+copyright:           2020-2021 WriteOnly Developers
 
 category:            Language
 build-type:          Simple
