@@ -140,7 +140,7 @@ spec = do
     reverseEither  <- parseFromFile "reverse"
     functionEither <- parseFromFile "function"
     addEither      <- parseFromFile "add"
-    writeStrEither <- parseFromFile "writeStr"
+    writeStrEither <- parseFromFile "writestr"
     hello2Either   <- parseFromFile "hello2"
     hello3Either   <- parseFromFile "hello3"
     hello4Either   <- parseFromFile "hello4"

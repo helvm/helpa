@@ -17,7 +17,7 @@ spec = do
     reverseEither  <- assemblyFile "reverse"
     functionEither <- assemblyFile "function"
     addEither      <- assemblyFile "add"
-    writeStrEither <- assemblyFile "writeStr"
+    writeStrEither <- assemblyFile "writestr"
     hello2Either   <- assemblyFile "hello2"
     hello3Either   <- assemblyFile "hello3"
     hello4Either   <- assemblyFile "hello4"

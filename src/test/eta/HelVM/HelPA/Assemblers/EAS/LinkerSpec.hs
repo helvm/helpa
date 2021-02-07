@@ -17,7 +17,7 @@ spec = do
     reverseEither  <- linkFile "reverse"
     functionEither <- linkFile "function"
     addEither      <- linkFile "add"
-    writeStrEither <- linkFile "writeStr"
+    writeStrEither <- linkFile "writestr"
     hello2Either   <- linkFile "hello2"
     hello3Either   <- linkFile "hello3"
     hello4Either   <- linkFile "hello4"
