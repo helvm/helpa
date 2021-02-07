@@ -15,7 +15,7 @@ cd helpa
 To compile you need `cabal`:
 ```bash
 cabal update
-cabal clean && cabal build && cabal test
+cabal new-clean && cabal new-build && cabal new-test
 cabal new-test --test-show-details=streaming
 ```
 
