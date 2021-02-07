@@ -1,0 +1,35 @@
+include io
+
+push 3
+
+label LOOP
+doub
+outN
+
+pushS " bottles of beer on the wall, "
+call prints
+
+doub
+outN
+
+pushS " bottles of beer"
+call printsln
+pushS "Take one down, pass it around"
+call printsln
+
+push 1
+sub
+
+doub
+outN
+
+pushS " bottles of beer on the wall"
+call printsln
+
+pushS ""
+call printsln
+
+doub
+jumpNP LOOP
+
+exit

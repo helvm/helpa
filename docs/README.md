@@ -1,12 +1,16 @@
-# Welcome to 🧑‍🏭 HELPA
+# Welcome to 🏭 🌾 HELPA
 
-🧑‍🏭 **HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta.
+**🏭 🌾 HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta.
+
+**🧑‍🏭 🧑‍🌾 HAPAPL** - High Abstract Parallel Assembly Programing Language is a kind of [Low-level] [Second-generation] [ASM] for Esoteric Languages.
+
+**🧑‍🏭 🧑‍🌾 HAPLAP** - High Abstract Parallel Language of Assembly Program
 
 ```
 FOR everyone
 WHO want to assembly Esoteric Languages
 THE HELPA IS a Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta
-THAT is an Para Assembler to Esoteric Languages (EsoLangs)
+THAT is an Paradise Assembler to Esoteric Languages (EsoLangs)
 ```
 
 ## For User
@@ -22,7 +26,12 @@ THAT is an Para Assembler to Esoteric Languages (EsoLangs)
 * [AUTHORS](AUTHORS.md)
 * [ROADMAP](ROADMAP.md)
 * [CHANGELOG](CHANGELOG.md)
+* [ARCHITECTURE](ARCHITECTURE.md)
 * [CONTRIBUTING](CONTRIBUTING.md)
 * [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
 
 ## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+
+[Low-level]:         https://en.wikipedia.org/wiki/Low-level_programming_language
+[Second-generation]: https://en.wikipedia.org/wiki/Second-generation_programming_language
+[ASM]:               https://en.wikipedia.org/wiki/Assembly_language

@@ -1,5 +1,13 @@
 # 📅 Revision history for Helpa
 
+## 0.3.3.0 -- 2021-06-11
+
+Use RIO
+
+## 0.3.2.0  -- 2021-06-06
+
+* Use HSpec and add golden tests
+
 ## 0.3.1.0  -- 2021-01-22
 
 * Use `relude` library

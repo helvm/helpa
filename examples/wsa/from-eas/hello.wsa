@@ -1,0 +1,29 @@
+push 32
+push ',
+push 'o
+push 'l
+push 'l
+push 'e
+push 'H
+outC
+outC
+outC
+outC
+outC
+outC
+outC
+push 10
+push '!
+push 'd
+push 'l
+push 'r
+push 'o
+push 'w
+outC
+outC
+outC
+outC
+outC
+outC
+outC
+exit

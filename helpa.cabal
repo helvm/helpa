@@ -41,7 +41,10 @@ library
         HelVM.HelPA.Assemblers.WSA.Linker
         HelVM.HelPA.Assemblers.WSA.Reducer
         HelVM.HelPA.Assemblers.WSA.Token
+        HelVM.HelPA.Common.TokenType
 
+        HelVM.HelPA.Common.API
+        HelVM.HelPA.Common.AssemblyOptions
         HelVM.HelPA.Common.AsmParserUtil
         HelVM.HelPA.Common.OrError
         HelVM.HelPA.Common.Util
@@ -49,6 +52,7 @@ library
   other-extensions:
   build-depends:
       base
+--    , rio                  == 0.1.20.0
     , relude               == 0.7.0.0
     , split
 
@@ -57,17 +61,81 @@ library
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/main/eta
+  hs-source-dirs:      hs/src
   default-language:    Haskell2010
-  ghc-options:         -XOverloadedStrings -Wall
+  ghc-options:
+--Extensions
+    -XEmptyDataDecls
+    -XExistentialQuantification
+    -XFlexibleContexts
+    -XFlexibleInstances
+    -XFunctionalDependencies
+    -XGADTs
+    -XGeneralizedNewtypeDeriving
+    -XInstanceSigs
+    -XKindSignatures
+    -XLambdaCase
+    -XMonadFailDesugaring
+    -XMultiParamTypeClasses
+    -XMultiWayIf
+    -XNamedFieldPuns
+--    -XNoImplicitPrelude
+    -XOverloadedStrings
+    -XPartialTypeSignatures
+    -XPatternGuards
+    -XPolyKinds
+    -XRankNTypes
+    -XRecordWildCards
+    -XScopedTypeVariables
+    -XStandaloneDeriving
+    -XTupleSections
+    -XTypeFamilies
+    -XTypeSynonymInstances
+    -XViewPatterns
+--    -XCPP
+--    -XTemplateHaskell
+--    -XForeignFunctionInterface
+--    -XMagicHash
+--    -XUnliftedFFITypes
+    -XTypeOperators
+--    -XUnboxedTuples
+--    -XPackageImports
+--    -XQuasiQuotes
+--    -XDeriveAnyClass
+--    -XDeriveLift
+--    -XStaticPointers
+--Only for lib
+    -XDeriveFunctor
+--Warnings
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-uni-patterns
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wnoncanonical-monad-instances
+    -fhide-source-paths
+--    -Wmissing-export-lists FIXME
+    -Wpartial-fields
+--    -Wmissing-deriving-strategies (GHC ⩾ 8.8)
+--    -fwrite-ide-info              (GHC ⩾ 8.8)
+--    -hiedir=.hie                  (GHC ⩾ 8.8)
+--    -Wunused-packages             (GHC ⩾ 8.10)
+    -Werror
 
 test-suite spec
   type:                exitcode-stdio-1.0
-  main-is:             Spec.hs
+  main-is:             Main.hs
   other-modules:
+        Spec
+
+        HelVM.HelPA.Assemblers.CartesianProduct
+        HelVM.HelPA.Assemblers.Expectations
+
         HelVM.HelPA.Assemblers.EAS.AsmParserSpec
         HelVM.HelPA.Assemblers.EAS.AssemblerSpec
         HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.EAS.FileUtil
         HelVM.HelPA.Assemblers.EAS.LinkerSpec
         HelVM.HelPA.Assemblers.EAS.TestData
         HelVM.HelPA.Assemblers.EAS.ReducerSpec
@@ -75,6 +143,7 @@ test-suite spec
         HelVM.HelPA.Assemblers.WSA.AsmParserSpec
         HelVM.HelPA.Assemblers.WSA.AssemblerSpec
         HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.WSA.FileUtil
         HelVM.HelPA.Assemblers.WSA.LinkerSpec
         HelVM.HelPA.Assemblers.WSA.ReducerSpec
         HelVM.HelPA.Assemblers.WSA.TestData
@@ -90,40 +159,85 @@ test-suite spec
     , helpa
     , hspec
     , hspec-attoparsec
+    , hspec-core
+    , hspec-golden
+    , hspec-slow
     , QuickCheck
     , smallcheck
+    , filepath
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/test/eta
+  hs-source-dirs:      hs/test
   default-language:    Haskell2010
-  ghc-options:         -XOverloadedStrings -threaded -rtsopts -with-rtsopts=-N
   build-tool-depends:  hspec-discover:hspec-discover == 2.*
+  ghc-options:
+--Extensions
+    -XEmptyDataDecls
+    -XExistentialQuantification
+    -XFlexibleContexts
+    -XFlexibleInstances
+    -XFunctionalDependencies
+    -XGADTs
+    -XGeneralizedNewtypeDeriving
+    -XInstanceSigs
+    -XKindSignatures
+    -XLambdaCase
+    -XMonadFailDesugaring
+    -XMultiParamTypeClasses
+    -XMultiWayIf
+    -XNamedFieldPuns
+--    -XNoImplicitPrelude
+    -XOverloadedStrings
+    -XPartialTypeSignatures
+    -XPatternGuards
+    -XPolyKinds
+    -XRankNTypes
+    -XRecordWildCards
+    -XScopedTypeVariables
+    -XStandaloneDeriving
+    -XTupleSections
+    -XTypeFamilies
+    -XTypeSynonymInstances
+    -XViewPatterns
+--    -XCPP
+--    -XTemplateHaskell
+--    -XForeignFunctionInterface
+--    -XMagicHash
+--    -XUnliftedFFITypes
+--    -XTypeOperators
+--    -XUnboxedTuples
+--    -XPackageImports
+--    -XQuasiQuotes
+--    -XDeriveAnyClass
+--    -XDeriveLift
+--    -XStaticPointers
+--Warnings
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-uni-patterns
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wnoncanonical-monad-instances
+    -fhide-source-paths
+--    -Wmissing-export-lists FIXME
+    -Wpartial-fields
+--    -Wmissing-deriving-strategies (GHC ⩾ 8.8)
+--    -fwrite-ide-info              (GHC ⩾ 8.8)
+--    -hiedir=.hie                  (GHC ⩾ 8.8)
+--    -Wunused-packages             (GHC ⩾ 8.10)
+    -Werror
+--Only for tests
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N
 
 executable helpa
   main-is:             Main.hs
   other-modules:
         AppOptions
 
-        HelVM.HelPA.Assemblers.EAS.AsmParser
-        HelVM.HelPA.Assemblers.EAS.Assembler
-        HelVM.HelPA.Assemblers.EAS.CodeGenerator
-        HelVM.HelPA.Assemblers.EAS.Instruction
-        HelVM.HelPA.Assemblers.EAS.Linker
-        HelVM.HelPA.Assemblers.EAS.Reducer
-
-        HelVM.HelPA.Assemblers.WSA.AsmParser
-        HelVM.HelPA.Assemblers.WSA.Assembler
-        HelVM.HelPA.Assemblers.WSA.CodeGenerator
-        HelVM.HelPA.Assemblers.WSA.Instruction
-        HelVM.HelPA.Assemblers.WSA.Linker
-        HelVM.HelPA.Assemblers.WSA.Reducer
-        HelVM.HelPA.Assemblers.WSA.Token
-
-        HelVM.HelPA.Common.AsmParserUtil
-        HelVM.HelPA.Common.OrError
-        HelVM.HelPA.Common.Util
-        HelVM.HelPA.Common.Value
   other-extensions:
   build-depends:
       base
@@ -132,10 +246,66 @@ executable helpa
     , optparse-applicative >= 0.14.3.0
 
     , attoparsec
+    , helpa
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/main/eta
+  hs-source-dirs:      hs/app
   default-language:    Haskell2010
-  ghc-options:         -XOverloadedStrings -threaded -rtsopts -with-rtsopts=-N
-
+  ghc-options:
+--Extensions
+    -XEmptyDataDecls
+    -XExistentialQuantification
+    -XFlexibleContexts
+    -XFlexibleInstances
+    -XFunctionalDependencies
+    -XGADTs
+    -XGeneralizedNewtypeDeriving
+    -XInstanceSigs
+    -XKindSignatures
+    -XLambdaCase
+    -XMonadFailDesugaring
+    -XMultiParamTypeClasses
+    -XMultiWayIf
+    -XNamedFieldPuns
+--    -XNoImplicitPrelude
+    -XOverloadedStrings
+    -XPartialTypeSignatures
+    -XPatternGuards
+    -XPolyKinds
+    -XRankNTypes
+    -XRecordWildCards
+    -XScopedTypeVariables
+    -XStandaloneDeriving
+    -XTupleSections
+    -XTypeFamilies
+    -XTypeSynonymInstances
+    -XViewPatterns
+--    -XCPP
+--    -XTemplateHaskell
+--    -XForeignFunctionInterface
+--    -XMagicHash
+--    -XUnliftedFFITypes
+--    -XTypeOperators
+--    -XUnboxedTuples
+--    -XPackageImports
+--    -XQuasiQuotes
+--    -XDeriveAnyClass
+--    -XDeriveLift
+--    -XStaticPointers
+--Warnings
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-uni-patterns
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wnoncanonical-monad-instances
+    -fhide-source-paths
+--    -Wmissing-export-lists FIXME
+    -Wpartial-fields
+--    -Wmissing-deriving-strategies (GHC ⩾ 8.8)
+--    -fwrite-ide-info              (GHC ⩾ 8.8)
+--    -hiedir=.hie                  (GHC ⩾ 8.8)
+--    -Wunused-packages             (GHC ⩾ 8.10)
+    -Werror

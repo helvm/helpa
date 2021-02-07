@@ -1,0 +1,18 @@
+label LOOP
+dup
+
+push 0
+push 1
+sub
+sub
+
+jumpNP WRITE
+exit
+
+label WRITE
+outC
+jump LOOP
+
+
+
+
