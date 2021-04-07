@@ -98,5 +98,5 @@ spec = do
     it "memory" $ do memoryEither `shouldBe` Right memoryIL
     it "prim"   $ do primEither   `shouldBe` Right (Include "io" : primIL)
 
-parseLibFromFile name = parseAssembler <$> runIO (readFileText $ "src/test/resources/wsa/libs/" ++ name ++ ".wsa")
-parseFromFile    name = parseAssembler <$> runIO (readFileText $ "src/test/resources/wsa/examples/" ++ name ++ ".wsa")
+parseLibFromFile name = parseAssembler <$> runIO (readFileText $ "examples/wsa/libs/" ++ name ++ ".wsa")
+parseFromFile    name = parseAssembler <$> runIO (readFileText $ "examples/wsa/examples/" ++ name ++ ".wsa")

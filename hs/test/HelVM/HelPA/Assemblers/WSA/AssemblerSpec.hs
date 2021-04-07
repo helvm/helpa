@@ -18,5 +18,5 @@ spec = do
     it "memory" $ do memoryEither `shouldBe` Right (showTL memoryTL)
     it "prim"   $ do primpEither  `shouldBe` Right (showTL primTL)
 
-assembleLibFile name = runIO $ assemblyIO False "src/test/resources/wsa/libs/" $ "src/test/resources/wsa/libs/" ++ name ++ ".wsa"
-assembleFile name = runIO $ assemblyIO False "src/test/resources/wsa/libs/" $ "src/test/resources/wsa/examples/" ++ name ++ ".wsa"
+assembleLibFile name = runIO $ assemblyIO False "examples/wsa/libs/" $ "examples/wsa/libs/" ++ name ++ ".wsa"
+assembleFile name = runIO $ assemblyIO False "examples/wsa/libs/" $ "examples/wsa/examples/" ++ name ++ ".wsa"

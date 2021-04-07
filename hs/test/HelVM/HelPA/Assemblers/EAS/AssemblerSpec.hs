@@ -45,4 +45,4 @@ spec = do
     it "bottles"  $ do bottlesEither  `shouldBe` Right bottlesETA
     it "euclid"   $ do euclidEither   `shouldBe` Right euclidETA
 
-assemblyFile name = runIO $ assemblyIO "src/test/resources/eas/" $ "src/test/resources/eas/" ++ name ++ ".eas"
+assemblyFile name = runIO $ assemblyIO "examples/eas/" $ "examples/eas/" ++ name ++ ".eas"

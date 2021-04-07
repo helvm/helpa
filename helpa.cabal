@@ -57,7 +57,7 @@ library
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/main/eta
+  hs-source-dirs:      hs/src
   default-language:    Haskell2010
   ghc-options:         -XOverloadedStrings -Wall
 
@@ -95,7 +95,7 @@ test-suite spec
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/test/eta
+  hs-source-dirs:      hs/test
   default-language:    Haskell2010
   ghc-options:         -XOverloadedStrings -threaded -rtsopts -with-rtsopts=-N
   build-tool-depends:  hspec-discover:hspec-discover == 2.*
@@ -105,25 +105,6 @@ executable helpa
   other-modules:
         AppOptions
 
-        HelVM.HelPA.Assemblers.EAS.AsmParser
-        HelVM.HelPA.Assemblers.EAS.Assembler
-        HelVM.HelPA.Assemblers.EAS.CodeGenerator
-        HelVM.HelPA.Assemblers.EAS.Instruction
-        HelVM.HelPA.Assemblers.EAS.Linker
-        HelVM.HelPA.Assemblers.EAS.Reducer
-
-        HelVM.HelPA.Assemblers.WSA.AsmParser
-        HelVM.HelPA.Assemblers.WSA.Assembler
-        HelVM.HelPA.Assemblers.WSA.CodeGenerator
-        HelVM.HelPA.Assemblers.WSA.Instruction
-        HelVM.HelPA.Assemblers.WSA.Linker
-        HelVM.HelPA.Assemblers.WSA.Reducer
-        HelVM.HelPA.Assemblers.WSA.Token
-
-        HelVM.HelPA.Common.AsmParserUtil
-        HelVM.HelPA.Common.OrError
-        HelVM.HelPA.Common.Util
-        HelVM.HelPA.Common.Value
   other-extensions:
   build-depends:
       base
@@ -132,10 +113,11 @@ executable helpa
     , optparse-applicative >= 0.14.3.0
 
     , attoparsec
+    , helpa
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra)
-  hs-source-dirs:      src/main/eta
+  hs-source-dirs:      hs/app
   default-language:    Haskell2010
   ghc-options:         -XOverloadedStrings -threaded -rtsopts -with-rtsopts=-N
 

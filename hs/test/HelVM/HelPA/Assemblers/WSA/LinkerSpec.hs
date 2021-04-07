@@ -18,5 +18,5 @@ spec = do
     it "memory" $ do memoryEither `shouldBe` Right memoryIL
     it "prim"   $ do primEither   `shouldBe` Right (primIL ++ ioIL)
 
-linkLibFile name = runIO $ linkLibIO "src/test/resources/wsa/libs/" $ name ++ ".wsa"
-linkFile name = runIO $ linkIO "src/test/resources/wsa/libs/" $ "src/test/resources/wsa/examples/" ++ name ++ ".wsa"
+linkLibFile name = runIO $ linkLibIO "examples/wsa/libs/" $ name ++ ".wsa"
+linkFile name = runIO $ linkIO "examples/wsa/libs/" $ "examples/wsa/examples/" ++ name ++ ".wsa"

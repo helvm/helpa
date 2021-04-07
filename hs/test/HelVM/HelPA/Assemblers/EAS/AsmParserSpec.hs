@@ -168,4 +168,4 @@ spec = do
     it "bottles"  $ do bottlesEither  `shouldBe` Right bottlesIL
     it "euclid"   $ do euclidEither   `shouldBe` Right euclidIL
 
-parseFromFile name = parseAssembler <$> runIO (readFileText $ "src/test/resources/eas/" <> name <> ".eas")
+parseFromFile name = parseAssembler <$> runIO (readFileText $ "examples/eas/" <> name <> ".eas")
