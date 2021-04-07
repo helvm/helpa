@@ -10,7 +10,7 @@ linkIO :: String -> String -> IO (Either String InstructionList)
 linkIO dirPath filePath = runExceptT $ link dirPath filePath
 
 linkLib :: String -> String -> ExceptT String IO InstructionList
-linkLib dirPath fileName = link dirPath $ dirPath ++ "/" ++ fileName
+linkLib dirPath fileName = link dirPath $ dirPath <> "/" <> fileName
 
 link :: String -> String -> ExceptT String IO InstructionList
 link dirPath filePath = (includeLibs dirPath =<<) $ ExceptT $ parseAssembler <$> readFileText filePath

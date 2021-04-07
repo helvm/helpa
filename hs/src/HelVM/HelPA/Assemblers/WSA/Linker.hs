@@ -10,7 +10,7 @@ linkIO :: String -> String -> IO (Either String InstructionList)
 linkIO dirPath filePath = runExceptT $ link dirPath filePath
 
 linkLib :: String -> String -> ExceptT String IO InstructionList
-linkLib dirPath fileName = link dirPath $ dirPath ++ "/" ++ fileName
+linkLib dirPath fileName = link dirPath $ dirPath <> "/" <> fileName
 
 link :: String -> String -> ExceptT String IO InstructionList
 link dirPath filePath = (includeLibs dirPath =<<) $ ExceptT $ parseAssembler <$> readFileText filePath
@@ -19,10 +19,10 @@ includeLibs :: String -> InstructionList -> ExceptT String IO InstructionList
 includeLibs dirPath il = sortBlocks <$> mapM (includeLib dirPath) il
 
 sortBlocks :: [Block InstructionList] -> InstructionList
-sortBlocks list = unwrap =<< (filter isNormal list ++ filter isIncluded list)
+sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list)
 
 includeLib :: String -> Instruction -> ExceptT String IO (Block InstructionList)
-includeLib dirPath (Include libName) = Included <$> linkLib dirPath (libName ++ ".wsa")
+includeLib dirPath (Include libName) = Included <$> linkLib dirPath (libName <> ".wsa")
 includeLib _ i = pure $ Normal [i]
 
 unwrap :: Block a -> a

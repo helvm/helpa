@@ -17,7 +17,7 @@ generateTL debug il = generateTLForInstruction debug =<< il
 
 generateTLForInstruction :: Bool -> Instruction -> TokenList
 -- Stack instructions
-generateTLForInstruction _ (Push (Literal value)) = [S,S] ++ integerToTL value
+generateTLForInstruction _ (Push (Literal value)) = [S,S] <> integerToTL value
 generateTLForInstruction _  Pop                   = [S,S,N]
 generateTLForInstruction _  Dup                   = [S,N,S]
 generateTLForInstruction _  Swap                  = [S,N,T]
@@ -31,11 +31,11 @@ generateTLForInstruction _ (Mod Nothing)          = [T,S,T,T]
 generateTLForInstruction _ (Store Nothing)        = [T,T,S]
 generateTLForInstruction _ (Load  Nothing)        = [T,T,T]
 -- Control
-generateTLForInstruction _ (Mark    label)        = [N,S,S] ++ stringToTL label
-generateTLForInstruction _ (Call    label)        = [N,S,T] ++ stringToTL label
-generateTLForInstruction _ (Branch  label)        = [N,S,N] ++ stringToTL label
-generateTLForInstruction _ (BranchZ label)        = [N,T,S] ++ stringToTL label
-generateTLForInstruction _ (BranchN label)        = [N,T,T] ++ stringToTL label
+generateTLForInstruction _ (Mark    label)        = [N,S,S] <> stringToTL label
+generateTLForInstruction _ (Call    label)        = [N,S,T] <> stringToTL label
+generateTLForInstruction _ (Branch  label)        = [N,S,N] <> stringToTL label
+generateTLForInstruction _ (BranchZ label)        = [N,T,S] <> stringToTL label
+generateTLForInstruction _ (BranchN label)        = [N,T,T] <> stringToTL label
 generateTLForInstruction _  Return                = [N,T,N]
 generateTLForInstruction _  End                   = [N,N,N]
 -- IO instructions
@@ -52,7 +52,7 @@ generateTLForInstruction False DebugPrintHeap     = []
 generateTLForInstruction _ i = error $ "Can not handle instruction " <> show i
 
 valueToTL :: Integer -> TokenList
-valueToTL value = integerToTL value ++ [N]
+valueToTL value = integerToTL value <> [N]
 
 integerToTL :: Integer -> TokenList
 integerToTL value
@@ -63,7 +63,7 @@ naturalToTL :: Natural -> TokenList
 naturalToTL value = bitToToken <$> naturalToDigits2 value
 
 stringToTL :: String -> TokenList
-stringToTL value = (charToTL =<< value) ++ [N]
+stringToTL value = (charToTL =<< value) <> [N]
 
 charToTL :: Char -> TokenList
 charToTL value = bitToToken <$> toBits8 (ord value `mod` 256)

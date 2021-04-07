@@ -68,6 +68,7 @@ test-suite spec
         HelVM.HelPA.Assemblers.EAS.AsmParserSpec
         HelVM.HelPA.Assemblers.EAS.AssemblerSpec
         HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.EAS.FileUtil
         HelVM.HelPA.Assemblers.EAS.LinkerSpec
         HelVM.HelPA.Assemblers.EAS.TestData
         HelVM.HelPA.Assemblers.EAS.ReducerSpec
@@ -75,9 +76,12 @@ test-suite spec
         HelVM.HelPA.Assemblers.WSA.AsmParserSpec
         HelVM.HelPA.Assemblers.WSA.AssemblerSpec
         HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
+        HelVM.HelPA.Assemblers.WSA.FileUtil
         HelVM.HelPA.Assemblers.WSA.LinkerSpec
         HelVM.HelPA.Assemblers.WSA.ReducerSpec
         HelVM.HelPA.Assemblers.WSA.TestData
+
+        HelVM.HelPA.Assemblers.Util
   other-extensions:
   build-depends:
       base

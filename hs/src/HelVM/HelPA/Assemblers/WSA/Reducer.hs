@@ -9,7 +9,7 @@ reduce il = reduceInstruction =<< il
 
 reduceInstruction :: Instruction -> InstructionList
 reduceInstruction (PushS (Literal [])) = [Push (Literal 0)]
-reduceInstruction (PushS (Literal (x:xs))) = reduceInstruction (PushS (Literal xs)) ++ [Push (Literal (fromIntegral (ord x)))]
+reduceInstruction (PushS (Literal (x:xs))) = reduceInstruction (PushS (Literal xs)) <> [Push (Literal (fromIntegral (ord x)))]
 
 reduceInstruction (Test v)            = [Dup, Push (Literal v), Sub Nothing]
 reduceInstruction (Load (Just v)) = [Push v, Load Nothing]
@@ -40,4 +40,4 @@ reduceInstruction (BranchNZ l) = [Dup, BranchN l1, Dup, BranchZ l1, Branch l2, M
 reduceInstruction i = [i]
       
 calculateLocalLabel :: String -> Integer -> String
-calculateLocalLabel label suffix = label ++ ":" ++ show suffix
+calculateLocalLabel label suffix = label <> ":" <> show suffix

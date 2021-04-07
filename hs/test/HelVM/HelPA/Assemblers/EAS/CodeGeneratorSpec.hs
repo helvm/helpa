@@ -5,6 +5,7 @@ import HelVM.HelPA.Assemblers.EAS.CodeGenerator
 import HelVM.HelPA.Assemblers.EAS.Instruction
 
 import HelVM.HelPA.Assemblers.EAS.TestData
+import HelVM.HelPA.Assemblers.EAS.FileUtil
 
 import Test.Hspec
 
@@ -25,18 +26,21 @@ spec = do
     it "showValue 111111" $ do showValue 111111 `shouldBe` "sitsih"
 
   describe "Examples" $ do
-    it "true"     $ do generateCode trueIL      `shouldBe` trueETA
-    it "hello"    $ do generateCode helloIL     `shouldBe` helloETA
-    it "pip"      $ do generateCode pipIL'      `shouldBe` pipETA
-    it "pip2"     $ do generateCode pip2IL'     `shouldBe` pip2ETA
-    it "reverse"  $ do generateCode reverseIL'  `shouldBe` reverseETA
-    it "function" $ do generateCode functionIL  `shouldBe` functionETA
-    it "add"      $ do generateCode addIL'      `shouldBe` addETA
-    it "writestr" $ do generateCode writeStrIL' `shouldBe` writeStrETA
-    it "hello2"   $ do generateCode hello2IL'   `shouldBe` hello2ETA
-    it "writenum" $ do generateCode writeNumIL' `shouldBe` writeNumETA
-    it "multiply" $ do generateCode multiplyIL' `shouldBe` multiplyETA
-    it "readnum"  $ do generateCode readNumIL'  `shouldBe` readNumETA
-    it "fact"     $ do generateCode factIL'     `shouldBe` factETA
---    it "bottles"  $ do generateCode bottlesIL'  `shouldBe` bottlesETA
-    it "euclid"   $ do generateCode euclidIL'   `shouldBe` euclidETA
+    it "true"     $ do generateCode trueIL            `shouldBeDo` readEtaFile "true"
+    it "hello"    $ do generateCode helloIL           `shouldBeDo` readEtaFile "hello"
+    it "pip"      $ do generateCode pipILReduced      `shouldBeDo` readEtaFile "pip"
+    it "pip2"     $ do generateCode pip2ILReduced     `shouldBeDo` readEtaFile "pip2"
+    it "reverse"  $ do generateCode reverseILReduced  `shouldBeDo` readEtaFile "reverse"
+    it "function" $ do generateCode functionIL        `shouldBeDo` readEtaFile "function"
+    it "add"      $ do generateCode addILReduced      `shouldBeDo` readEtaFile "add"
+    it "writestr" $ do generateCode writeStrILReduced `shouldBeDo` readEtaFile "writestr"
+    it "hello2"   $ do generateCode hello2ILReduced   `shouldBeDo` readEtaFile "hello2"
+    it "writenum" $ do generateCode writeNumILReduced `shouldBeDo` readEtaFile "writenum"
+    it "multiply" $ do generateCode multiplyILReduced `shouldBeDo` readEtaFile "multiply"
+    it "readnum"  $ do generateCode readNumILReduced  `shouldBeDo` readEtaFile "readnum"
+    it "fact"     $ do generateCode factILReduced     `shouldBeDo` readEtaFile "fact"
+    it "bottles"  $ do generateCode bottlesILReduced  `shouldBeDo` readEtaFile "bottles"
+    it "euclid"   $ do generateCode euclidILReduced   `shouldBeDo` readEtaFile "euclid"
+
+shouldBeDo :: (HasCallStack, Show a, Eq a) => a -> IO a -> Expectation
+action `shouldBeDo` expected = (action `shouldBe`) =<< expected

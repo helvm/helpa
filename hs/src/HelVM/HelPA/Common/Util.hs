@@ -18,7 +18,7 @@ naturalToDigits b = unfoldl lambda where
 unfoldl :: (a -> Maybe (a,b)) -> a -> [b]
 unfoldl lambda value = check $ lambda value where
   check  Nothing     = []
-  check (Just (a,b)) = unfoldl lambda a ++ [b]
+  check (Just (a,b)) = unfoldl lambda a <> [b]
 
 setDefault :: ([k], v) -> [(k, v)]
 setDefault (keys, value) = (, value) <$> keys

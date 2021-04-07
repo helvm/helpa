@@ -7,8 +7,6 @@ import HelVM.HelPA.Common.Value
 trueIL :: InstructionList
 trueIL = []
 
-trueETA = ""
-
 ----
 
 helloIL :: InstructionList
@@ -20,8 +18,6 @@ helloIL =
   ,N (Literal 33),N (Literal 100),N (Literal 108),N (Literal 114),N (Literal 111),N (Literal 119),R
   ,O,O,O,O,O,O,O,R
   ]
-
-helloETA = "Niie\nNsaeNatseNatoeNatoeNahoeNtoae\nOOOOOOO\nNtoe\nNineNahaeNatoeNaaaeNatseNaohe\nOOOOOOO\n"
 
 ----
 
@@ -38,8 +34,8 @@ pipIL =
   ]
 
 
-pipIL' :: InstructionList
-pipIL' =
+pipILReduced :: InstructionList
+pipILReduced =
   [L "LOOP",I,R
   ,N (Literal 0),H,R
   ,N (Literal 0),N (Literal 1),S,S,R
@@ -52,22 +48,16 @@ pipIL' =
 
 ----
 
-pipETA = "I\nNeH\nNeNteSS\nNtheT\nNeNteHT\nNteNeT\nO\nNteNteT\n"
-
-----
-
 pip2IL :: InstructionList
 pip2IL =
   [L "LOOP",I,N (Literal 0),H,N (Literal 0),N (Literal 1),S,S,N (Variable "WRITE"),T,N (Literal 0),N (Literal 1),H,T,N (Literal 1),N (Literal 0),T,R
   ,L "WRITE",O,N (Literal 1),N (Variable "LOOP"),T,R
   ]
 
-pip2IL' :: InstructionList
-pip2IL' =
+pip2ILReduced :: InstructionList
+pip2ILReduced =
   [L "LOOP",I,N (Literal 0),H,N (Literal 0),N (Literal 1),S,S,N (Literal 2),T,N (Literal 0),N (Literal 1),H,T,N (Literal 1),N (Literal 0),T,R
   ,L "WRITE",O,N (Literal 1),N (Literal 1),T,R]
-
-pip2ETA = "INeHNeNteSSNaeTNeNteHTNteNeT\nONteNteT\n"
 
 ----
 
@@ -82,8 +72,8 @@ reverseIL =
   ,O,N (Literal 1),N (Variable "WRITE"),T,R
   ]
 
-reverseIL' :: InstructionList
-reverseIL' =
+reverseILReduced :: InstructionList
+reverseILReduced =
   [N (Literal 0),N (Literal 1),S,R
   ,L "READ",I,R
   ,N (Literal 0),H,N (Literal 0),N (Literal 1),S,S,N (Literal 2),T,R
@@ -91,8 +81,6 @@ reverseIL' =
   ,L "WRITE",N (Literal 0),H,N (Literal 0),N (Literal 1),S,S,A,N (Literal 0),N (Literal 1),S,S,T,R
   ,N (Literal 0),N (Literal 1),H,T,N (Literal 1),N (Literal 0),T,R
   ,O,N (Literal 1),N (Literal 5),T,R]
-
-reverseETA = "NeNteS\nI\nNeHNeNteSSNaeT\nNeNteHT\nNeHNeNteSSANeNteSST\nNeNteHTNteNeT\nONteNneT\n"
 
 ----
 
@@ -108,9 +96,8 @@ functionIL =
   ,N (Literal 2),H,R
   ,T,R]
 
-functionETA = "NaeH\nNaeH\nNe\nNteH\nS\nS\nNte\nNaeH\nT\n"
-
 ----
+
 addIL :: InstructionList
 addIL =
   [I,R
@@ -118,9 +105,11 @@ addIL =
   ,A,N (Literal 1),N (Variable "ADD"),T,R
   ,O,R
   ,N (Literal 1),N (Literal 0),T,R]
-  
-addIL' :: InstructionList
-addIL' =
+
+addILLinked = addIL <> functionIL
+
+addILReduced :: InstructionList
+addILReduced =
   [I,R
   ,I,R
   ,A,N (Literal 1),N (Literal 6),T,R
@@ -136,8 +125,6 @@ addIL' =
   ,N (Literal 2),H,R
   ,T,R]
 
-addETA = "I\nI\nANteNseT\nO\nNteNeT\nNaeH\nNaeH\nNe\nNteH\nS\nS\nNte\nNaeH\nT\n"
-
 ----
 
 writeStrIL :: InstructionList
@@ -150,8 +137,8 @@ writeStrIL =
   ,N (Literal 1),N (Variable "WRITESTR"),T,R
   ]
 
-writeStrIL' :: InstructionList
-writeStrIL' =
+writeStrILReduced :: InstructionList
+writeStrILReduced =
   [L "WRITESTR",N (Literal 1),H,R
   ,N (Literal 0),H,R
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
@@ -159,8 +146,6 @@ writeStrIL' =
   ,O,R
   ,N (Literal 1),N (Literal 1),T,R
   ]
-
-writeStrETA = "NteH\nNeH\nANeNteSST\nSNteNteHT\nO\nNteNteT\n"
 
 ----
 
@@ -171,8 +156,10 @@ hello2IL =
   ,N (Literal 1),N (Literal 0),T,R
   ]
 
-hello2IL' :: InstructionList
-hello2IL' =
+hello2ILLinked = hello2IL <> writeStrIL
+
+hello2ILReduced :: InstructionList
+hello2ILReduced =
   [N (Literal 0),N (Literal 10),N (Literal 33),N (Literal 100),N (Literal 108),N (Literal 114),N (Literal 111),N (Literal 119),N (Literal 32),N (Literal 44),N (Literal 111),N (Literal 108),N (Literal 108),N (Literal 101),N (Literal 72),R
   ,A,N (Literal 1),N (Literal 4),T,R
   ,N (Literal 1),N (Literal 0),T,R
@@ -184,8 +171,6 @@ hello2IL' =
   ,N (Literal 1),N (Literal 4),T,R
   ]
 
-hello2ETA = "NeNtoeNineNahaeNatoeNaaaeNatseNaoheNiieNsaeNatseNatoeNatoeNahoeNtoae\nANteNieT\nNteNeT\nNteH\nNeH\nANeNteSST\nSNteNteHT\nO\nNteNieT\n"
-  
 ----
 
 hello4IL :: InstructionList
@@ -194,6 +179,8 @@ hello4IL =
   ,A,N (Literal 1),N (Variable "WRITESTR"),T,R
   ,N (Literal 1),N (Literal 0),T,R
   ]
+
+hello4ILLinked = hello4IL <> writeStrIL
 
 ----
 
@@ -213,8 +200,10 @@ writeNumIL =
   ,N (Literal 1),N (Literal 1),H,T,R
   ]
 
-writeNumIL' :: InstructionList
-writeNumIL' =
+writeNumILLinked = writeNumIL <> writeStrIL
+
+writeNumILReduced :: InstructionList
+writeNumILReduced =
   [L "WRITENUM",N (Literal 0),N (Literal 2),H,R
   ,N (Literal 0),H,A,N (Literal 0),N (Literal 1),S,S,T,R
   ,N (Literal 48),O,T,N (Literal 1),N (Literal 1),H,T,R
@@ -234,8 +223,6 @@ writeNumIL' =
   ,O,R
   ,N (Literal 1),N (Literal 13),T,R
   ]
-
-writeNumETA = "NeNaeH\nNeHANeNteSST\nNsseOTNteNteHT\nNeH\nANeNteSST\nSNteNtieT\nNtoeE\nNeNsseSS\nNteH\nNteNieT\nANteNtseT\nNteNteHT\nNteH\nNeH\nANeNteSST\nSNteNteHT\nO\nNteNtseT\n"
 
 ----
 
@@ -259,8 +246,8 @@ multiplyIL =
    ,N (Literal 1),N (Literal 2),H,T,R
    ]
 
-multiplyIL' :: InstructionList
-multiplyIL' =
+multiplyILReduced :: InstructionList
+multiplyILReduced =
   [L "MULTIPLY",N (Literal 2),H,N (Literal 2),H,R
   ,N (Literal 0),R
   ,N (Literal 2),H,R
@@ -278,8 +265,6 @@ multiplyIL' =
   ,L "MULTIPLYdone",N (Literal 1),H,T,R
   ,N (Literal 1),N (Literal 2),H,T,R
   ]
-
-multiplyETA = "NaeHNaeH\nNe\nNaeH\nNaeH\nNeH\nANeNteSST\nNteNateT\nNteS\nNaeH\nNeNeNoeSH\nSS\nNaeH\nNaeH\nNteNneT\nNteHT\nNteNaeHT\n"
 
 ----
 
@@ -305,8 +290,10 @@ readNumIL =
   ,N (Literal 1),N (Literal 2),H,T,R
   ]
 
-readNumIL' :: InstructionList
-readNumIL' =
+readNumILLinked = readNumIL <> multiplyIL
+
+readNumILReduced :: InstructionList
+readNumILReduced =
  [L "READNUM",L "READNUMspace",I,R
   ,N (Literal 0),H,N (Literal 32),S,R
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
@@ -342,8 +329,6 @@ readNumIL' =
   ,L "MULTIPLYdone",N (Literal 1),H,T,R
   ,N (Literal 1),N (Literal 2),H,T,R]
 
-readNumETA = "I\nNeHNiieS\nANeNteSST\nNeNteTNteT\nNeNteH\nNsseNiieS\nNteH\nNtoeANteNaneT\nNeNteH\nSS\nI\nNeHNiieSNaheT\nNteNaoeT\nNeHNtoeSNaaeT\nNteNaoeT\nNeHNeNteSSNseT\nNeNteHT\nNteNaeHT\nNaeHNaeH\nNe\nNaeH\nNaeH\nNeH\nANeNteSST\nNteNineT\nNteS\nNaeH\nNeNeNoeSH\nSS\nNaeH\nNaeH\nNteNoaeT\nNteHT\nNteNaeHT\n"
-
 ----
 
 factIL :: InstructionList
@@ -363,8 +348,10 @@ factIL =
   ,L "FACTdone",N (Literal 1),N (Literal 2),H,T,R
   ]
 
-factIL' :: InstructionList
-factIL' = 
+factILLinked = factIL <> readNumIL <> writeNumIL <> multiplyIL <> writeStrIL
+
+factILReduced :: InstructionList
+factILReduced =
   [A,N (Literal 1),N (Literal 14),T,R
   ,A,N (Literal 1),N (Literal 5),T,R
   ,A,N (Literal 1),N (Literal 32),T,R
@@ -432,13 +419,10 @@ factIL' =
   ,N (Literal 1),N (Literal 60),T,R
   ]
 
-factETA = "ANteNaheT\nANteNneT\nANteNiieT\nNtoeONteNeT\nNteH\nNeH\nNteSANeNteSST\nNteNtseT\nNeH\nNteS\nANteNneT\nANteNsaeT\nNteNaeHT\nI\nNeHNiieS\nANeNteSST\nNeNteTNaheT\nNeNteH\nNsseNiieS\nNteH\nNtoeANteNsaeT\nNeNteH\nSS\nI\nNeHNiieSNoseT\nNteNiaeT\nNeHNtoeSNiteT\nNteNiaeT\nNeHNeNteSSNaneT\nNeNteHT\nNteNaeHT\nNeNaeH\nNeHANeNteSST\nNsseOTNteNteHT\nNeH\nANeNteSST\nSNteNsheT\nNtoeE\nNeNsseSS\nNteH\nNteNnheT\nANteNttieT\nNteNteHT\nNaeHNaeH\nNe\nNaeH\nNaeH\nNeH\nANeNteSST\nNteNttaeT\nNteS\nNaeH\nNeNeNoeSH\nSS\nNaeH\nNaeH\nNteNsseT\nNteHT\nNteNaeHT\nNteH\nNeH\nANeNteSST\nSNteNteHT\nO\nNteNttieT\n"
-
 ----
 
 bottlesIL :: InstructionList
-bottlesIL =
-  [N (Literal 1),N (Variable "MAIN"),T,R
+bottlesIL = [N (Literal 1),N (Variable "MAIN"),T,R
   ,D "writestr.eas",D "writenum.eas",R
   ,L "nBoB",N (Literal 1),H,R
   ,A,N (Literal 1),N (Variable "WRITENUM"),T,R
@@ -461,10 +445,95 @@ bottlesIL =
   ,N (Literal 0),H,A,N (Literal 1),N (Variable "nBoBotW"),T,R
   ,N (Literal 10),N (Literal 10),O,O,R
   ,N (Literal 0),H,N (Variable "LOOP"),T,R
-  ,N (Literal 0),T,R
-  ]
+  ,N (Literal 0),T,R]
 
-bottlesETA = "NteNioeT\nNteH\nNeH\nANeNteSST\nSNteNteHT\nO\nNteNaeT\nNeNaeH\nNeHANeNteSST\nNsseOTNteNteHT\nNeH\nANeNteSST\nSNteNaieT\nNtoeE\nNeNsseSS\nNteH\nNteNtieT\nANteNaeT\nNteNteHT\n\nNteH\nANteNtteT\nNeNaaaeNahoeNahoeNahheNiieNahieNatseNiieNaaoeNahoeNatoeNaaieNaaieNatseNahheNiie\nANteNaeT\nNteNteHT\nNteH\nANteNoheT\nNeNatoeNatoeNtsseNaoheNiieNahoeNahseNaaieNiieNatneNatseNiie\nANteNaeT\nNteNteHT\nNoe\nNeHANteNoneT\nNsaeONiieO\nNeHANteNoheT\nNtoeO\nNeNtoeNahaeNatneNaaneNatseNaaaeNtsseNiieNaaieNatheNiieNaaoeNaaoeNtsseNaaheNiieNsaeNatneNaoheNatseNahaeNiieNahoeNatneNatseNiieNahoeNataeNtsseNtnhe\nANteNaeT\nNteS\nNeHANteNoneT\nNtoeNtoeOO\nNeHNiieT\nNeT\n"
+bottlesILLinked :: InstructionList
+bottlesILLinked = [N (Literal 1),N (Variable "MAIN"),T,R
+  ,L "WRITESTR",N (Literal 1),H,R
+  ,N (Literal 0),H,R
+  ,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,S,N (Literal 1),N (Literal 1),H,T,R
+  ,O,R
+  ,N (Literal 1),N (Variable "WRITESTR"),T,R
+  ,L "WRITENUM",N (Literal 0),N (Literal 2),H,R
+  ,N (Literal 0),H,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,N (Literal 48),O,T,N (Literal 1),N (Literal 1),H,T,R
+  ,L "WRITENUMloop",N (Literal 0),H,R
+  ,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,S,N (Literal 1),N (Variable "WRITENUMdone"),T,R
+  ,N (Literal 10),E,R
+  ,N (Literal 0),N (Literal 48),S,S,R
+  ,N (Literal 1),H,R
+  ,N (Literal 1),N (Variable "WRITENUMloop"),T,R
+  ,L "WRITENUMdone",A,N (Literal 1),N (Variable "WRITESTR"),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,R
+  ,L "nBoB",N (Literal 1),H,R
+  ,A,N (Literal 1),N (Variable "WRITENUM"),T,R
+  ,N (Literal 0),N (Literal 114),N (Literal 101),N (Literal 101),N (Literal 98),N (Literal 32),N (Literal 102),N (Literal 111),N (Literal 32),N (Literal 115),N (Literal 101),N (Literal 108),N (Literal 116),N (Literal 116),N (Literal 111),N (Literal 98),N (Literal 32),R
+  ,A,N (Literal 1),N (Variable "WRITESTR"),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,L "nBoBotW",N (Literal 1),H,R
+  ,A,N (Literal 1),N (Variable "nBoB"),T,R
+  ,N (Literal 0),N (Literal 108),N (Literal 108),N (Literal 97),N (Literal 119),N (Literal 32),N (Literal 101),N (Literal 104),N (Literal 116),N (Literal 32),N (Literal 110),N (Literal 111),N (Literal 32),R
+  ,A,N (Literal 1),N (Variable "WRITESTR"),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,L "MAIN",N (Literal 3),R
+  ,L "LOOP",N (Literal 0),H,A,N (Literal 1),N (Variable "nBoBotW"),T,R
+  ,N (Literal 44),O,N (Literal 32),O,R
+  ,N (Literal 0),H,A,N (Literal 1),N (Variable "nBoB"),T,R
+  ,N (Literal 10),O,R
+  ,N (Literal 0),N (Literal 10),N (Literal 100),N (Literal 110),N (Literal 117),N (Literal 111),N (Literal 114),N (Literal 97),N (Literal 32),N (Literal 116),N (Literal 105),N (Literal 32),N (Literal 115),N (Literal 115),N (Literal 97),N (Literal 112),N (Literal 32),N (Literal 44),N (Literal 110),N (Literal 119),N (Literal 111),N (Literal 100),N (Literal 32),N (Literal 101),N (Literal 110),N (Literal 111),N (Literal 32),N (Literal 101),N (Literal 107),N (Literal 97),N (Literal 84),R
+  ,A,N (Literal 1),N (Variable "WRITESTR"),T,R
+  ,N (Literal 1),S,R
+  ,N (Literal 0),H,A,N (Literal 1),N (Variable "nBoBotW"),T,R
+  ,N (Literal 10),N (Literal 10),O,O,R
+  ,N (Literal 0),H,N (Variable "LOOP"),T,R
+  ,N (Literal 0),T,R]
+
+bottlesILReduced :: InstructionList
+bottlesILReduced = [N (Literal 1),N (Literal 31),T,R
+  ,L "WRITESTR",N (Literal 1),H,R
+  ,N (Literal 0),H,R
+  ,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,S,N (Literal 1),N (Literal 1),H,T,R
+  ,O,R
+  ,N (Literal 1),N (Literal 2),T,R
+  ,L "WRITENUM",N (Literal 0),N (Literal 2),H,R
+  ,N (Literal 0),H,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,N (Literal 48),O,T,N (Literal 1),N (Literal 1),H,T,R
+  ,L "WRITENUMloop",N (Literal 0),H,R
+  ,A,N (Literal 0),N (Literal 1),S,S,T,R
+  ,S,N (Literal 1),N (Literal 18),T,R
+  ,N (Literal 10),E,R
+  ,N (Literal 0),N (Literal 48),S,S,R
+  ,N (Literal 1),H,R
+  ,N (Literal 1),N (Literal 11),T,R
+  ,L "WRITENUMdone",A,N (Literal 1),N (Literal 2),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,R
+  ,L "nBoB",N (Literal 1),H,R
+  ,A,N (Literal 1),N (Literal 8),T,R
+  ,N (Literal 0),N (Literal 114),N (Literal 101),N (Literal 101),N (Literal 98),N (Literal 32),N (Literal 102),N (Literal 111),N (Literal 32),N (Literal 115),N (Literal 101),N (Literal 108),N (Literal 116),N (Literal 116),N (Literal 111),N (Literal 98),N (Literal 32),R
+  ,A,N (Literal 1),N (Literal 2),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,L "nBoBotW",N (Literal 1),H,R
+  ,A,N (Literal 1),N (Literal 21),T,R
+  ,N (Literal 0),N (Literal 108),N (Literal 108),N (Literal 97),N (Literal 119),N (Literal 32),N (Literal 101),N (Literal 104),N (Literal 116),N (Literal 32),N (Literal 110),N (Literal 111),N (Literal 32),R
+  ,A,N (Literal 1),N (Literal 2),T,R
+  ,N (Literal 1),N (Literal 1),H,T,R
+  ,L "MAIN",N (Literal 3),R
+  ,L "LOOP",N (Literal 0),H,A,N (Literal 1),N (Literal 26),T,R
+  ,N (Literal 44),O,N (Literal 32),O,R
+  ,N (Literal 0),H,A,N (Literal 1),N (Literal 21),T,R
+  ,N (Literal 10),O,R
+  ,N (Literal 0),N (Literal 10),N (Literal 100),N (Literal 110),N (Literal 117),N (Literal 111),N (Literal 114),N (Literal 97),N (Literal 32),N (Literal 116),N (Literal 105),N (Literal 32),N (Literal 115),N (Literal 115),N (Literal 97),N (Literal 112),N (Literal 32),N (Literal 44),N (Literal 110),N (Literal 119),N (Literal 111),N (Literal 100),N (Literal 32),N (Literal 101),N (Literal 110),N (Literal 111),N (Literal 32),N (Literal 101),N (Literal 107),N (Literal 97),N (Literal 84),R
+  ,A,N (Literal 1),N (Literal 2),T,R
+  ,N (Literal 1),S,R
+  ,N (Literal 0),H,A,N (Literal 1),N (Literal 26),T,R
+  ,N (Literal 10),N (Literal 10),O,O,R
+  ,N (Literal 0),H,N (Literal 32),T,R
+  ,N (Literal 0),T,R]
 
 ----
 
@@ -484,8 +553,8 @@ euclidIL =
   ,T,R
   ]
   
-euclidIL' :: InstructionList
-euclidIL' =
+euclidILReduced :: InstructionList
+euclidILReduced =
   [L "EUCLID",N (Literal 2),H,N (Literal 2),H,R
   ,L "EUCLIDloop",N (Literal 0),H,R
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
@@ -499,5 +568,3 @@ euclidIL' =
   ,N (Literal 1),N (Literal 2),H,R
   ,T,R
   ]
-
-euclidETA = "NaeHNaeH\nNeH\nANeNteSST\nNteNtoeT\nNeNteSH\nE\nNeNaeHT\nNteH\nNteNaeT\nNeT\nNteNaeH\nT\n"

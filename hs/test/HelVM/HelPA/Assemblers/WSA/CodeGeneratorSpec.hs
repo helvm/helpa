@@ -39,4 +39,4 @@ spec = do
   describe "Examples" $ do
     it "io"     $ do generateTL True ioIL'     `shouldBe` ioTL
     it "memory" $ do generateTL True memoryIL' `shouldBe` memoryTL
-    it "prim"   $ do generateTL True (primIL' ++ ioIL') `shouldBe` primTL
+    it "prim"   $ do generateTL True (primIL' <> ioIL') `shouldBe` primTL
