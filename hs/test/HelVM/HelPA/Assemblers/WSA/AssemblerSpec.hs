@@ -3,11 +3,11 @@ module HelVM.HelPA.Assemblers.WSA.AssemblerSpec (spec) where
 import HelVM.HelPA.Assemblers.WSA.Assembler
 import HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import HelVM.HelPA.Assemblers.CartesianProduct
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.CartesianProduct
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.API
-import HelVM.HelPA.Common.AssemblyOptions
+import HelVM.HelPA.Assembler.API
+import HelVM.HelPA.Assembler.AssemblyOptions
 
 import System.FilePath.Posix
 
@@ -25,7 +25,7 @@ spec = do
       let assembleLib = assembleLibFile fileName options
       let minorPath = name </> fileName
       it minorPath $ do
-        assembleLib `goldenShouldParseReturn` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
+        assembleLib `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
 
   describe "assembleApp" $ do
     describe "original" $ do
@@ -34,7 +34,7 @@ spec = do
         let assembleApp = assembleAppFile fileName options
         let minorPath = name </> fileName
         it minorPath $ do
-          assembleApp `goldenShouldParseReturn` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
+          assembleApp `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
 
     describe "from-eas" $ do
       forM_ ([ "true"
@@ -58,17 +58,17 @@ spec = do
         let assemble = assembleFile SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext} options
         let minorPath = name </> fileName
         it minorPath $ do
-          assemble `goldenShouldParseReturn` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
+          assemble `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
 
 --  describe "assembleFile" $ do
---    it "io"     $ do assembleLibFile "io"     visibleTokenTypeOptions `shouldParseReturn` showTL ioTL
---    it "memory" $ do assembleLibFile "memory" visibleTokenTypeOptions `shouldParseReturn` showTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   visibleTokenTypeOptions `shouldParseReturn` showTL primTL
+--    it "io"     $ do assembleLibFile "io"     visibleTokenTypeOptions `shouldSafeReturn` showTL ioTL
+--    it "memory" $ do assembleLibFile "memory" visibleTokenTypeOptions `shouldSafeReturn` showTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   visibleTokenTypeOptions `shouldSafeReturn` showTL primTL
 --
---    it "io"     $ do assembleLibFile "io"     allFalse `shouldParseReturn` showTLAsWTL ioTL
---    it "memory" $ do assembleLibFile "memory" allFalse `shouldParseReturn` showTLAsWTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   allFalse `shouldParseReturn` showTLAsWTL primTL
+--    it "io"     $ do assembleLibFile "io"     allFalse `shouldSafeReturn` showTLAsWTL ioTL
+--    it "memory" $ do assembleLibFile "memory" allFalse `shouldSafeReturn` showTLAsWTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   allFalse `shouldSafeReturn` showTLAsWTL primTL
 --
---    it "io"     $ do assembleLibFile "io"     bothTokenTypeOptions `shouldParseReturn` showTLAsBTL ioTL
---    it "memory" $ do assembleLibFile "memory" bothTokenTypeOptions `shouldParseReturn` showTLAsBTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   bothTokenTypeOptions `shouldParseReturn` showTLAsBTL primTL
+--    it "io"     $ do assembleLibFile "io"     bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL ioTL
+--    it "memory" $ do assembleLibFile "memory" bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL primTL

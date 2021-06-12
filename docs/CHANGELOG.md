@@ -1,8 +1,11 @@
 # 📅 Revision history for Helpa
 
-## 0.3.3.0 -- 2021-06-11
+## 0.3.3.0 -- 2021-07-6
 
-Use RIO
+* Use `Safe`, remove `error` calls
+* Replace `String` by `Text`
+* Extract `HelVM.Common` and `HelVM.Common.Digit` packages
+* Fix `AsmParser` and specification
 
 ## 0.3.2.0  -- 2021-06-06
 

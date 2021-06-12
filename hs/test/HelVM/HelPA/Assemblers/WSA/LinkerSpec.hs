@@ -4,9 +4,9 @@ import HelVM.HelPA.Assemblers.WSA.Linker
 import HelVM.HelPA.Assemblers.WSA.TestData
 import HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.API
+import HelVM.HelPA.Assembler.API
 
 import System.FilePath.Posix
 
@@ -23,14 +23,14 @@ spec = do
           , "memory"
           ] $ \fileName -> do
       it fileName $ do
-        linkLibFile fileName `goldenShouldParseReturn` buildAbsolutePathToIlFile ("linkLibFile" </> fileName)
+        linkLibFile fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("linkLibFile" </> fileName)
 
   describe "linkAppFile" $ do
     describe "original" $ do
       forM_ [ "prim"
             ] $ \fileName -> do
         it fileName $ do
-          linkAppFile fileName `goldenShouldParseReturn` buildAbsolutePathToIlFile ("linkAppFile" </> "original" </> fileName)
+          linkAppFile fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("linkAppFile" </> "original" </> fileName)
 
     describe "from-eas" $ do
       forM_ [ "true"
@@ -52,9 +52,9 @@ spec = do
  --           , "euclid"
             ] $ \ fileName -> do
         it fileName $ do
-          linkAppFile1 fileName `goldenShouldParseReturn` buildAbsolutePathToIlFile ("linkAppFile" </> "from-eas" </> fileName)
+          linkAppFile1 fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("linkAppFile" </> "from-eas" </> fileName)
 
   describe "linkFile" $ do
-    it "io"     $ do linkLibFile "io"     `shouldParseReturn` ioIL
-    it "memory" $ do linkLibFile "memory" `shouldParseReturn` memoryIL
-    it "prim"   $ do linkAppFile "prim"   `shouldParseReturn` (primIL <> ioIL)
+    it "io"     $ do linkLibFile "io"     `shouldSafeReturn` ioIL
+    it "memory" $ do linkLibFile "memory" `shouldSafeReturn` memoryIL
+    it "prim"   $ do linkAppFile "prim"   `shouldSafeReturn` (primIL <> ioIL)

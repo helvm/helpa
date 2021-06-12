@@ -1,6 +1,7 @@
-module HelVM.HelPA.Common.TokenType where
+module HelVM.HelPA.Assembler.TokenType where
 
-data TokenType = VisibleTokenType | WhiteTokenType | BothTokenType deriving (Eq , Read , Show)
+data TokenType = VisibleTokenType | WhiteTokenType | BothTokenType
+  deriving stock (Eq , Read , Show)
 
 tokenTypes :: [TokenType]
 tokenTypes = [VisibleTokenType , WhiteTokenType , BothTokenType]

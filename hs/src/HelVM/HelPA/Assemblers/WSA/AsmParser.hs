@@ -4,22 +4,23 @@ module HelVM.HelPA.Assemblers.WSA.AsmParser (
 
 import HelVM.HelPA.Assemblers.WSA.Instruction
 
-import HelVM.HelPA.Common.API
-import HelVM.HelPA.Common.AsmParserUtil
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.AsmParserUtil
+import HelVM.HelPA.Assembler.Value
+
+import HelVM.Common.Safe
 
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
 
-parseAssemblyText :: Text -> Parsed InstructionList
-parseAssemblyText = parseOnly instructionListParser
+parseAssemblyText :: Text -> Safe InstructionList
+parseAssemblyText code = safeLegacyToSafe $ parseOnly (instructionListParser <*skipSpace <* endOfInput) code
 
 instructionListParser :: Parser InstructionList
 instructionListParser = catMaybes <$> many maybeInstructionParser
 
 maybeInstructionParser :: Parser (Maybe Instruction)
 maybeInstructionParser =
-       Just <$> (skipSpace *> instructionParser <* skipHorizontalSpace <* optional skipComment)
+       Just <$> (skipSpace *> instructionParser)
   <|> (Nothing <$ (skipSpace *> skipComment))
 
 ----
@@ -35,41 +36,41 @@ instructionParser =
 
 zeroOperandInstructionParser :: Parser Instruction
 zeroOperandInstructionParser =
-      parser Pop "pop"
-  <|> parser Dup "doub"
-  <|> parser Swap "swap"
-  <|> parser Return "ret"
-  <|> parser End "exit"
-  <|> parser OutputNum "outn"
+      parser Pop        "pop"
+  <|> parser Dup        "doub"
+  <|> parser Swap       "swap"
+  <|> parser Return     "ret"
+  <|> parser End        "exit"
+  <|> parser OutputNum  "outn"
   <|> parser OutputChar "outc"
-  <|> parser InputNum "inn"
-  <|> parser InputChar "inc"
+  <|> parser InputNum   "inn"
+  <|> parser InputChar  "inc"
     where parser i t = i <$ (asciiCI t *> endWordParser)
 
 maybeOperandInstructionParser :: Parser Instruction
 maybeOperandInstructionParser =
-      parser Add "add"
-  <|> parser Sub "sub"
-  <|> parser Mul "mul"
-  <|> parser Div "div"
-  <|> parser Mod "mod"
+      parser Add   "add"
+  <|> parser Sub   "sub"
+  <|> parser Mul   "mul"
+  <|> parser Div   "div"
+  <|> parser Mod   "mod"
   <|> parser Store "store"
-  <|> parser Load "retrive"
+  <|> parser Load  "retrive"
     where parser f t = f <$> (asciiCI t *> optional (Literal <$> (skip1HorizontalSpace *> integerParser)))
 
 identifierOperandInstructionParser :: Parser Instruction
 identifierOperandInstructionParser =
-      parser Mark "label"
-  <|> parser Call "call"
-  <|> parser Branch "jump"
-  <|> parser BranchZ "jumpZ"
-  <|> parser BranchM "jumpN"
-  <|> parser BranchP "jumpP"
+      parser Mark     "label"
+  <|> parser Call     "call"
+  <|> parser Branch   "jump"
+  <|> parser BranchZ  "jumpZ"
+  <|> parser BranchM  "jumpN"
+  <|> parser BranchP  "jumpP"
   <|> parser BranchNP "jumpNZ"
   <|> parser BranchNM "jumpPZ"
   <|> parser BranchNZ "jumpNP"
   <|> parser BranchNZ "jumpPN"
-  <|> parser Include "include"
+  <|> parser Include  "include"
     where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
 
 testParser :: Parser Instruction

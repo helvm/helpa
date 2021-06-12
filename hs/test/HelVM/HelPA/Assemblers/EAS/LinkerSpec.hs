@@ -5,9 +5,9 @@ import HelVM.HelPA.Assemblers.EAS.Linker
 import HelVM.HelPA.Assemblers.EAS.TestData
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.API
+import HelVM.HelPA.Assembler.API
 
 import Test.Hspec
 
@@ -32,4 +32,4 @@ spec = do
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
       let linkFile = linkLib SourcePath {dirPath = "examples/eas/", filePath = buildEasFileName fileName}
-      it fileName $ do linkFile `shouldParseReturn` il
+      it fileName $ do linkFile `shouldSafeReturn` il

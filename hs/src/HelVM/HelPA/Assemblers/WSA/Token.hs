@@ -1,57 +1,42 @@
 module HelVM.HelPA.Assemblers.WSA.Token where
 
-import HelVM.HelPA.Common.TokenType
+import HelVM.HelPA.Assembler.TokenType
 
-import Data.Char
+import HelVM.Common.Digit.Digitable
+import HelVM.Common.Digit.ToDigit
+import HelVM.Common.Safe
+import HelVM.Common.Containers.Util
+
 import Text.Read
 
 import qualified Text.Show
 
-showTLByType :: TokenType -> TokenList -> String
+showTLByType :: TokenType -> TokenList -> Text
 showTLByType VisibleTokenType = showTL
 showTLByType WhiteTokenType   = showTLAsWTL
 showTLByType BothTokenType    = showTLAsBTL
 
-showTL :: TokenList -> String
-showTL tl = show =<< tl
+showTL :: TokenList -> Text
+showTL = showFoldable
 
-showTLAsWTL :: TokenList -> String
-showTLAsWTL = showWTL . toWTL
+showTLAsWTL :: TokenList -> Text
+showTLAsWTL = showFoldable . toWTL
 
 toWTL :: TokenList -> WhiteTokenList
 toWTL = map WhiteToken
 
-showWTL :: WhiteTokenList -> String
-showWTL tl = show =<< tl
-
-showTLAsBTL :: TokenList -> String
-showTLAsBTL = showBTL . toBTL
+showTLAsBTL :: TokenList -> Text
+showTLAsBTL = showFoldable . toBTL
 
 toBTL :: TokenList -> BothTokenList
 toBTL = map BothToken
 
-showBTL :: BothTokenList -> String
-showBTL tl = show =<< tl
-
 ----
-
-toDigit :: (Num a) => Token -> a
-toDigit S = 0
-toDigit T = 1
-toDigit c = error $ show c
-
-toBitChar :: Token -> Char
-toBitChar = intToDigit . toDigit
-
-bitToToken :: Natural -> Token
-bitToToken 0 = S
-bitToToken 1 = T
-bitToToken a = error $ show a
 
 type TokenList = [Token]
 
 data Token =  S | T | N | E | R
-  deriving (Eq, Ord, Enum, Read)
+  deriving stock (Eq, Ord, Enum, Read)
 
 instance Show Token where
   show S = "S"
@@ -60,11 +45,22 @@ instance Show Token where
   show E = " "
   show R = "\n"
 
+instance ToDigit Token where
+  toDigit S = safe 0
+  toDigit T = safe 1
+  toDigit t = safeError $ show t
+
+instance Digitable Token where
+  fromDigit 0 = safe S
+  fromDigit 1 = safe T
+  fromDigit t = safeError $ show t
+
 ----
 
 type WhiteTokenList = [WhiteToken]
 
-newtype WhiteToken = WhiteToken Token deriving (Eq)
+newtype WhiteToken = WhiteToken Token
+  deriving stock (Eq)
 
 instance Show WhiteToken where
   show (WhiteToken S) = " "
@@ -83,7 +79,8 @@ instance Read WhiteToken where
 
 type BothTokenList = [BothToken]
 
-newtype BothToken = BothToken Token deriving (Eq)
+newtype BothToken = BothToken Token
+  deriving stock (Eq)
 
 instance Show BothToken where
   show (BothToken S) = " S"

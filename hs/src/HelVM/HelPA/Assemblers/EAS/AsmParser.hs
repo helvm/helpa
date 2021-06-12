@@ -4,18 +4,19 @@ module HelVM.HelPA.Assemblers.EAS.AsmParser (
 
 import HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Common.API
-import HelVM.HelPA.Common.AsmParserUtil
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.AsmParserUtil
+import HelVM.HelPA.Assembler.Value
+
+import HelVM.Common.Safe
 
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
 
-parseAssemblyText :: Text -> Parsed InstructionList
-parseAssemblyText = parseOnly instructionListParser
+parseAssemblyText :: Text -> Safe InstructionList
+parseAssemblyText code = safeLegacyToSafe $ parseOnly (instructionListParser <* endOfInput) code
 
 instructionListParser :: Parser InstructionList
-instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace) -- <* endOfInput
+instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace)
 
 instructionParser :: Parser Instruction
 instructionParser =
@@ -88,7 +89,7 @@ naturalValueParser :: Parser NaturalValue
 naturalValueParser = labelNaturalParser <|> naturalRightParser
 
 labelNaturalParser :: Parser NaturalValue
-labelNaturalParser = Variable <$> (char '<' *> many1 letter)
+labelNaturalParser = Variable . toIdentifier <$> (char '<' *> many1 letter)
 
 naturalRightParser :: Parser NaturalValue
 naturalRightParser = Literal <$> naturalParser

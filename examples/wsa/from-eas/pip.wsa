@@ -1,5 +1,5 @@
 label LOOP
-dup
+doub
 
 push 0
 push 1
@@ -12,7 +12,3 @@ exit
 label WRITE
 outC
 jump LOOP
-
-
-
-

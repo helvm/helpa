@@ -3,7 +3,7 @@ module HelVM.HelPA.Assemblers.WSA.TestData where
 import HelVM.HelPA.Assemblers.WSA.Instruction
 import HelVM.HelPA.Assemblers.WSA.Token
 
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.Value
 
 ioIL :: InstructionList
 ioIL =

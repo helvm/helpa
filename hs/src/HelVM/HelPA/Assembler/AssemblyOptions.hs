@@ -1,6 +1,6 @@
-module HelVM.HelPA.Common.AssemblyOptions where
+module HelVM.HelPA.Assembler.AssemblyOptions where
 
-import HelVM.HelPA.Common.TokenType
+import HelVM.HelPA.Assembler.TokenType
 
 manyOptionsWithName :: [(String, AssemblyOptions)]
 manyOptionsWithName = [

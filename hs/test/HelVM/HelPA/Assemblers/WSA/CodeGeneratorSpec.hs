@@ -5,10 +5,10 @@ import HelVM.HelPA.Assemblers.WSA.Token
 import HelVM.HelPA.Assemblers.WSA.TestData
 import HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import HelVM.HelPA.Assemblers.CartesianProduct
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.CartesianProduct
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.AssemblyOptions
+import HelVM.HelPA.Assembler.AssemblyOptions
 
 import System.FilePath.Posix
 
@@ -22,7 +22,7 @@ spec = do
            , ("prim"   , primILReduced <> ioILReduced)
            ] >><< manyOptionsWithName) $ \(fileName , il, name, options) -> do
       it (name </> fileName) $ do
-        reduceAndGenerateCode options il `goldenShouldBe` buildAbsolutePathToWsFile ("codeGenerator" </> name </> fileName)
+        reduceAndGenerateCode options il `goldenShouldSafe` buildAbsolutePathToWsFile ("codeGenerator" </> name </> fileName)
 
   describe "valueToTL" $ do
     it "valueToTL 0"  $ do valueToTL   0  `shouldBe` [S,N]
@@ -42,9 +42,9 @@ spec = do
     it "valueToTL -6" $ do valueToTL (-6) `shouldBe` [T,T,T,S,N]
     it "valueToTL -7" $ do valueToTL (-7) `shouldBe` [T,T,T,T,N]
 
-  describe "stringToTL" $ do
-    it "stringToTL \" \"" $ do stringToTL " " `shouldBe` [S,S,T,S,S,S,S,S, N]
-    it "stringToTL \"A\"" $ do stringToTL "A" `shouldBe` [S,T,S,S,S,S,S,T, N]
-    it "stringToTL \"Z\"" $ do stringToTL "Z" `shouldBe` [S,T,S,T,T,S,T,S, N]
-    it "stringToTL \"a\"" $ do stringToTL "a" `shouldBe` [S,T,T,S,S,S,S,T, N]
-    it "stringToTL \"z\"" $ do stringToTL "z" `shouldBe` [S,T,T,T,T,S,T,S, N]
+  describe "identifierToTL" $ do
+    it "identifierToTL \" \"" $ do identifierToTL " " `shouldBe` [S,S,T,S,S,S,S,S, N]
+    it "identifierToTL \"A\"" $ do identifierToTL "A" `shouldBe` [S,T,S,S,S,S,S,T, N]
+    it "identifierToTL \"Z\"" $ do identifierToTL "Z" `shouldBe` [S,T,S,T,T,S,T,S, N]
+    it "identifierToTL \"a\"" $ do identifierToTL "a" `shouldBe` [S,T,T,S,S,S,S,T, N]
+    it "identifierToTL \"z\"" $ do identifierToTL "z" `shouldBe` [S,T,T,T,T,S,T,S, N]

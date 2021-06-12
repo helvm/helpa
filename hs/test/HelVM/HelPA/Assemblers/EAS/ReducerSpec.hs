@@ -3,6 +3,8 @@ module HelVM.HelPA.Assemblers.EAS.ReducerSpec where
 import HelVM.HelPA.Assemblers.EAS.Reducer
 import HelVM.HelPA.Assemblers.EAS.TestData
 
+import HelVM.Common.Safe
+
 import Test.Hspec
 
 spec :: Spec
@@ -25,4 +27,4 @@ spec = do
           , ("bottles"  , bottlesILLinked  , bottlesILReduced)
           , ("euclid"   , euclidIL         , euclidILReduced)
           ] $ \(fileName , ilLinked, ilReduced) -> do
-      it fileName $ do reduce ilLinked `shouldBe` ilReduced
+      it fileName $ do unsafe (reduce ilLinked) `shouldBe` ilReduced

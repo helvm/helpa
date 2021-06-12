@@ -4,7 +4,7 @@ import HelVM.HelPA.Assemblers.EAS.CodeGenerator
 import HelVM.HelPA.Assemblers.EAS.TestData
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.Expectations
 
 import System.FilePath.Posix
 
@@ -31,7 +31,7 @@ spec = do
           ] $ \(fileName , ilReduced) -> do
       it fileName $ do generateCode ilReduced `goldenShouldBe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
 
-  describe "showValue" $ do
+  describe "naturalToDigitString" $ do
     forM_ [ (0      , "")
           , (1      , "t")
           , (10     , "to")
@@ -45,4 +45,4 @@ spec = do
           , (111110 , "sitsos")
           , (111111 , "sitsih")
           ] $ \(value , shown) -> do
-       it (show value) $ do showValue value `shouldBe` shown
+       it (show value) $ do naturalToDigitString value `shouldSafe` shown

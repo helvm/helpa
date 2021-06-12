@@ -7,23 +7,28 @@ module HelVM.HelPA.Assemblers.EAS.Linker (
 import HelVM.HelPA.Assemblers.EAS.AsmParser
 import HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Common.API
+import HelVM.HelPA.Assembler.API
+import HelVM.HelPA.Assembler.IO.WrapperIO
+import HelVM.HelPA.Assembler.Value
 
-linkLib :: SourcePath -> ParsedIO InstructionList
+import HelVM.Common.Safe
+import HelVM.Common.SafeMonadT
+
+linkLib :: WrapperIO m => SourcePath -> SafeFail m InstructionList
 linkLib = runExceptT . expectTLinkLib
 
-linkApp :: SourcePath -> ParsedIO InstructionList
+linkApp :: WrapperIO m => SourcePath -> SafeFail m InstructionList
 linkApp = runExceptT . exceptTLinkApp
 
-expectTLinkLib :: SourcePath -> ParsedExceptT InstructionList
+expectTLinkLib :: WrapperIO m => SourcePath -> SafeMonadT m InstructionList
 expectTLinkLib = exceptTLinkApp . absolutePath
 
-exceptTLinkApp :: SourcePath -> ParsedExceptT InstructionList
-exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ ExceptT $ parseAssemblyText <$> readFileText (filePath path)
+exceptTLinkApp :: WrapperIO m => SourcePath -> SafeMonadT m InstructionList
+exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ ExceptT $ parseAssemblyText <$> wReadFile (filePath path)
 
-exceptTIncludeLibs :: String -> InstructionList -> ParsedExceptT InstructionList
+exceptTIncludeLibs :: WrapperIO m => String -> InstructionList -> SafeMonadT m InstructionList
 exceptTIncludeLibs dir il = concat <$> mapM (exceptTIncludeLib dir) il
 
-exceptTIncludeLib :: String -> Instruction -> ParsedExceptT InstructionList
-exceptTIncludeLib dir (D libName) = expectTLinkLib SourcePath { dirPath = dir, filePath = libName }
+exceptTIncludeLib :: WrapperIO m => String -> Instruction -> SafeMonadT m InstructionList
+exceptTIncludeLib dir (D libName) = expectTLinkLib SourcePath { dirPath = dir, filePath = unwrapIdentifier libName }
 exceptTIncludeLib _ i = pure [i]

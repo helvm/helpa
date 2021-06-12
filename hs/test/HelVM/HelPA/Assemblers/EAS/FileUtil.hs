@@ -1,5 +1,4 @@
 module HelVM.HelPA.Assemblers.EAS.FileUtil (
-  readEtaFile,
   buildAbsolutePathToEtaFile,
   buildAbsolutePathToEasFile,
   buildEasFileName,
@@ -8,20 +7,17 @@ module HelVM.HelPA.Assemblers.EAS.FileUtil (
 
 import System.FilePath.Posix
 
-readEtaFile :: String -> IO String
-readEtaFile fileName = readFile $ buildAbsolutePathToEtaFile fileName
-
-buildAbsolutePathToEtaFile :: String -> String
+buildAbsolutePathToEtaFile :: FilePath -> FilePath
 buildAbsolutePathToEtaFile fileName = dir </> "eta" </> fileName <.> "eta"
 
-buildAbsolutePathToEasFile :: String -> String
+buildAbsolutePathToEasFile :: FilePath -> FilePath
 buildAbsolutePathToEasFile fileName = easDir </> buildEasFileName fileName
 
-buildEasFileName :: String -> String
+buildEasFileName :: FilePath -> FilePath
 buildEasFileName fileName = fileName <.> "eas"
 
-easDir :: String
+easDir :: FilePath
 easDir = dir </> "eas"
 
-dir :: String
+dir :: FilePath
 dir = "examples"

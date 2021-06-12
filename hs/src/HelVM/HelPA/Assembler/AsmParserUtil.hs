@@ -1,7 +1,8 @@
-module HelVM.HelPA.Common.AsmParserUtil where
+module HelVM.HelPA.Assembler.AsmParserUtil where
 
-import HelVM.HelPA.Common.OrError
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.Value
+
+import HelVM.Common.ReadText
 
 import Data.Attoparsec.Combinator
 import Data.Attoparsec.Text hiding (I, D)
@@ -14,10 +15,10 @@ integerParser :: Parser Integer
 integerParser = integerLiteralParser <|> ordCharLiteralParser
 
 naturalLiteralParser :: Parser Natural
-naturalLiteralParser = readOrError <$> many1 digit
+naturalLiteralParser = readText . toText <$> many1 digit
 
 integerLiteralParser :: Parser Integer
-integerLiteralParser = readOrError <$> many1 digit
+integerLiteralParser = readText . toText <$> many1 digit
 
 ordCharLiteralParser :: Integral a => Parser a
 ordCharLiteralParser = fromIntegral . ord <$> (char '\'' *> anyChar)
@@ -32,10 +33,10 @@ skip1HorizontalSpace :: Parser ()
 skip1HorizontalSpace = satisfy isHorizontalSpace *> skipWhile isHorizontalSpace
 
 identifierParser :: Parser Identifier
-identifierParser = liftA2 (:) letter (many alphaNum_)
+identifierParser = toIdentifier <$> liftA2 (:) letter (many alphaNum_)
 
 fileNameParser :: Parser Identifier
-fileNameParser = liftA2 (:) letter (many alphaNumDot_)
+fileNameParser = toIdentifier <$> liftA2 (:) letter (many alphaNumDot_)
 
 alphaNum_ :: Parser Char
 alphaNum_ = satisfy isAlphaNum_

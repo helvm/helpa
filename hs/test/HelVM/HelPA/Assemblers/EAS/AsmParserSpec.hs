@@ -5,12 +5,11 @@ import HelVM.HelPA.Assemblers.EAS.Instruction
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 import HelVM.HelPA.Assemblers.EAS.TestData
 
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.Value
 
 import Test.Hspec
-import Test.Hspec.Attoparsec
 
 spec :: Spec
 spec = do
@@ -33,119 +32,119 @@ spec = do
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
       let parseAssembly = parseAssemblyText <$> readFileText (buildAbsolutePathToEasFile fileName)
-      it fileName $ do parseAssembly `shouldParseReturn` il
+      it fileName $ do parseAssembly `shouldSafeReturn` il
 
   describe "empty" $ do
-    it "parse ''" $ do parseAssemblyText "" `shouldParse` []
+    it "parse ''" $ do parseAssemblyText "" `shouldSafe` []
 
   describe "Short Commands" $ do
 
-    it "parse 'E'"  $ do parseAssemblyText "E"  `shouldParse` [E]
-    it "parse 'E '" $ do parseAssemblyText "E " `shouldParse` [E]
-    it "parse ' E'" $ do parseAssemblyText " E" `shouldParse` [E]
+    it "parse 'E'"  $ do parseAssemblyText "E"  `shouldSafe` [E]
+    it "parse 'E '" $ do parseAssemblyText "E " `shouldSafe` [E]
+    it "parse ' E'" $ do parseAssemblyText " E" `shouldSafe` [E]
 
-    it "parse 'T'"  $ do parseAssemblyText "T"  `shouldParse` [T]
-    it "parse 'T '" $ do parseAssemblyText "T " `shouldParse` [T]
-    it "parse ' T'" $ do parseAssemblyText " T" `shouldParse` [T]
+    it "parse 'T'"  $ do parseAssemblyText "T"  `shouldSafe` [T]
+    it "parse 'T '" $ do parseAssemblyText "T " `shouldSafe` [T]
+    it "parse ' T'" $ do parseAssemblyText " T" `shouldSafe` [T]
 
-    it "parse 'A'"  $ do parseAssemblyText "A"  `shouldParse` [A]
-    it "parse 'A '" $ do parseAssemblyText "A " `shouldParse` [A]
-    it "parse ' A'" $ do parseAssemblyText " A" `shouldParse` [A]
+    it "parse 'A'"  $ do parseAssemblyText "A"  `shouldSafe` [A]
+    it "parse 'A '" $ do parseAssemblyText "A " `shouldSafe` [A]
+    it "parse ' A'" $ do parseAssemblyText " A" `shouldSafe` [A]
 
-    it "parse 'O'"  $ do parseAssemblyText "O"  `shouldParse` [O]
-    it "parse 'O '" $ do parseAssemblyText "O " `shouldParse` [O]
-    it "parse ' O'" $ do parseAssemblyText " O" `shouldParse` [O]
+    it "parse 'O'"  $ do parseAssemblyText "O"  `shouldSafe` [O]
+    it "parse 'O '" $ do parseAssemblyText "O " `shouldSafe` [O]
+    it "parse ' O'" $ do parseAssemblyText " O" `shouldSafe` [O]
 
-    it "parse 'I'"  $ do parseAssemblyText "I"  `shouldParse` [I]
-    it "parse 'I '" $ do parseAssemblyText "I " `shouldParse` [I]
-    it "parse ' I'" $ do parseAssemblyText " I" `shouldParse` [I]
+    it "parse 'I'"  $ do parseAssemblyText "I"  `shouldSafe` [I]
+    it "parse 'I '" $ do parseAssemblyText "I " `shouldSafe` [I]
+    it "parse ' I'" $ do parseAssemblyText " I" `shouldSafe` [I]
 
-    it "parse 'S'"  $ do parseAssemblyText "S"  `shouldParse` [S]
-    it "parse 'S '" $ do parseAssemblyText "S " `shouldParse` [S]
-    it "parse ' S'" $ do parseAssemblyText " S" `shouldParse` [S]
+    it "parse 'S'"  $ do parseAssemblyText "S"  `shouldSafe` [S]
+    it "parse 'S '" $ do parseAssemblyText "S " `shouldSafe` [S]
+    it "parse ' S'" $ do parseAssemblyText " S" `shouldSafe` [S]
 
-    it "parse 'H'"  $ do parseAssemblyText "H"  `shouldParse` [H]
-    it "parse 'H '" $ do parseAssemblyText "H " `shouldParse` [H]
-    it "parse ' H'" $ do parseAssemblyText " H" `shouldParse` [H]
+    it "parse 'H'"  $ do parseAssemblyText "H"  `shouldSafe` [H]
+    it "parse 'H '" $ do parseAssemblyText "H " `shouldSafe` [H]
+    it "parse ' H'" $ do parseAssemblyText " H" `shouldSafe` [H]
 
   describe "Short Commands - Numbers" $ do
 
-    it "parse 'N0'"   $ do parseAssemblyText "N0"    `shouldParse` [N (Literal 0)]
-    it "parse 'N0 '"  $ do parseAssemblyText "N0 "   `shouldParse` [N (Literal 0)]
-    it "parse ' N0'"  $ do parseAssemblyText " N0"   `shouldParse` [N (Literal 0)]
+    it "parse 'N0'"   $ do parseAssemblyText "N0"    `shouldSafe` [N (Literal 0)]
+    it "parse 'N0 '"  $ do parseAssemblyText "N0 "   `shouldSafe` [N (Literal 0)]
+    it "parse ' N0'"  $ do parseAssemblyText " N0"   `shouldSafe` [N (Literal 0)]
 
-    it "parse 'N00'"  $ do parseAssemblyText "N00"   `shouldParse` [N (Literal 0)]
-    it "parse 'N00 '" $ do parseAssemblyText "N00 "  `shouldParse` [N (Literal 0)]
-    it "parse ' N00'" $ do parseAssemblyText " N00"  `shouldParse` [N (Literal 0)]
+    it "parse 'N00'"  $ do parseAssemblyText "N00"   `shouldSafe` [N (Literal 0)]
+    it "parse 'N00 '" $ do parseAssemblyText "N00 "  `shouldSafe` [N (Literal 0)]
+    it "parse ' N00'" $ do parseAssemblyText " N00"  `shouldSafe` [N (Literal 0)]
 
-    it "parse 'N1'"   $ do parseAssemblyText "N1"    `shouldParse` [N (Literal 1)]
-    it "parse 'N1 '"  $ do parseAssemblyText "N1 "   `shouldParse` [N (Literal 1)]
-    it "parse ' N1'"  $ do parseAssemblyText " N1"   `shouldParse` [N (Literal 1)]
+    it "parse 'N1'"   $ do parseAssemblyText "N1"    `shouldSafe` [N (Literal 1)]
+    it "parse 'N1 '"  $ do parseAssemblyText "N1 "   `shouldSafe` [N (Literal 1)]
+    it "parse ' N1'"  $ do parseAssemblyText " N1"   `shouldSafe` [N (Literal 1)]
 
-    it "parse 'N01'"  $ do parseAssemblyText "N01"   `shouldParse` [N (Literal 1)]
-    it "parse 'N01 '" $ do parseAssemblyText "N01 "  `shouldParse` [N (Literal 1)]
-    it "parse ' N01'" $ do parseAssemblyText " N01"  `shouldParse` [N (Literal 1)]
+    it "parse 'N01'"  $ do parseAssemblyText "N01"   `shouldSafe` [N (Literal 1)]
+    it "parse 'N01 '" $ do parseAssemblyText "N01 "  `shouldSafe` [N (Literal 1)]
+    it "parse ' N01'" $ do parseAssemblyText " N01"  `shouldSafe` [N (Literal 1)]
 
-    it "parse 'N10'"  $ do parseAssemblyText "N10"   `shouldParse` [N (Literal 10)]
-    it "parse 'N10 '" $ do parseAssemblyText "N10 "  `shouldParse` [N (Literal 10)]
-    it "parse ' N10'" $ do parseAssemblyText " N10"  `shouldParse` [N (Literal 10)]
+    it "parse 'N10'"  $ do parseAssemblyText "N10"   `shouldSafe` [N (Literal 10)]
+    it "parse 'N10 '" $ do parseAssemblyText "N10 "  `shouldSafe` [N (Literal 10)]
+    it "parse ' N10'" $ do parseAssemblyText " N10"  `shouldSafe` [N (Literal 10)]
 
-    it "parse 'N' ''" $ do parseAssemblyText "N' '"  `shouldParse` [N (Literal 32)]
-    it "parse 'N''''" $ do parseAssemblyText "N'\''" `shouldParse` [N (Literal 39)]
-    it "parse 'N'0''" $ do parseAssemblyText "N'0'"  `shouldParse` [N (Literal 48)]
-    it "parse 'N'N''" $ do parseAssemblyText "N'N'"  `shouldParse` [N (Literal 78)]
+    it "parse 'N' ''" $ do parseAssemblyText "N' "  `shouldSafe` [N (Literal 32)]
+    it "parse 'N''''" $ do parseAssemblyText "N''" `shouldSafe` [N (Literal 39)]
+    it "parse 'N'0''" $ do parseAssemblyText "N'0"  `shouldSafe` [N (Literal 48)]
+    it "parse 'N'N''" $ do parseAssemblyText "N'N"  `shouldSafe` [N (Literal 78)]
 
-    it "parse 'N<label '" $ do parseAssemblyText "N<label " `shouldParse` [N (Variable "label")]
-    it "parse ' N<label'" $ do parseAssemblyText " N<label" `shouldParse` [N (Variable "label")]
+    it "parse 'N<label '" $ do parseAssemblyText "N<label " `shouldSafe` [N (Variable "label")]
+    it "parse ' N<label'" $ do parseAssemblyText " N<label" `shouldSafe` [N (Variable "label")]
 
   describe "Long Commends" $ do
-    it "parse 'dividE'"    $ do parseAssemblyText "dividE"    `shouldParse` [E]
-    it "parse 'Transfer'"  $ do parseAssemblyText "Transfer"  `shouldParse` [T]
-    it "parse 'Address'"   $ do parseAssemblyText "Address"   `shouldParse` [A]
-    it "parse 'Output'"    $ do parseAssemblyText "Output"    `shouldParse` [O]
-    it "parse 'Input'"     $ do parseAssemblyText "Input"     `shouldParse` [I]
-    it "parse 'Substract'" $ do parseAssemblyText "Substract" `shouldParse` [S]
-    it "parse 'Halibut'"   $ do parseAssemblyText "Halibut"   `shouldParse` [H]
+    it "parse 'dividE'"    $ do parseAssemblyText "dividE"    `shouldSafe` [E]
+    it "parse 'Transfer'"  $ do parseAssemblyText "Transfer"  `shouldSafe` [T]
+    it "parse 'Address'"   $ do parseAssemblyText "Address"   `shouldSafe` [A]
+    it "parse 'Output'"    $ do parseAssemblyText "Output"    `shouldSafe` [O]
+    it "parse 'Input'"     $ do parseAssemblyText "Input"     `shouldSafe` [I]
+    it "parse 'Substract'" $ do parseAssemblyText "Substract" `shouldSafe` [S]
+    it "parse 'Halibut'"   $ do parseAssemblyText "Halibut"   `shouldSafe` [H]
 
   describe "Long Commends - Numbers" $ do
-    it "parse 'Number 0'"   $ do parseAssemblyText "Number 0"    `shouldParse` [N (Literal 0)]
-    it "parse 'Number 00'"  $ do parseAssemblyText "Number 00"   `shouldParse` [N (Literal 0)]
-    it "parse 'Number 1'"   $ do parseAssemblyText "Number 1"    `shouldParse` [N (Literal 1)]
-    it "parse 'Number 01'"  $ do parseAssemblyText "Number 01"   `shouldParse` [N (Literal 1)]
-    it "parse 'Number 10'"  $ do parseAssemblyText "Number 10"   `shouldParse` [N (Literal 10)]
-    it "parse 'Number ' ''" $ do parseAssemblyText "Number ' '"  `shouldParse` [N (Literal 32)]
-    it "parse 'Number ''''" $ do parseAssemblyText "Number '\''" `shouldParse` [N (Literal 39)]
-    it "parse 'Number '0''" $ do parseAssemblyText "Number '0'"  `shouldParse` [N (Literal 48)]
-    it "parse 'Number 'N''" $ do parseAssemblyText "Number 'N'"  `shouldParse` [N (Literal 78)]
-    it "parse 'Number <label'" $ do parseAssemblyText "Number <label" `shouldParse` [N (Variable "label")]
+    it "parse 'Number 0'"   $ do parseAssemblyText "Number 0"  `shouldSafe` [N (Literal 0)]
+    it "parse 'Number 00'"  $ do parseAssemblyText "Number 00" `shouldSafe` [N (Literal 0)]
+    it "parse 'Number 1'"   $ do parseAssemblyText "Number 1"  `shouldSafe` [N (Literal 1)]
+    it "parse 'Number 01'"  $ do parseAssemblyText "Number 01" `shouldSafe` [N (Literal 1)]
+    it "parse 'Number 10'"  $ do parseAssemblyText "Number 10" `shouldSafe` [N (Literal 10)]
+    it "parse 'Number ' ''" $ do parseAssemblyText "Number ' " `shouldSafe` [N (Literal 32)]
+    it "parse 'Number ''''" $ do parseAssemblyText "Number ''" `shouldSafe` [N (Literal 39)]
+    it "parse 'Number '0''" $ do parseAssemblyText "Number '0" `shouldSafe` [N (Literal 48)]
+    it "parse 'Number 'N''" $ do parseAssemblyText "Number 'N" `shouldSafe` [N (Literal 78)]
+    it "parse 'Number <label'" $ do parseAssemblyText "Number <label" `shouldSafe` [N (Variable "label")]
 
   describe "Labels" $ do
 
-    it "parse '*label\n'"   $ do parseAssemblyText "*label\n"   `shouldParse` [D "label"]
-    it "parse '*label\n '"  $ do parseAssemblyText "*label\n "  `shouldParse` [D "label"]
-    it "parse ' *label\n'"  $ do parseAssemblyText " *label\n"  `shouldParse` [D "label"]
+    it "parse '*label\n'"   $ do parseAssemblyText "*label\n"   `shouldSafe` [D "label"]
+    it "parse '*label\n '"  $ do parseAssemblyText "*label\n "  `shouldSafe` [D "label"]
+    it "parse ' *label\n'"  $ do parseAssemblyText " *label\n"  `shouldSafe` [D "label"]
 
-    it "parse '>label:'"    $ do parseAssemblyText ">label:"   `shouldParse` [L "label"]
-    it "parse '>label: '"   $ do parseAssemblyText ">label: "   `shouldParse` [L "label"]
-    it "parse ' >label:'"   $ do parseAssemblyText " >label:"  ` shouldParse` [L "label"]
+    it "parse '>label:'"    $ do parseAssemblyText ">label:"   `shouldSafe` [L "label"]
+    it "parse '>label: '"   $ do parseAssemblyText ">label: "   `shouldSafe` [L "label"]
+    it "parse ' >label:'"   $ do parseAssemblyText " >label:"  ` shouldSafe` [L "label"]
 
-    it "parse '\"label\"'"  $ do parseAssemblyText "\"label\""  `shouldParse` [U "label"]
-    it "parse '\"label\" '" $ do parseAssemblyText "\"label\" " `shouldParse` [U "label"]
-    it "parse ' \"label\"'" $ do parseAssemblyText " \"label\"" `shouldParse` [U "label"]
+    it "parse '\"label\"'"  $ do parseAssemblyText "\"label\""  `shouldSafe` [U "label"]
+    it "parse '\"label\" '" $ do parseAssemblyText "\"label\" " `shouldSafe` [U "label"]
+    it "parse ' \"label\"'" $ do parseAssemblyText " \"label\"" `shouldSafe` [U "label"]
 
-    it "parse '>LOOP: Input'"   $ do parseAssemblyText ">LOOP: Input"   `shouldParse` [L "LOOP",I]
-    it "parse '>WRITE: Output'" $ do parseAssemblyText ">WRITE: Output" `shouldParse` [L "WRITE",O]
+    it "parse '>LOOP: Input'"   $ do parseAssemblyText ">LOOP: Input"   `shouldSafe` [L "LOOP",I]
+    it "parse '>WRITE: Output'" $ do parseAssemblyText ">WRITE: Output" `shouldSafe` [L "WRITE",O]
 
   describe "Return" $ do
-    it "parse '\n'"  $ do parseAssemblyText "\n"  `shouldParse` [R]
-    it "parse '\n '" $ do parseAssemblyText "\n " `shouldParse` [R]
-    it "parse ' \n'" $ do parseAssemblyText " \n" `shouldParse` [R]
+    it "parse '\n'"  $ do parseAssemblyText "\n"  `shouldSafe` [R]
+    it "parse '\n '" $ do parseAssemblyText "\n " `shouldSafe` [R]
+    it "parse ' \n'" $ do parseAssemblyText " \n" `shouldSafe` [R]
 
-    it "parse 'A N0 T \nA N0 T \n'" $ do parseAssemblyText "A N0 T \nA N0 T \n" `shouldParse` [A,N (Literal 0),T,R,A,N (Literal 0),T,R]
+    it "parse 'A N0 T \nA N0 T \n'" $ do parseAssemblyText "A N0 T \nA N0 T \n" `shouldSafe` [A,N (Literal 0),T,R,A,N (Literal 0),T,R]
 
   describe "Comments" $ do
-    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldParse` [A, N (Literal 0), T, R]
-    it "parse '# A N0 T \n '" $ do parseAssemblyText "# A N0 T \n " `shouldParse` []
-    it "parse ' #A N0 T \n '" $ do parseAssemblyText " #A N0 T \n " `shouldParse` [R]
-    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldParse` [A, R]
-    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldParse` [A, R]
+    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldSafe` [A, N (Literal 0), T, R]
+    it "parse '# A N0 T \n '" $ do parseAssemblyText "# A N0 T \n " `shouldSafe` []
+    it "parse ' #A N0 T \n '" $ do parseAssemblyText " #A N0 T \n " `shouldSafe` [R]
+    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldSafe` [A, R]
+    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldSafe` [A, R]

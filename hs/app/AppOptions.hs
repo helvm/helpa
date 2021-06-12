@@ -3,7 +3,7 @@
 
 module AppOptions where
 
-import HelVM.HelPA.Common.TokenType
+import HelVM.HelPA.Assembler.TokenType
 
 import Options.Applicative
 
@@ -60,7 +60,7 @@ data AppOptions = AppOptions
 ----
 
 data Lang = HAPAPL | EAS | WSA
-  deriving (Eq, Read, Show)
+  deriving stock (Eq, Read, Show)
 
 langs :: [Lang]
 langs = [HAPAPL, EAS, WSA]

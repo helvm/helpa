@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.WSA.Reducer where
 
 import HelVM.HelPA.Assemblers.WSA.Instruction
 
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.Value
 
 reduce :: Bool ->  InstructionList -> InstructionList
 reduce True  il = reduceInstruction =<< addEndOfLine =<< il
@@ -40,5 +40,5 @@ reduceInstruction (BranchNP l) = [Dup, BranchM l1, Dup, BranchZ l1, Branch l2, M
 
 reduceInstruction i = [i]
 
-calculateLocalLabel :: String -> Integer -> String
+calculateLocalLabel :: Identifier -> Integer -> Identifier
 calculateLocalLabel label suffix = label <> ":" <> show suffix

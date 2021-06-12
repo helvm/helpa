@@ -3,9 +3,9 @@ module HelVM.HelPA.Assemblers.EAS.AssemblerSpec where
 import HelVM.HelPA.Assemblers.EAS.Assembler
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 
-import HelVM.HelPA.Assemblers.Expectations
+import HelVM.Expectations
 
-import HelVM.HelPA.Common.API
+import HelVM.HelPA.Assembler.API
 
 import System.FilePath.Posix
 
@@ -36,4 +36,4 @@ spec = do
           , "euclid"
           ] $ \fileName -> do
       let assemble = assembleFile SourcePath {dirPath = easDir, filePath = buildAbsolutePathToEasFile fileName}
-      it fileName $ do assemble `goldenShouldParseReturn` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)
+      it fileName $ do assemble `goldenShouldSafeReturn` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)

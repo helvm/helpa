@@ -1,27 +1,27 @@
-module HelVM.HelPA.Assemblers.WSA.FileUtil  where
+module HelVM.HelPA.Assemblers.WSA.FileUtil where
 
 import System.FilePath.Posix
 
-buildAbsolutePathToWsFile :: String -> String
+buildAbsolutePathToWsFile :: FilePath -> FilePath
 buildAbsolutePathToWsFile fileName = wsaDir </> "ws" </> fileName <.> "ws"
 
-buildAbsolutePathToIlFile :: String -> String
+buildAbsolutePathToIlFile :: FilePath -> FilePath
 buildAbsolutePathToIlFile fileName = wsaDir </> "il" </> fileName <.> "il"
 
-libDir :: String
+libDir :: FilePath
 libDir = wsaDir </> "libs"
 
-appDir :: String
+appDir :: FilePath
 appDir = wsaDir </> "apps"
 
-wsDir :: String
+wsDir :: FilePath
 wsDir = dir </> "ws"
 
-wsaDir :: String
+wsaDir :: FilePath
 wsaDir = dir </> "wsa"
 
-dir :: String
+dir :: FilePath
 dir = "examples"
 
-ext :: String
+ext :: FilePath
 ext = "wsa"

@@ -1,13 +1,15 @@
 {-# Language NamedFieldPuns   #-}
 module Main where
 
-import HelVM.HelPA.Common.API
+import HelVM.HelPA.Assembler.API
 
-import HelVM.HelPA.Common.AssemblyOptions
-import HelVM.HelPA.Common.TokenType
+import HelVM.HelPA.Assembler.AssemblyOptions
+import HelVM.HelPA.Assembler.TokenType
 
 import qualified HelVM.HelPA.Assemblers.EAS.Assembler as EAS
 import qualified HelVM.HelPA.Assemblers.WSA.Assembler as WSA
+
+import HelVM.Common.Safe
 
 import AppOptions
 
@@ -33,12 +35,8 @@ eval EAS    _       = putExcept . EAS.assembleFile
 eval WSA    options = putExcept . flip WSA.assembleFile options
 eval HAPAPL _       = hapapl
 
-putExcept :: ParsedIO String -> IO ()
-putExcept io = putStrLn . output =<< io
-
-output :: Parsed String -> String
-output (Right result) = result
-output (Left message) = error $ toText message
+putExcept :: SafeFail IO Text -> IO ()
+putExcept io = putTextLn . unsafe =<< io --FIXME Bug in relude doc
 
 hapapl :: SourcePath -> IO ()
 hapapl _ = putStrLn "HAPAPL is not supported now"

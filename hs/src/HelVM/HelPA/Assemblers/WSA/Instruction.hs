@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.WSA.Instruction where
 
-import HelVM.HelPA.Common.Value
+import HelVM.HelPA.Assembler.Value
 
 data Instruction =
 -- Stack instructions
@@ -49,6 +49,6 @@ data Instruction =
   | EndOption
   | ElseIfOption Identifier
   | EOL
-  deriving (Eq, Show, Ord)
+  deriving stock (Eq, Show, Ord)
 
 type InstructionList = [Instruction]

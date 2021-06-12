@@ -1,10 +1,15 @@
 # Welcome to 🏭 🌾 HELPA
 
-**🏭 🌾 HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta.
+**🏭 🌾 HELPA** - Heavenly Esoteric Little Para Assembler to Esoteric Languages implemented in Haskell/Eta
+and it is second part of [HelVM](http://helvm.online/) project.
 
 **🧑‍🏭 🧑‍🌾 HAPAPL** - High Abstract Parallel Assembly Programing Language is a kind of [Low-level] [Second-generation] [ASM] for Esoteric Languages.
 
 **🧑‍🏭 🧑‍🌾 HAPLAP** - High Abstract Parallel Language of Assembly Program
+
+**🧑‍🏭 🧑‍🌾 HAPAPL** has two forms:
+* Fruity - Forth-Like with Functions for Fruitarians;
+* Bloody - Basic-Like with Block for Bastards;
 
 ```
 FOR everyone
