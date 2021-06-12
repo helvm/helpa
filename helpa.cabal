@@ -52,7 +52,7 @@ library
   other-extensions:
   build-depends:
       base
---    , rio                  == 0.1.20.0
+    , rio                  == 0.1.20.0
     , relude               == 0.7.0.0
     , split
 
