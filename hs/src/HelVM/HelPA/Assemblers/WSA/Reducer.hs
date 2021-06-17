@@ -4,6 +4,9 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 
 import HelVM.HelPA.Common.Value
 
+import RIO
+import RIO.Char
+
 reduce :: Bool ->  InstructionList -> InstructionList
 reduce True  il = reduceInstruction =<< addEndOfLine =<< il
 reduce False il = reduceInstruction =<< il

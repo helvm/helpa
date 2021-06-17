@@ -7,6 +7,8 @@ import Data.Attoparsec.Combinator
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
 
+import RIO
+
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser
 

@@ -11,6 +11,8 @@ import HelVM.HelPA.Common.Value
 import Data.Attoparsec.Text hiding (I, D)
 import Data.Char
 
+import RIO
+
 parseAssemblyText :: Text -> Parsed InstructionList
 parseAssemblyText = parseOnly instructionListParser
 
@@ -26,7 +28,7 @@ maybeInstructionParser =
 
 instructionParser :: Parser Instruction
 instructionParser =
-  try pushSParser
+  Data.Attoparsec.Text.try pushSParser
   <|> maybeOperandInstructionParser
   <|> identifierOperandInstructionParser
   <|> zeroOperandInstructionParser

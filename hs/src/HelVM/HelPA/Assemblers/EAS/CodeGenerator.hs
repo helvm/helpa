@@ -12,6 +12,8 @@ import HelVM.HelPA.Common.Value
 
 import Data.List
 
+import RIO
+
 import qualified Text.Show
 
 reduceAndGenerateCode :: InstructionList -> String

@@ -5,6 +5,8 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 
 import HelVM.HelPA.Common.API
 
+import RIO
+
 linkLib :: SourcePath -> ParsedIO InstructionList
 linkLib = runExceptT . expectTLinkLib
 

@@ -5,7 +5,7 @@ import HelVM.HelPA.Common.TokenType
 import Data.Char
 import Text.Read
 
-import qualified Text.Show
+import RIO
 
 showTLByType :: TokenType -> TokenList -> String
 showTLByType VisibleTokenType = showTL

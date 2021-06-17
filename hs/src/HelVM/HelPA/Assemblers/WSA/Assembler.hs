@@ -10,6 +10,8 @@ import HelVM.HelPA.Assemblers.WSA.Linker
 import HelVM.HelPA.Common.API
 import HelVM.HelPA.Common.AssemblyOptions
 
+import RIO
+
 assembleFile :: SourcePath -> AssemblyOptions -> ParsedIO String
 assembleFile sourcePath = runExceptT . exceptTAssembleFile sourcePath
 

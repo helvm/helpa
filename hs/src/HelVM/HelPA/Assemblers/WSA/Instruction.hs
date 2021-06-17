@@ -2,6 +2,8 @@ module HelVM.HelPA.Assemblers.WSA.Instruction where
 
 import HelVM.HelPA.Common.Value
 
+import RIO
+
 data Instruction =
 -- Stack instructions
     Push IntegerValue

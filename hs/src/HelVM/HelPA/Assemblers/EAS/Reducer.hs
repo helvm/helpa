@@ -10,6 +10,8 @@ import HelVM.HelPA.Common.Value
 
 import Data.List.Split
 
+import RIO
+
 reduce :: InstructionList -> InstructionList
 reduce il = replaceStrings $ replaceLabels addresses il where addresses = addressOfLabels il
 

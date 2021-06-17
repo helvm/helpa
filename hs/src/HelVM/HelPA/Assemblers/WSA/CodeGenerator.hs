@@ -14,6 +14,9 @@ import HelVM.HelPA.Common.TokenType
 import HelVM.HelPA.Common.Util
 import HelVM.HelPA.Common.Value
 
+import RIO
+import RIO.Char
+
 reduceAndGenerateCode :: AssemblyOptions -> InstructionList -> String
 reduceAndGenerateCode options = generateCode (tokenType options) (startOfInstruction options) (debug options) . reduce (endOfLine options)
 

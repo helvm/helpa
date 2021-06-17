@@ -1,13 +1,15 @@
 module HelVM.HelPA.Common.OrError where
 
-import Relude.Extra
+import RIO
+import qualified RIO.Map as Map
+import Text.Read
 
 readOrError :: Read a => String -> a
 readOrError raw = check $ readEither raw where
   check (Right result) = result
-  check (Left message) = error $ message <> " [" <> toText raw <> "]"
+  check (Left message) = error $ message <> " [" <> raw <> "]"
 
 findOrError :: (Show k, Ord k, Show v) => k -> Map k v -> v
-findOrError key hash = check $ lookup key hash where
+findOrError key hash = check $ Map.lookup key hash where
   check (Just result) = result
   check  Nothing      = error $ "key [" <> show key <> "] map {" <> show hash <> "}"

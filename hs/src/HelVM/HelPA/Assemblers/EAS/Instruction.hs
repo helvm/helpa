@@ -2,6 +2,8 @@ module HelVM.HelPA.Assemblers.EAS.Instruction where
 
 import HelVM.HelPA.Common.Value
 
+import RIO
+
 data Instruction = E | T | A | O | I | N NaturalValue | S | H | R | D Identifier | L Identifier | U String
   deriving (Eq, Show, Ord)
 

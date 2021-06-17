@@ -9,6 +9,8 @@ import HelVM.HelPA.Assemblers.EAS.Linker
 
 import HelVM.HelPA.Common.API
 
+import RIO
+
 assembleFile :: SourcePath -> ParsedIO String
 assembleFile = runExceptT . exceptTAssembleFile
 

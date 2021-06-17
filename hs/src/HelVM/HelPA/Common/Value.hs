@@ -1,5 +1,7 @@
 module HelVM.HelPA.Common.Value where
 
+import RIO
+
 data Value a = Literal a | Variable Identifier
   deriving (Eq, Show, Ord)
 

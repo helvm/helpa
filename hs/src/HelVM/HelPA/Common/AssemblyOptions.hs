@@ -2,6 +2,8 @@ module HelVM.HelPA.Common.AssemblyOptions where
 
 import HelVM.HelPA.Common.TokenType
 
+import RIO
+
 manyOptionsWithName :: [(String, AssemblyOptions)]
 manyOptionsWithName = [
              ( "bothTokenTypeOptions"    , bothTokenTypeOptions )

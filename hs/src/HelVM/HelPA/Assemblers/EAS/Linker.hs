@@ -9,6 +9,8 @@ import HelVM.HelPA.Assemblers.EAS.Instruction
 
 import HelVM.HelPA.Common.API
 
+import RIO
+
 linkLib :: SourcePath -> ParsedIO InstructionList
 linkLib = runExceptT . expectTLinkLib
 

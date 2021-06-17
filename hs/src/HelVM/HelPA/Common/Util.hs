@@ -1,6 +1,8 @@
 {-# LANGUAGE TupleSections #-}
 module HelVM.HelPA.Common.Util where
 
+import RIO
+
 naturalToDigits7 :: Natural -> [Natural]
 naturalToDigits7 = naturalToDigits 7
 
