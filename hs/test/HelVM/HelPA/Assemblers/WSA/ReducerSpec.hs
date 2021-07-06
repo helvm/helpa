@@ -11,5 +11,5 @@ spec = do
     forM_ [ ("io"     , ioIL     , ioILReduced)
           , ("memory" , memoryIL , memoryILReduced)
           , ("prim"   , primIL   , primILReduced)
-          ] $ \(fileName , il, ilReduced) -> do
+          ] $ \(fileName , il , ilReduced) -> do
       it fileName $ do reduce False il `shouldBe` ilReduced

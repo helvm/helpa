@@ -143,8 +143,8 @@ spec = do
     it "parse 'A N0 T \nA N0 T \n'" $ do parseAssemblyText "A N0 T \nA N0 T \n" `shouldSafe` [A,N (Literal 0),T,R,A,N (Literal 0),T,R]
 
   describe "Comments" $ do
-    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldSafe` [A, N (Literal 0), T, R]
+    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldSafe` [A , N (Literal 0), T , R]
     it "parse '# A N0 T \n '" $ do parseAssemblyText "# A N0 T \n " `shouldSafe` []
     it "parse ' #A N0 T \n '" $ do parseAssemblyText " #A N0 T \n " `shouldSafe` [R]
-    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldSafe` [A, R]
-    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldSafe` [A, R]
+    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldSafe` [A , R]
+    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldSafe` [A , R]

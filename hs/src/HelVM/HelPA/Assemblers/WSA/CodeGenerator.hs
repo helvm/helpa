@@ -1,4 +1,5 @@
 module HelVM.HelPA.Assemblers.WSA.CodeGenerator (
+  liftedReduceAndGenerateCode,
   reduceAndGenerateCode,
   generateCode,
   valueToTL,
@@ -16,6 +17,9 @@ import HelVM.HelPA.Assembler.Value
 import HelVM.Common.Digit.Digitable
 import HelVM.Common.Digit.Digits
 import HelVM.Common.Safe
+
+liftedReduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
+liftedReduceAndGenerateCode options = liftSafe . reduceAndGenerateCode options
 
 reduceAndGenerateCode :: AssemblyOptions -> InstructionList -> Safe Text
 reduceAndGenerateCode options il = generateCode (tokenType options) (startOfInstruction options) (debug options) $ reduce (endOfLine options) il

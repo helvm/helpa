@@ -16,7 +16,7 @@ toUppers = Text.map toUpper
 splitOneOf :: String -> Text -> [Text]
 splitOneOf s = Text.split contains where contains c = c `elem` s
 
-showToText :: (Typeable a, Show a) => a -> Text
+showToText :: (Typeable a , Show a) => a -> Text
 showToText a = show a `fromMaybe` (cast a :: Maybe Text)
 
 ---- CharUtil

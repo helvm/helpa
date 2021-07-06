@@ -26,5 +26,5 @@ spec = do
           , ("fact"     , factILLinked     , factILReduced)
           , ("bottles"  , bottlesILLinked  , bottlesILReduced)
           , ("euclid"   , euclidIL         , euclidILReduced)
-          ] $ \(fileName , ilLinked, ilReduced) -> do
+          ] $ \(fileName , ilLinked , ilReduced) -> do
       it fileName $ do unsafe (reduce ilLinked) `shouldBe` ilReduced

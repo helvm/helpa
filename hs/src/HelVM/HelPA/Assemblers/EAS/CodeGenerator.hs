@@ -1,4 +1,5 @@
 module HelVM.HelPA.Assemblers.EAS.CodeGenerator (
+  liftedReduceAndGenerateCode,
   reduceAndGenerateCode,
   generateCode,
   naturalToDigitText,
@@ -13,6 +14,9 @@ import HelVM.HelPA.Assembler.Value
 import HelVM.Common.Digit.Digits
 import HelVM.Common.Containers.Lookup
 import HelVM.Common.Safe
+
+liftedReduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
+liftedReduceAndGenerateCode = liftSafe . reduceAndGenerateCode
 
 reduceAndGenerateCode :: InstructionList -> Safe Text
 reduceAndGenerateCode il = generateCode <$> reduce il

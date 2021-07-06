@@ -35,5 +35,5 @@ spec = do
           , "bottles3"
           , "euclid"
           ] $ \fileName -> do
-      let assemble = assembleFile SourcePath {dirPath = easDir, filePath = buildAbsolutePathToEasFile fileName}
-      it fileName $ do assemble `goldenShouldSafeReturn` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)
+      let assemble = assembleFile SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
+      it fileName $ do assemble `goldenShouldSafeExceptT` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)

@@ -42,13 +42,12 @@ library
 
         HelVM.Common.ReadText
         HelVM.Common.Safe
-        HelVM.Common.SafeMonadT
         HelVM.Common.Util
 
         HelVM.HelPA.Assembler.API
         HelVM.HelPA.Assembler.AssemblyOptions
         HelVM.HelPA.Assembler.AsmParserUtil
-        HelVM.HelPA.Assembler.IO.WrapperIO
+        HelVM.HelPA.Assembler.IO.BusinessIO
         HelVM.HelPA.Assembler.TokenType
         HelVM.HelPA.Assembler.Value
 
@@ -74,11 +73,15 @@ library
     , relude               == 1.0.0.0
     , attoparsec
 
+--    , co-log
+--    , co-log-core
     , containers           == 0.6.2.1
     , data-default
     , ilist
     , list-singleton
+    , mtl
     , split
+    , type-operators
 
   mixins:
       base hiding (Prelude)
@@ -126,6 +129,7 @@ library
 --    -XDeriveLift
 --    -XStaticPointers
     -XDerivingStrategies
+    -XConstraintKinds
 --Only for lib
     -XDeriveFunctor
 --Warnings
@@ -153,6 +157,7 @@ test-suite spec
 
         HelVM.CartesianProduct
         HelVM.Expectations
+        HelVM.MonadErrorSpec
 
         HelVM.HelPA.Assemblers.EAS.AsmParserSpec
         HelVM.HelPA.Assemblers.EAS.AssemblerSpec
@@ -178,7 +183,11 @@ test-suite spec
 
     , helpa
 
+--    , co-log
+--    , co-log-core
     , filepath
+    , mtl
+    , type-operators
 
     , hspec
     , hspec-attoparsec
@@ -226,7 +235,7 @@ test-suite spec
 --    -XForeignFunctionInterface
 --    -XMagicHash
 --    -XUnliftedFFITypes
---    -XTypeOperators
+    -XTypeOperators
 --    -XUnboxedTuples
 --    -XPackageImports
 --    -XQuasiQuotes
@@ -234,6 +243,7 @@ test-suite spec
 --    -XDeriveLift
 --    -XStaticPointers
     -XDerivingStrategies
+    -XConstraintKinds
 --Warnings
     -Wall
     -Wcompat
@@ -254,6 +264,7 @@ test-suite spec
     -threaded
     -rtsopts
     -with-rtsopts=-N
+    -fprint-potential-instances
 
 executable helpa
   main-is:             Main.hs
@@ -268,6 +279,10 @@ executable helpa
     , relude               == 1.0.0.0
 
     , helpa
+
+--    , co-log
+--    , co-log-core
+--    , mtl
     , optparse-applicative >= 0.14.3.0
   mixins:
       base hiding (Prelude)
@@ -307,7 +322,7 @@ executable helpa
 --    -XForeignFunctionInterface
 --    -XMagicHash
 --    -XUnliftedFFITypes
---    -XTypeOperators
+    -XTypeOperators
 --    -XUnboxedTuples
 --    -XPackageImports
 --    -XQuasiQuotes

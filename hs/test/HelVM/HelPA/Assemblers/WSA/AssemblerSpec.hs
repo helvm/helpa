@@ -25,7 +25,7 @@ spec = do
       let assembleLib = assembleLibFile fileName options
       let minorPath = name </> fileName
       it minorPath $ do
-        assembleLib `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
+        assembleLib `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
 
   describe "assembleApp" $ do
     describe "original" $ do
@@ -34,7 +34,7 @@ spec = do
         let assembleApp = assembleAppFile fileName options
         let minorPath = name </> fileName
         it minorPath $ do
-          assembleApp `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
+          assembleApp `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
 
     describe "from-eas" $ do
       forM_ ([ "true"
@@ -58,7 +58,7 @@ spec = do
         let assemble = assembleFile SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext} options
         let minorPath = name </> fileName
         it minorPath $ do
-          assemble `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
+          assemble `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
 
 --  describe "assembleFile" $ do
 --    it "io"     $ do assembleLibFile "io"     visibleTokenTypeOptions `shouldSafeReturn` showTL ioTL

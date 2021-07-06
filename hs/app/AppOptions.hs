@@ -60,10 +60,10 @@ data AppOptions = AppOptions
 ----
 
 data Lang = HAPAPL | EAS | WSA
-  deriving stock (Eq, Read, Show)
+  deriving stock (Eq , Read , Show)
 
 langs :: [Lang]
-langs = [HAPAPL, EAS, WSA]
+langs = [HAPAPL , EAS , WSA]
 
 computeLang :: String -> Lang
 computeLang raw = valid $ readMaybe raw where

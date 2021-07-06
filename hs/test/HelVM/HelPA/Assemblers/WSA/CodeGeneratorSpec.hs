@@ -20,7 +20,7 @@ spec = do
     forM_ ([ ("io"     , ioILReduced)
            , ("memory" , memoryILReduced)
            , ("prim"   , primILReduced <> ioILReduced)
-           ] >><< manyOptionsWithName) $ \(fileName , il, name, options) -> do
+           ] >><< manyOptionsWithName) $ \(fileName , il , name , options) -> do
       it (name </> fileName) $ do
         reduceAndGenerateCode options il `goldenShouldSafe` buildAbsolutePathToWsFile ("codeGenerator" </> name </> fileName)
 
@@ -43,8 +43,8 @@ spec = do
     it "valueToTL -7" $ do valueToTL (-7) `shouldBe` [T,T,T,T,N]
 
   describe "identifierToTL" $ do
-    it "identifierToTL \" \"" $ do identifierToTL " " `shouldBe` [S,S,T,S,S,S,S,S, N]
-    it "identifierToTL \"A\"" $ do identifierToTL "A" `shouldBe` [S,T,S,S,S,S,S,T, N]
-    it "identifierToTL \"Z\"" $ do identifierToTL "Z" `shouldBe` [S,T,S,T,T,S,T,S, N]
-    it "identifierToTL \"a\"" $ do identifierToTL "a" `shouldBe` [S,T,T,S,S,S,S,T, N]
-    it "identifierToTL \"z\"" $ do identifierToTL "z" `shouldBe` [S,T,T,T,T,S,T,S, N]
+    it "identifierToTL \" \"" $ do identifierToTL " " `shouldBe` [S,S,T,S,S,S,S,S , N]
+    it "identifierToTL \"A\"" $ do identifierToTL "A" `shouldBe` [S,T,S,S,S,S,S,T , N]
+    it "identifierToTL \"Z\"" $ do identifierToTL "Z" `shouldBe` [S,T,S,T,T,S,T,S , N]
+    it "identifierToTL \"a\"" $ do identifierToTL "a" `shouldBe` [S,T,T,S,S,S,S,T , N]
+    it "identifierToTL \"z\"" $ do identifierToTL "z" `shouldBe` [S,T,T,T,T,S,T,S , N]

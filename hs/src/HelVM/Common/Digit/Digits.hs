@@ -30,11 +30,11 @@ naturalToDigits2 = naturalToDigits 2
 naturalToDigits :: Natural -> Natural -> [Natural]
 naturalToDigits base = unfoldl (divModMaybe base)
 
-divModMaybe :: Natural -> Natural -> Maybe (Natural, Natural)
+divModMaybe :: Natural -> Natural -> Maybe (Natural , Natural)
 divModMaybe _    0     = Nothing
 divModMaybe base value = Just (value `divMod` base)
 
-unfoldl :: (a -> Maybe (a,b)) -> a -> [b]
+unfoldl :: (a -> Maybe (a , b)) -> a -> [b]
 unfoldl lambda value = check $ lambda value where
   check  Nothing     = []
   check (Just (a , b)) = unfoldl lambda a <> [b]

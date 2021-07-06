@@ -1,10 +1,12 @@
 {-# LANGUAGE UndecidableInstances #-}
 module HelVM.Expectations  (
+  goldenShouldSafeExceptT,
   goldenShouldSafe,
   goldenShouldSafeReturn,
   goldenShouldReturn,
   goldenShouldBe,
   ioShouldSafe,
+  shouldSafeExceptT,
   shouldSafe,
   ioShouldBe,
   shouldSafeReturn,
@@ -14,12 +16,17 @@ module HelVM.Expectations  (
 import HelVM.Common.Safe
 import HelVM.Common.Util
 
+import Control.Type.Operator
 import System.FilePath.Posix
 
 import Test.Hspec
 import Test.Hspec.Attoparsec
 import Test.Hspec.Golden
 import Test.Hspec.Core.Spec
+
+infix 1 `goldenShouldSafeExceptT`
+goldenShouldSafeExceptT:: (Typeable a , Show a) => SafeExceptT IO a -> FilePath -> WrappedGoldenIO Text
+goldenShouldSafeExceptT actualOutput = goldenShouldReturn (exceptTToIO actualOutput)
 
 infix 1 `goldenShouldSafe`
 goldenShouldSafe :: (Typeable a , Show a) => Safe a -> FilePath -> WrappedGoldenIO Text
@@ -62,6 +69,11 @@ ioShouldBe action expected = join $ liftA2 shouldBe action expected
 
 ----
 
+infix 1 `shouldSafeExceptT`
+shouldSafeExceptT :: (Show a , Eq a) => SafeExceptT IO a -> a -> Expectation
+shouldSafeExceptT action = shouldReturn (exceptTToIO action)
+
+
 infix 1 `shouldSafeReturn`
 shouldSafeReturn :: (Show a , Eq a) => SafeFail IO a -> a -> Expectation
 shouldSafeReturn action = shouldReturn (safeFailToFail action)
@@ -74,7 +86,7 @@ shouldBeDo action expected = shouldBe action =<< expected
 
 newtype WrappedGoldenIO a = WrappedGoldenIO { unWrappedGoldenIO :: GoldenIO a }
 
-type GoldenIO a = IO (Golden a)
+type GoldenIO a = IO $ Golden a
 
 instance Eq str => Example (WrappedGoldenIO str) where
   type Arg (WrappedGoldenIO str) = ()
