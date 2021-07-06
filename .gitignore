@@ -24,11 +24,14 @@ cabal.project.local~
 
 .idea
 *.iml
-build/
 .gradle
+build/
 gradle/
 
 Gemfile.lock
 _site
 
 .hlint-*/
+out/
+
+/stan.html

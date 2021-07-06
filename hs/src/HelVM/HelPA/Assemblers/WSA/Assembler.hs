@@ -10,16 +10,12 @@ import HelVM.HelPA.Assemblers.WSA.Linker
 import HelVM.HelPA.Assembler.API
 import HelVM.HelPA.Assembler.AssemblyOptions
 
-import HelVM.HelPA.Assembler.IO.WrapperIO
+import HelVM.HelPA.Assembler.IO.BusinessIO
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeMonadT
 
-assembleFile :: WrapperIO m => SourcePath -> AssemblyOptions -> SafeFail m Text
-assembleFile sourcePath = runExceptT . exceptTAssembleFile sourcePath
+assembleFile :: BIO m => SourcePath -> AssemblyOptions -> m Text
+assembleFile sourcePath options = reduceAndGenerateCode options =<< exceptTLinkApp sourcePath
 
-exceptTAssembleFile :: WrapperIO m => SourcePath -> AssemblyOptions -> SafeMonadT m Text
-exceptTAssembleFile sourcePath options = (hoistSafe . reduceAndGenerateCode options) =<< exceptTLinkApp sourcePath
-
-assembleText :: Text -> AssemblyOptions -> Safe Text
+assembleText :: MonadSafeError m => Text -> AssemblyOptions -> m Text
 assembleText code options = reduceAndGenerateCode options =<< parseAssemblyText code

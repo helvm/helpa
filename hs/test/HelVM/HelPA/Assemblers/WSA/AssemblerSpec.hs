@@ -3,15 +3,15 @@ module HelVM.HelPA.Assemblers.WSA.AssemblerSpec (spec) where
 import HelVM.HelPA.Assemblers.WSA.Assembler
 import HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import HelVM.CartesianProduct
-import HelVM.Expectations
-
 import HelVM.HelPA.Assembler.API
 import HelVM.HelPA.Assembler.AssemblyOptions
 
+import HelVM.CartesianProduct
+import HelVM.GoldenExpectations
+
 import System.FilePath.Posix
 
-import Test.Hspec
+import Test.Hspec (Spec , describe , it)
 
 spec :: Spec
 spec = do
@@ -25,7 +25,7 @@ spec = do
       let assembleLib = assembleLibFile fileName options
       let minorPath = name </> fileName
       it minorPath $ do
-        assembleLib `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
+        assembleLib `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
 
   describe "assembleApp" $ do
     describe "original" $ do
@@ -34,7 +34,7 @@ spec = do
         let assembleApp = assembleAppFile fileName options
         let minorPath = name </> fileName
         it minorPath $ do
-          assembleApp `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
+          assembleApp `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
 
     describe "from-eas" $ do
       forM_ ([ "true"
@@ -58,17 +58,17 @@ spec = do
         let assemble = assembleFile SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext} options
         let minorPath = name </> fileName
         it minorPath $ do
-          assemble `goldenShouldSafeReturn` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
+          assemble `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
 
 --  describe "assembleFile" $ do
---    it "io"     $ do assembleLibFile "io"     visibleTokenTypeOptions `shouldSafeReturn` showTL ioTL
---    it "memory" $ do assembleLibFile "memory" visibleTokenTypeOptions `shouldSafeReturn` showTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   visibleTokenTypeOptions `shouldSafeReturn` showTL primTL
+--    it "io"     $ do assembleLibFile "io"     visibleTokenTypeOptions `shouldSafeIO` showTL ioTL
+--    it "memory" $ do assembleLibFile "memory" visibleTokenTypeOptions `shouldSafeIO` showTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   visibleTokenTypeOptions `shouldSafeIO` showTL primTL
 --
---    it "io"     $ do assembleLibFile "io"     allFalse `shouldSafeReturn` showTLAsWTL ioTL
---    it "memory" $ do assembleLibFile "memory" allFalse `shouldSafeReturn` showTLAsWTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   allFalse `shouldSafeReturn` showTLAsWTL primTL
+--    it "io"     $ do assembleLibFile "io"     allFalse `shouldSafeIO` showTLAsWTL ioTL
+--    it "memory" $ do assembleLibFile "memory" allFalse `shouldSafeIO` showTLAsWTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   allFalse `shouldSafeIO` showTLAsWTL primTL
 --
---    it "io"     $ do assembleLibFile "io"     bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL ioTL
---    it "memory" $ do assembleLibFile "memory" bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL memoryTL
---    it "prim"   $ do assembleAppFile "prim"   bothTokenTypeOptions `shouldSafeReturn` showTLAsBTL primTL
+--    it "io"     $ do assembleLibFile "io"     bothTokenTypeOptions `shouldSafeIO` showTLAsBTL ioTL
+--    it "memory" $ do assembleLibFile "memory" bothTokenTypeOptions `shouldSafeIO` showTLAsBTL memoryTL
+--    it "prim"   $ do assembleAppFile "prim"   bothTokenTypeOptions `shouldSafeIO` showTLAsBTL primTL

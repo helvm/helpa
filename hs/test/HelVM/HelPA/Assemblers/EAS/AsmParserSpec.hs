@@ -9,7 +9,7 @@ import HelVM.Expectations
 
 import HelVM.HelPA.Assembler.Value
 
-import Test.Hspec
+import Test.Hspec (Spec , describe , it)
 
 spec :: Spec
 spec = do
@@ -32,7 +32,7 @@ spec = do
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
       let parseAssembly = parseAssemblyText <$> readFileText (buildAbsolutePathToEasFile fileName)
-      it fileName $ do parseAssembly `shouldSafeReturn` il
+      it fileName $ do parseAssembly `shouldSafeIO` il
 
   describe "empty" $ do
     it "parse ''" $ do parseAssemblyText "" `shouldSafe` []
@@ -143,8 +143,8 @@ spec = do
     it "parse 'A N0 T \nA N0 T \n'" $ do parseAssemblyText "A N0 T \nA N0 T \n" `shouldSafe` [A,N (Literal 0),T,R,A,N (Literal 0),T,R]
 
   describe "Comments" $ do
-    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldSafe` [A, N (Literal 0), T, R]
+    it "parse ' A N0 T \n '"  $ do parseAssemblyText " A N0 T \n "  `shouldSafe` [A , N (Literal 0), T , R]
     it "parse '# A N0 T \n '" $ do parseAssemblyText "# A N0 T \n " `shouldSafe` []
     it "parse ' #A N0 T \n '" $ do parseAssemblyText " #A N0 T \n " `shouldSafe` [R]
-    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldSafe` [A, R]
-    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldSafe` [A, R]
+    it "parse ' A# N0 T \n '" $ do parseAssemblyText " A# N0 T \n " `shouldSafe` [A , R]
+    it "parse ' A #N0 T \n '" $ do parseAssemblyText " A #N0 T \n " `shouldSafe` [A , R]

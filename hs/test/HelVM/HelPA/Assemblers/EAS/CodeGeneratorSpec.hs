@@ -5,10 +5,11 @@ import HelVM.HelPA.Assemblers.EAS.TestData
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 
 import HelVM.Expectations
+import HelVM.GoldenExpectations
 
 import System.FilePath.Posix
 
-import Test.Hspec
+import Test.Hspec (Spec , describe , it)
 
 spec :: Spec
 spec = do
@@ -29,7 +30,7 @@ spec = do
           , ("bottles"  , bottlesILReduced)
           , ("euclid"   , euclidILReduced)
           ] $ \(fileName , ilReduced) -> do
-      it fileName $ do generateCode ilReduced `goldenShouldBe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
+      it fileName $ do generateCode ilReduced `goldenShouldSafe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
 
   describe "naturalToDigitString" $ do
     forM_ [ (0      , "")

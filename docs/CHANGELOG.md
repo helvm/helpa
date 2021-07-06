@@ -1,5 +1,14 @@
 # 📅 Revision history for Helpa
 
+## 0.3.4.0 -- 2021-07-22
+
+* Use MonadError
+* Use Stan
+* Use pretty-simple for golden tests
+* Fill up ARCHITECTURE.md
+* Replace WrapperIO by BusinessIO
+* Remove gradle
+
 ## 0.3.3.0 -- 2021-07-6
 
 * Use `Safe`, remove `error` calls

@@ -12,7 +12,7 @@ import HelVM.Common.Safe
 
 import Data.List.Split
 
-reduce :: InstructionList -> Safe InstructionList
+reduce :: MonadSafeError m => InstructionList -> m InstructionList
 reduce il = replaceStrings <$> replaceLabels addresses il where addresses = addressOfLabels il
 
 ----
@@ -20,26 +20,26 @@ reduce il = replaceStrings <$> replaceLabels addresses il where addresses = addr
 type LabelAddresses = Map Identifier Natural
 
 addressOfLabels :: InstructionList -> LabelAddresses
-addressOfLabels il = fromList $ setDefault =<< zip (labelsToStrings2 il) [1..]
+addressOfLabels il = fromList $ setDefault =<< zip (labelsToIdentifiers2 il) [1..]
 
-labelsToStrings2 :: InstructionList -> [[Identifier]]
-labelsToStrings2 il = labelsToStrings <$> splitOn [R] il
+labelsToIdentifiers2 :: InstructionList -> [[Identifier]]
+labelsToIdentifiers2 il = labelsToIdentifiers <$> splitOn [R] il
 
-labelsToStrings :: InstructionList -> [Identifier]
-labelsToStrings il = labelToStrings =<< il
+labelsToIdentifiers :: InstructionList -> [Identifier]
+labelsToIdentifiers il = labelToIdentifiers =<< il
 
-labelToStrings :: Instruction -> [Identifier]
-labelToStrings (L s) = [s]
-labelToStrings  _    = []
+labelToIdentifiers :: Instruction -> [Identifier]
+labelToIdentifiers (L s) = [s]
+labelToIdentifiers  _    = []
 
 ----
 
-replaceLabels ::  LabelAddresses -> InstructionList -> Safe InstructionList
+replaceLabels ::  MonadSafeError m => LabelAddresses -> InstructionList -> m InstructionList
 replaceLabels addresses il = sequenceA $ replaceLabel addresses <$> il
 
-replaceLabel :: LabelAddresses -> Instruction -> Safe Instruction
+replaceLabel :: MonadSafeError m => LabelAddresses -> Instruction -> m Instruction
 replaceLabel addresses (N (Variable l)) = N . Literal <$> indexSafeByKey l addresses
-replaceLabel _          i               = safe i
+replaceLabel _          i               = pure i
 
 ----
 
@@ -55,5 +55,5 @@ charToInstruction = N . Literal . fromIntegral . ord
 
 ----
 
-setDefault :: ([k], v) -> [(k, v)]
-setDefault (keys, value) = (, value) <$> keys
+setDefault :: ([k] , v) -> [(k , v)]
+setDefault (keys , value) = (, value) <$> keys

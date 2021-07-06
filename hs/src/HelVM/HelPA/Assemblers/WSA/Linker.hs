@@ -6,31 +6,30 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 import HelVM.HelPA.Assembler.API
 import HelVM.HelPA.Assembler.Value
 
-import HelVM.HelPA.Assembler.IO.WrapperIO
+import HelVM.HelPA.Assembler.IO.BusinessIO
 
-import HelVM.Common.Safe
-import HelVM.Common.SafeMonadT
+import Control.Type.Operator
 
-linkLib :: WrapperIO m => SourcePath -> SafeFail m InstructionList
-linkLib = runExceptT . expectTLinkLib
+linkLib :: BIO m => SourcePath -> m InstructionList
+linkLib = expectTLinkLib
 
-linkApp :: WrapperIO m => SourcePath -> SafeFail m InstructionList
-linkApp = runExceptT . exceptTLinkApp
+linkApp :: BIO m => SourcePath -> m InstructionList
+linkApp = exceptTLinkApp
 
-expectTLinkLib :: WrapperIO m => SourcePath -> SafeMonadT m InstructionList
+expectTLinkLib :: BIO m => SourcePath -> m InstructionList
 expectTLinkLib = exceptTLinkApp . absolutePath
 
-exceptTLinkApp :: WrapperIO m => SourcePath -> SafeMonadT m InstructionList
-exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ ExceptT $ parseAssemblyText <$> wReadFile (filePath path)
+exceptTLinkApp :: BIO m => SourcePath -> m InstructionList
+exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ parseAssemblyText =<< wReadFile (filePath path)
 
-exceptTIncludeLibs :: WrapperIO m => String -> InstructionList -> SafeMonadT m InstructionList
+exceptTIncludeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
 exceptTIncludeLibs dir il = sortBlocks <$> mapM (exceptTIncludeLib dir) il
 
 sortBlocks :: [Block InstructionList] -> InstructionList
-sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list)
+sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list) --FIXME groupBy ?
 
-exceptTIncludeLib :: WrapperIO m => String -> Instruction -> SafeMonadT m (Block InstructionList)
-exceptTIncludeLib dir (Include libName) = Included <$> expectTLinkLib (SourcePath {dirPath = dir, filePath = unwrapIdentifier libName <> ".wsa"})
+exceptTIncludeLib :: BIO m => FilePath -> Instruction -> m $ Block InstructionList
+exceptTIncludeLib dir (Include libName) = Included <$> expectTLinkLib (SourcePath {dirPath = dir , filePath = unwrapIdentifier libName <> ".wsa"})
 exceptTIncludeLib _ i = pure $ Normal [i]
 
 unwrap :: Block a -> a
@@ -45,4 +44,4 @@ isIncluded :: Block a -> Bool
 isIncluded (Normal   _) = False
 isIncluded (Included _) = True
 
-data Block a = Normal a | Included a
+data Block a = Normal !a | Included !a

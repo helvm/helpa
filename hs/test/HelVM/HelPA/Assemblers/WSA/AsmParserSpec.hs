@@ -5,35 +5,37 @@ import HelVM.HelPA.Assemblers.WSA.Instruction
 import HelVM.HelPA.Assemblers.WSA.TestData
 import HelVM.HelPA.Assemblers.WSA.FileUtil
 
+import HelVM.Common.Safe
+
 import HelVM.Expectations
+import HelVM.GoldenExpectations
 
 import HelVM.HelPA.Assembler.Value
 
 import System.FilePath.Posix
 
-import Test.Hspec
+import Test.Hspec (Spec , describe , it)
 
 spec :: Spec
 spec = do
-  let parseAssemblyFile = fmap parseAssemblyText . readFileText
-
-  let parseAssemblyLib = \ fileName -> parseAssemblyFile (libDir </> fileName <.> ext)
-  let parseAssemblyApp = \ fileName -> parseAssemblyFile (appDir </> fileName <.> ext)
-  let parseAssemblyApp1 = \ fileName -> parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> ext)
+  let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
+  let parseAssemblyLib  fileName = parseAssemblyFile (libDir </> fileName <.> ext)
+  let parseAssemblyApp  fileName = parseAssemblyFile (appDir </> fileName <.> ext)
+  let parseAssemblyEAS  fileName = parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> ext)
 
   describe "parseAssemblyLib" $ do
     forM_ [ "io"
           , "memory"
           ] $ \fileName -> do
       it fileName $ do
-        parseAssemblyLib fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("parseAssemblyLib" </> fileName)
+        safeIOToPTextIO (parseAssemblyLib fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyLib" </> fileName)
 
   describe "parseAssemblyApp" $ do
     describe "original" $ do
       forM_ [ "prim"
             ] $ \fileName -> do
         it fileName $ do
-          parseAssemblyApp fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "original" </> fileName)
+          safeIOToPTextIO (parseAssemblyApp fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "original" </> fileName)
 
     describe "from-eas" $ do
       forM_ [ "true"
@@ -55,12 +57,12 @@ spec = do
  --           , "euclid"
             ] $ \ fileName -> do
         it fileName $ do
-          parseAssemblyApp1 fileName `goldenShouldSafeReturn` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "from-eas" </> fileName)
+          safeIOToPTextIO (parseAssemblyEAS fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "from-eas" </> fileName)
 
   describe "parseAssemblyText" $ do
-    it "io"     $ do parseAssemblyLib "io"     `shouldSafeReturn` ioIL
-    it "memory" $ do parseAssemblyLib "memory" `shouldSafeReturn` memoryIL
-    it "prim"   $ do parseAssemblyApp "prim"   `shouldSafeReturn` (Include "io" : primIL)
+    it "io"     $ do parseAssemblyLib "io"     `shouldSafeIO` ioIL
+    it "memory" $ do parseAssemblyLib "memory" `shouldSafeIO` memoryIL
+    it "prim"   $ do parseAssemblyApp "prim"   `shouldSafeIO` (Include "io" : primIL)
 
   describe "Commands without operands" $ do
     it "parse 'pop'"  $ do parseAssemblyText "pop"  `shouldSafe` [Pop]

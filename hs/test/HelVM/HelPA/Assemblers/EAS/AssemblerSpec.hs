@@ -3,13 +3,13 @@ module HelVM.HelPA.Assemblers.EAS.AssemblerSpec where
 import HelVM.HelPA.Assemblers.EAS.Assembler
 import HelVM.HelPA.Assemblers.EAS.FileUtil
 
-import HelVM.Expectations
+import HelVM.GoldenExpectations
 
 import HelVM.HelPA.Assembler.API
 
 import System.FilePath.Posix
 
-import Test.Hspec
+import Test.Hspec (Spec , describe , it)
 
 spec :: Spec
 spec = do
@@ -35,5 +35,5 @@ spec = do
           , "bottles3"
           , "euclid"
           ] $ \fileName -> do
-      let assemble = assembleFile SourcePath {dirPath = easDir, filePath = buildAbsolutePathToEasFile fileName}
-      it fileName $ do assemble `goldenShouldSafeReturn` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)
+      let assemble = assembleFile SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
+      it fileName $ do assemble `goldenShouldSafeExceptT` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)

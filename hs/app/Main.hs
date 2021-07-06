@@ -4,6 +4,7 @@ module Main where
 import HelVM.HelPA.Assembler.API
 
 import HelVM.HelPA.Assembler.AssemblyOptions
+import HelVM.HelPA.Assembler.IO.BusinessIO
 import HelVM.HelPA.Assembler.TokenType
 
 import qualified HelVM.HelPA.Assemblers.EAS.Assembler as EAS
@@ -23,20 +24,19 @@ main = run =<< execParser opts where
      <> progDesc "" )
 
 run :: AppOptions -> IO ()
-run AppOptions{lang, tokenType, debug, startOfInstruction, endOfLine, dir, file} = do
-  eval lang' assemblerOptions sourcePath where
-    assemblerOptions = (AssemblyOptions {tokenType=tokenType', debug=debug, startOfInstruction=startOfInstruction, endOfLine=endOfLine})
-    sourcePath = (SourcePath {dirPath = dir, filePath = file})
+run AppOptions{lang , tokenType , debug , startOfInstruction , endOfLine , dir , file} = do
+  putTextLn =<< exceptTToIO (eval lang' assemblerOptions sourcePath) where  --FIXME Bug in relude doc
+    assemblerOptions = AssemblyOptions {tokenType=tokenType', debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
+    sourcePath = SourcePath {dirPath = dir , filePath = file}
     tokenType' = parseTokenType tokenType
     lang' = computeLang lang
 
-eval :: Lang -> AssemblyOptions -> SourcePath -> IO ()
-eval EAS    _       = putExcept . EAS.assembleFile
-eval WSA    options = putExcept . flip WSA.assembleFile options
-eval HAPAPL _       = hapapl
 
-putExcept :: SafeFail IO Text -> IO ()
-putExcept io = putTextLn . unsafe =<< io --FIXME Bug in relude doc
 
-hapapl :: SourcePath -> IO ()
-hapapl _ = putStrLn "HAPAPL is not supported now"
+eval :: BIO m => Lang -> AssemblyOptions -> SourcePath -> m Text
+eval EAS    _        path = EAS.assembleFile path
+eval WSA    options  path = WSA.assembleFile path options
+eval HAPAPL _        _    = hapapl
+
+hapapl :: BIO m => m Text
+hapapl = liftError "HAPAPL is not supported now"

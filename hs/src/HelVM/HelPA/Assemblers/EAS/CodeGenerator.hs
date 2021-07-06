@@ -14,26 +14,26 @@ import HelVM.Common.Digit.Digits
 import HelVM.Common.Containers.Lookup
 import HelVM.Common.Safe
 
-reduceAndGenerateCode :: InstructionList -> Safe Text
-reduceAndGenerateCode il = generateCode <$> reduce il
+reduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
+reduceAndGenerateCode il = generateCode =<< reduce il
 
-generateCode :: InstructionList -> Text
-generateCode il = mconcat $ unsafe $ sequenceA $ generateCode' <$> il
+generateCode :: MonadSafeError m => InstructionList -> m Text
+generateCode il = mconcat <$> sequenceA (generateCode' <$> il)
 
-generateCode' :: Instruction -> Safe Text
+generateCode' :: MonadSafeError m => Instruction -> m Text
 generateCode' (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
-generateCode' (N (Variable i)) = safeError $ show i
-generateCode' (D i)            = safeError $ show i
-generateCode' (U i)            = safeError $ show i
-generateCode' (L _)            = safe ""
-generateCode' R                = safe "\n"
-generateCode' i                = safe $ show i
+generateCode' (N (Variable i)) = liftError $ show i
+generateCode' (D i)            = liftError $ show i
+generateCode' (U i)            = liftError $ show i
+generateCode' (L _)            = pure ""
+generateCode' R                = pure "\n"
+generateCode' i                = pure $ show i
 
-naturalToDigitText :: Natural -> Safe Text
+naturalToDigitText :: MonadSafeError m => Natural -> m Text
 naturalToDigitText value = toText <$> naturalToDigitString value
 
-naturalToDigitString :: Natural -> Safe String
+naturalToDigitString :: MonadSafeError m => Natural -> m String
 naturalToDigitString value = sequenceA $ naturalToDigitChar <$> naturalToDigits7 value
 
-naturalToDigitChar :: Natural -> Safe Char
-naturalToDigitChar i = ['h', 't', 'a', 'o', 'i', 'n', 's'] `naturalIndexSafe` i
+naturalToDigitChar :: MonadSafeError m => Natural -> m Char
+naturalToDigitChar i = liftSafe $ ['h', 't', 'a', 'o', 'i', 'n', 's'] `naturalIndexSafe` i

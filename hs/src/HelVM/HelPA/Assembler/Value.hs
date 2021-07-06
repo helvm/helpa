@@ -1,7 +1,7 @@
 module HelVM.HelPA.Assembler.Value where
 
-data Value a = Literal a | Variable Identifier
-  deriving stock (Eq, Show, Ord)
+data Value a = Literal !a | Variable !Identifier
+  deriving stock (Eq , Show , Ord)
 
 type NaturalValue = Value Natural
 

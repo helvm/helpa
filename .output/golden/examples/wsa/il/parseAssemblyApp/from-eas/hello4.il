@@ -1,1 +1,6 @@
-[Include "io",PushS (Literal "Hello, world!"),Call "printsln",End]
+[ Include "io"
+, PushS
+    ( Literal "Hello, world!" )
+, Call "printsln"
+, End
+]

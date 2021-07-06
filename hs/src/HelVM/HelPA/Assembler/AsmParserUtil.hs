@@ -5,7 +5,7 @@ import HelVM.HelPA.Assembler.Value
 import HelVM.Common.ReadText
 
 import Data.Attoparsec.Combinator
-import Data.Attoparsec.Text hiding (I, D)
+import Data.Attoparsec.Text hiding (I , D)
 import Data.Char
 
 naturalParser :: Parser Natural

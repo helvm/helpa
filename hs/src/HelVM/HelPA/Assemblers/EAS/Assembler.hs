@@ -8,17 +8,12 @@ import HelVM.HelPA.Assemblers.EAS.CodeGenerator
 import HelVM.HelPA.Assemblers.EAS.Linker
 
 import HelVM.HelPA.Assembler.API
-import HelVM.HelPA.Assembler.IO.WrapperIO
+import HelVM.HelPA.Assembler.IO.BusinessIO
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeMonadT
 
-assembleFile :: WrapperIO m => SourcePath -> SafeFail m Text
-assembleFile = runExceptT . exceptTAssembleFile
+assembleFile :: BIO m => SourcePath -> m Text
+assembleFile sourcePath = reduceAndGenerateCode =<< linkApp sourcePath
 
-exceptTAssembleFile :: WrapperIO m => SourcePath -> SafeMonadT m Text
-exceptTAssembleFile sourcePath = exceptTAssembleFile' =<< exceptTLinkApp sourcePath where
-  exceptTAssembleFile' code = hoistSafe $ reduceAndGenerateCode code
-
-assembleText :: Text -> Safe Text
+assembleText :: MonadSafeError m => Text -> m Text
 assembleText code = reduceAndGenerateCode =<< parseAssemblyText code
