@@ -7,13 +7,13 @@ module HelVM.Common.Digit.Digits (
 
 import HelVM.Common.Safe
 
-digitsToIntegral :: Integral a => a -> [Safe a] -> Safe a --FIXME
-digitsToIntegral base = foldr (liftedMulAndAdd base) (safe 0)
+digitsToIntegral :: (MonadSafeError m , Integral a) => a -> [m a] -> m a --FIXME
+digitsToIntegral base = foldr (liftedMulAndAdd base) (pure 0)
 
 digitsToIntegral' :: Integral a => a -> [a] -> a
 digitsToIntegral' base = foldr (mulAndAdd base) 0
 
-liftedMulAndAdd :: (Integral a) => a -> Safe a -> Safe a -> Safe a
+liftedMulAndAdd :: (MonadSafeError m , Integral a)  => a -> m a -> m a -> m a
 liftedMulAndAdd base = liftA2 (mulAndAdd base)
 
 mulAndAdd :: Integral a => a -> a -> a -> a
