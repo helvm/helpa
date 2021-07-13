@@ -13,7 +13,7 @@ import Data.Attoparsec.Text hiding (I , D)
 import Data.Char
 
 parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
-parseAssemblyText = liftSafe. safeLegacyToSafe . parseOnly (instructionListParser <* endOfInput)
+parseAssemblyText = liftLegacySafe . parseOnly (instructionListParser <* endOfInput)
 
 instructionListParser :: Parser InstructionList
 instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace)

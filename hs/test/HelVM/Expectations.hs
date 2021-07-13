@@ -61,7 +61,7 @@ ioShouldSafe action expected = join $ liftA2 shouldSafe action expected
 
 infix 1 `shouldSafe`
 shouldSafe :: (Show a , Eq a) => Safe a -> a -> Expectation
-shouldSafe action = shouldParse (safeToSafeLegacy action)
+shouldSafe action = shouldParse (safeToLegacySafe action)
 
 infix 1 `ioShouldBe`
 ioShouldBe :: (HasCallStack , Show a , Eq a) => IO a -> IO a -> Expectation

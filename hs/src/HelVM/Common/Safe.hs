@@ -7,6 +7,7 @@ module HelVM.Common.Safe (
   hoistMonad,
   liftExceptT,
   liftSafe,
+  liftLegacySafe,
   liftErrorTuple,
   liftError,
   liftMaybeOrErrorTupleList,
@@ -14,12 +15,8 @@ module HelVM.Common.Safe (
   liftMaybeOrError,
 
   safe,
-  safeLegacyToSafe,
-  safeToSafeLegacy,
-
-  maybeToSafeOrErrorTupleList,
-  maybeToSafeOrErrorTuple,
-  maybeToSafeOrError,
+  legacySafeToSafe,
+  safeToLegacySafe,
 
   safeErrorTupleList,
   safeErrorTuple,
@@ -68,6 +65,9 @@ liftExceptT m = liftEither =<< runExceptT m
 liftSafe :: MonadSafeError m => Safe a -> m a
 liftSafe = liftEither
 
+liftLegacySafe :: MonadSafeError m => LegacySafe a -> m a
+liftLegacySafe = liftSafe . legacySafeToSafe
+
 liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
 liftErrorTuple = liftError . tupleToError
 
@@ -88,22 +88,11 @@ liftMaybeOrError e = liftSafe . maybeToRight e
 safe :: a -> Safe a
 safe = pure
 
-safeLegacyToSafe :: SafeLegacy a -> Safe a
-safeLegacyToSafe = first toText
+legacySafeToSafe :: LegacySafe a -> Safe a
+legacySafeToSafe = first toText
 
-safeToSafeLegacy :: Safe a -> SafeLegacy a
-safeToSafeLegacy = first toString
-
----- Create from Maybe
-
-maybeToSafeOrErrorTupleList :: [ErrorTuple] -> Maybe a -> Safe a
-maybeToSafeOrErrorTupleList = maybeToSafeOrError . tupleListToError
-
-maybeToSafeOrErrorTuple :: ErrorTuple -> Maybe a -> Safe a
-maybeToSafeOrErrorTuple = maybeToSafeOrError . tupleToError
-
-maybeToSafeOrError :: Error -> Maybe a -> Safe a
-maybeToSafeOrError = maybeToRight
+safeToLegacySafe :: Safe a -> LegacySafe a
+safeToLegacySafe = first toString
 
 ---- Create Error
 
@@ -149,7 +138,7 @@ type MonadSafeError m = MonadError Error m
 
 type SafeExceptT m = ExceptT Error m
 
-type SafeLegacy = Either String
+type LegacySafe = Either String
 
 type Safe = Either Error
 
