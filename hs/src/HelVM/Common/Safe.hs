@@ -17,13 +17,13 @@ module HelVM.Common.Safe (
   liftErrorTuple,
   liftError,
 
-  safe,
-  legacySafeToSafe,
-  safeToLegacySafe,
-
   appendErrorTupleList,
   appendErrorTuple,
   appendError,
+
+  safe,
+  legacySafeToSafe,
+  safeToLegacySafe,
 
   tupleListToError,
   tupleToError,
@@ -89,6 +89,18 @@ liftErrorTuple = liftError . tupleToError
 liftError :: MonadSafeError m => Error -> m a
 liftError = throwError
 
+---- Append Error
+
+appendErrorTupleList :: MonadSafeError m => [ErrorTuple] -> m a -> m a
+appendErrorTupleList = appendError . tupleListToError
+
+appendErrorTuple :: MonadSafeError m => ErrorTuple -> m a -> m a
+appendErrorTuple = appendError . tupleToError
+
+appendError :: MonadSafeError m => Error -> m a -> m a
+--appendError message = first (<> message)
+appendError message a = catchError a appendAndThrow where appendAndThrow e = throwError (e <> message)
+
 -- Create Safe
 
 safe :: a -> Safe a
@@ -99,17 +111,6 @@ legacySafeToSafe = first toText
 
 safeToLegacySafe :: Safe a -> LegacySafe a
 safeToLegacySafe = first toString
-
----- Append Error
-
-appendErrorTupleList :: [ErrorTuple] -> Safe a -> Safe a
-appendErrorTupleList = appendError . tupleListToError
-
-appendErrorTuple :: ErrorTuple -> Safe a -> Safe a
-appendErrorTuple = appendError . tupleToError
-
-appendError :: Error -> Safe a -> Safe a
-appendError message = first (<> message)
 
 ----
 
