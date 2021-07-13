@@ -15,5 +15,5 @@ class Monad m => BusinessIO m where
 instance BusinessIO IO where
   wReadFile = readFileText
 
-instance BusinessIO (SafeMonadT IO) where
+instance BusinessIO (SafeExceptT IO) where
   wReadFile = hoistMonad . readFileText
