@@ -4,11 +4,10 @@ module HelVM.Common.Safe (
   exceptTToIO,
   userErrorText,
 
-  hoistMonad,
   liftExceptT,
   liftSafe,
   liftLegacySafe,
-  
+
   liftMaybeOrErrorTupleList,
   liftMaybeOrErrorTuple,
   liftMaybeOrError,
@@ -21,6 +20,7 @@ module HelVM.Common.Safe (
   appendErrorTuple,
   appendError,
 
+  safeExceptT,
   safe,
   legacySafeToSafe,
   safeToLegacySafe,
@@ -53,10 +53,7 @@ exceptTToIO = liftExceptT . withExceptT userErrorText
 userErrorText :: Text -> IOException
 userErrorText = userError . toString
 
----- Lift
-
-hoistMonad :: Monad m => m a -> SafeExceptT m a
-hoistMonad a = ExceptT $ safe <$> a
+-- Lift
 
 liftExceptT :: MonadError e m => ExceptT e m a -> m a
 liftExceptT m = liftEither =<< runExceptT m
@@ -89,7 +86,7 @@ liftErrorTuple = liftError . tupleToError
 liftError :: MonadSafeError m => Error -> m a
 liftError = throwError
 
----- Append Error
+-- Append Error
 
 appendErrorTupleList :: MonadSafeError m => [ErrorTuple] -> m a -> m a
 appendErrorTupleList = appendError . tupleListToError
@@ -98,10 +95,12 @@ appendErrorTuple :: MonadSafeError m => ErrorTuple -> m a -> m a
 appendErrorTuple = appendError . tupleToError
 
 appendError :: MonadSafeError m => Error -> m a -> m a
---appendError message = first (<> message)
 appendError message a = catchError a appendAndThrow where appendAndThrow e = throwError (e <> message)
 
 -- Create Safe
+
+safeExceptT :: Monad m => m a -> SafeExceptT m a
+safeExceptT a = ExceptT $ safe <$> a
 
 safe :: a -> Safe a
 safe = pure
