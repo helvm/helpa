@@ -49,17 +49,17 @@ exceptTToIO a = liftEither =<< runExceptT (withExceptT userErrorText a)
 userErrorText :: Text -> IOException
 userErrorText = userError . toString
 
-liftMonad :: MonadError e m => ExceptT e m a -> m a
-liftMonad m = liftEither =<< runExceptT m
-
 hoistMonad :: Monad m => m a -> SafeExceptT m a
 hoistMonad a = ExceptT $ safe <$> a
 
-liftError :: MonadSafeError m => Error -> m a
-liftError = throwError
+liftMonad :: MonadSafeError m => SafeExceptT m a -> m a
+liftMonad m = liftEither =<< runExceptT m
 
 liftSafe :: MonadSafeError m => Safe a -> m a
 liftSafe = liftEither
+
+liftError :: MonadSafeError m => Error -> m a
+liftError = throwError
 
 safeFailToFail ::  MonadFail m => SafeFail m a -> m a
 safeFailToFail m = safeToFail =<< m
