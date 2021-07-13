@@ -37,7 +37,7 @@ generateTLForInstruction _    debug i   = generateTLForInstruction' debug i
 
 generateTLForInstruction' :: Bool -> Instruction -> Safe TokenList
 -- Stack instructions
-generateTLForInstruction' _ (Push (Literal value)) = pure $ [S,S] <> valueToTL value
+generateTLForInstruction' _ (Push (Literal value)) = ([S,S] <>) <$> valueToTL value
 generateTLForInstruction' _  Dup                   = pure [S,N,S]
 generateTLForInstruction' _  Swap                  = pure [S,N,T]
 generateTLForInstruction' _  Pop                   = pure [S,N,N]
@@ -69,18 +69,18 @@ generateTLForInstruction' True  DebugPrintStack    = pure [N,N,S,S,S]
 generateTLForInstruction' True  DebugPrintHeap     = pure [N,N,S,S,T]
 generateTLForInstruction' False DebugPrintStack    = pure []
 generateTLForInstruction' False DebugPrintHeap     = pure []
-generateTLForInstruction' _ i = safeErrorTuple ("Can not handle instruction" , show i)
+generateTLForInstruction' _ i = liftErrorTuple ("Can not handle instruction" , show i)
 
-valueToTL :: Integer -> TokenList
-valueToTL value = integerToTL value <> [N]
+valueToTL :: Integer -> Safe TokenList
+valueToTL value = integerToTL value <&> (<> [N])
 
-integerToTL :: Integer -> TokenList
+integerToTL :: Integer -> Safe TokenList
 integerToTL value
-  | 0 <= value = S : naturalToTL (fromIntegral value)
-  | otherwise  = T : naturalToTL (fromIntegral (- value))
+  | 0 <= value = (S : ) <$> naturalToTL (fromIntegral value)
+  | otherwise  = (T : ) <$> naturalToTL (fromIntegral (- value))
 
-naturalToTL :: Natural -> TokenList
-naturalToTL v = unsafe $ sequenceA $ fromDigit <$> naturalToDigits2 v
+naturalToTL :: Natural -> Safe TokenList
+naturalToTL v = sequenceA $ fromDigit <$> naturalToDigits2 v
 
 identifierToTL :: Identifier -> TokenList
 identifierToTL v = (charToTL =<< unwrapIdentifier v) <> [N]

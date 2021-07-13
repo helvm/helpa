@@ -8,6 +8,7 @@ module HelVM.Common.Safe (
   liftExceptT,
   liftSafe,
   liftError,
+  liftErrorTuple,
 
   safe,
   safeLegacyToSafe,
@@ -66,6 +67,9 @@ liftSafe = liftEither
 
 liftError :: MonadSafeError m => Error -> m a
 liftError = throwError
+
+liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
+liftErrorTuple = liftError . tupleToError
 
 -- Create Safe
 
