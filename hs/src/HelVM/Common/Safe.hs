@@ -4,10 +4,10 @@ module HelVM.Common.Safe (
   exceptTToIO,
   userErrorText,
 
-  liftExceptT,
   hoistMonad,
-  liftError,
+  liftExceptT,
   liftSafe,
+  liftError,
 
   safe,
   safeLegacyToSafe,
