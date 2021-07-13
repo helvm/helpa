@@ -44,7 +44,7 @@ import Control.Monad.Except hiding (ExceptT , runExceptT)
 import System.IO.Error
 
 exceptTToIO :: SafeExceptT IO a -> IO a
-exceptTToIO a = liftEither =<< runExceptT (withExceptT userErrorText a)
+exceptTToIO a = liftMonad (withExceptT userErrorText a)
 
 userErrorText :: Text -> IOException
 userErrorText = userError . toString
@@ -52,7 +52,7 @@ userErrorText = userError . toString
 hoistMonad :: Monad m => m a -> SafeExceptT m a
 hoistMonad a = ExceptT $ safe <$> a
 
-liftMonad :: MonadSafeError m => SafeExceptT m a -> m a
+liftMonad :: MonadError e m => ExceptT e m a -> m a
 liftMonad m = liftEither =<< runExceptT m
 
 liftSafe :: MonadSafeError m => Safe a -> m a
