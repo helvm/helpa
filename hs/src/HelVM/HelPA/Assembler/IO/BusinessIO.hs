@@ -1,4 +1,3 @@
---{-# LANGUAGE UndecidableInstances #-}
 module HelVM.HelPA.Assembler.IO.BusinessIO (
   BIO,
   BusinessIO,
@@ -12,13 +11,9 @@ type BIO m = (MonadSafeError m , BusinessIO m)
 
 class Monad m => BusinessIO m where
   wReadFile :: FilePath -> m Text
---  wReadFile = liftIO . readFileText
 
 instance BusinessIO IO where
   wReadFile = readFileText
 
 instance BusinessIO (SafeMonadT IO) where
   wReadFile = hoistMonad . readFileText
-
---instance (Monad m , MonadIO m) => BusinessIO m where
---  wReadFile = liftIO . readFileText
