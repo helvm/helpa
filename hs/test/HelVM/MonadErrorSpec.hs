@@ -10,7 +10,6 @@ spec = do
     it "Right" $ do textRight `shouldBe` Right 1
     it "Left"  $ do textLeft  `shouldBe` Left "one"
 
---type TextEither a = Either Text a
 type MonadTextError m = MonadError Text m
 
 textRight :: MonadTextError m => m Integer
