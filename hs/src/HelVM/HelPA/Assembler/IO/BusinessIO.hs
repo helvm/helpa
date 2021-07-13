@@ -5,7 +5,6 @@ module HelVM.HelPA.Assembler.IO.BusinessIO (
 ) where
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeMonadT
 
 type BIO m = (MonadSafeError m , BusinessIO m)
 

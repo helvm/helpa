@@ -11,8 +11,7 @@ import HelVM.Common.Safe
 
 --import Control.Monad.Except
 
-hoistMonad :: Monad m => m a -> SafeMonadT m a
-hoistMonad a = ExceptT $ safe <$> a
+
 
 --except :: Monad m => Either e a -> ExceptT e m a
 hoistSafe :: Monad m => Safe a -> SafeMonadT m a
