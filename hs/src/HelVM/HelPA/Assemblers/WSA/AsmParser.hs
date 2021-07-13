@@ -1,5 +1,4 @@
 module HelVM.HelPA.Assemblers.WSA.AsmParser (
-  liftedParseAssemblyText,
   parseAssemblyText,
 ) where
 
@@ -14,11 +13,8 @@ import Control.Type.Operator
 import Data.Attoparsec.Text hiding (I , D)
 import Data.Char
 
-liftedParseAssemblyText :: MonadSafeError m => Text -> m InstructionList
-liftedParseAssemblyText = liftSafe . parseAssemblyText
-
-parseAssemblyText :: Text -> Safe InstructionList
-parseAssemblyText code = safeLegacyToSafe $ parseOnly (instructionListParser <*skipSpace <* endOfInput) code
+parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
+parseAssemblyText = liftSafe . safeLegacyToSafe . parseOnly (instructionListParser <*skipSpace <* endOfInput)
 
 instructionListParser :: Parser InstructionList
 instructionListParser = catMaybes <$> many maybeInstructionParser

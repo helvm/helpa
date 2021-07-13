@@ -20,7 +20,7 @@ expectTLinkLib :: BIO m => SourcePath -> m InstructionList
 expectTLinkLib = exceptTLinkApp . absolutePath
 
 exceptTLinkApp :: BIO m => SourcePath -> m InstructionList
-exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ liftedParseAssemblyText =<< wReadFile (filePath path)
+exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ parseAssemblyText =<< wReadFile (filePath path)
 
 exceptTIncludeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
 exceptTIncludeLibs dir il = sortBlocks <$> mapM (exceptTIncludeLib dir) il

@@ -15,7 +15,7 @@ import HelVM.HelPA.Assembler.IO.BusinessIO
 import HelVM.Common.Safe
 
 assembleFile :: BIO m => SourcePath -> AssemblyOptions -> m Text
-assembleFile sourcePath options = liftedReduceAndGenerateCode options =<< exceptTLinkApp sourcePath
+assembleFile sourcePath options = reduceAndGenerateCode options =<< exceptTLinkApp sourcePath
 
 assembleText :: MonadSafeError m => Text -> AssemblyOptions -> m Text
-assembleText code options = liftedReduceAndGenerateCode options =<< liftedParseAssemblyText code
+assembleText code options = reduceAndGenerateCode options =<< parseAssemblyText code

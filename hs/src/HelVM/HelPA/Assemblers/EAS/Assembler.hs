@@ -13,7 +13,7 @@ import HelVM.HelPA.Assembler.IO.BusinessIO
 import HelVM.Common.Safe
 
 assembleFile :: BIO m => SourcePath -> m Text
-assembleFile sourcePath = liftedReduceAndGenerateCode =<< linkApp sourcePath
+assembleFile sourcePath = reduceAndGenerateCode =<< linkApp sourcePath
 
 assembleText :: MonadSafeError m => Text -> m Text
-assembleText code = liftedReduceAndGenerateCode =<< liftedParseAssemblyText code
+assembleText code = reduceAndGenerateCode =<< parseAssemblyText code

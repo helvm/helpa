@@ -1,5 +1,4 @@
 module HelVM.HelPA.Assemblers.WSA.CodeGenerator (
-  liftedReduceAndGenerateCode,
   reduceAndGenerateCode,
   generateCode,
   valueToTL,
@@ -18,19 +17,16 @@ import HelVM.Common.Digit.Digitable
 import HelVM.Common.Digit.Digits
 import HelVM.Common.Safe
 
-liftedReduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
-liftedReduceAndGenerateCode options = liftSafe . reduceAndGenerateCode options
-
-reduceAndGenerateCode :: AssemblyOptions -> InstructionList -> Safe Text
+reduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
 reduceAndGenerateCode options il = generateCode (tokenType options) (startOfInstruction options) (debug options) $ reduce (endOfLine options) il
 
-generateCode :: TokenType -> Bool -> Bool -> InstructionList -> Safe Text
+generateCode :: MonadSafeError m => TokenType -> Bool -> Bool -> InstructionList -> m Text
 generateCode tokenType startOfInstruction debug il = showTLByType tokenType <$> generateTL startOfInstruction debug il
 
-generateTL :: Bool -> Bool -> InstructionList -> Safe TokenList
+generateTL :: MonadSafeError m => Bool -> Bool -> InstructionList -> m TokenList
 generateTL startOfInstruction debug il = join <$> sequenceA (generateTLForInstruction startOfInstruction debug <$> il)
 
-generateTLForInstruction :: Bool -> Bool -> Instruction -> Safe TokenList
+generateTLForInstruction :: MonadSafeError m => Bool -> Bool -> Instruction -> m TokenList
 generateTLForInstruction _    _     EOL = pure [R]
 generateTLForInstruction True debug i   = ([E] <>) <$> generateTLForInstruction' debug i
 generateTLForInstruction _    debug i   = generateTLForInstruction' debug i

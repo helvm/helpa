@@ -7,8 +7,11 @@ module HelVM.Common.Safe (
   hoistMonad,
   liftExceptT,
   liftSafe,
-  liftError,
   liftErrorTuple,
+  liftError,
+  liftMaybeOrErrorTupleList,
+  liftMaybeOrErrorTuple,
+  liftMaybeOrError,
 
   safe,
   safeLegacyToSafe,
@@ -65,11 +68,20 @@ liftExceptT m = liftEither =<< runExceptT m
 liftSafe :: MonadSafeError m => Safe a -> m a
 liftSafe = liftEither
 
+liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
+liftErrorTuple = liftError . tupleToError
+
 liftError :: MonadSafeError m => Error -> m a
 liftError = throwError
 
-liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
-liftErrorTuple = liftError . tupleToError
+liftMaybeOrErrorTupleList :: MonadSafeError m => [ErrorTuple] -> Maybe a -> m a
+liftMaybeOrErrorTupleList = liftMaybeOrError . tupleListToError
+
+liftMaybeOrErrorTuple :: MonadSafeError m => ErrorTuple -> Maybe a -> m a
+liftMaybeOrErrorTuple = liftMaybeOrError . tupleToError
+
+liftMaybeOrError :: MonadSafeError m => Error -> Maybe a -> m a
+liftMaybeOrError e = liftSafe . maybeToRight e
 
 -- Create Safe
 
