@@ -5,7 +5,7 @@ module HelVM.Common.Safe (
   userErrorText,
 
   liftExceptT,
-  liftMonad,
+  hoistMonad,
   liftError,
   liftSafe,
 
@@ -55,8 +55,8 @@ userErrorText = userError . toString
 
 ---- Lift
 
-liftMonad :: Monad m => m a -> SafeExceptT m a
-liftMonad a = ExceptT $ safe <$> a
+hoistMonad :: Monad m => m a -> SafeExceptT m a
+hoistMonad a = ExceptT $ safe <$> a
 
 liftExceptT :: MonadError e m => ExceptT e m a -> m a
 liftExceptT m = liftEither =<< runExceptT m
