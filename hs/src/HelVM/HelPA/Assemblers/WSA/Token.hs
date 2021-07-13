@@ -46,14 +46,14 @@ instance Show Token where
   show R = "\n"
 
 instance ToDigit Token where
-  toDigit S = safe 0
-  toDigit T = safe 1
-  toDigit t = safeError $ show t
+  toDigit S = pure 0
+  toDigit T = pure 1
+  toDigit t = liftError $ show t
 
 instance Digitable Token where
-  fromDigit 0 = safe S
-  fromDigit 1 = safe T
-  fromDigit t = safeError $ show t
+  fromDigit 0 = pure S
+  fromDigit 1 = pure T
+  fromDigit t = liftError $ show t
 
 ----
 

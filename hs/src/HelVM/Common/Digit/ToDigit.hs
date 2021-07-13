@@ -26,4 +26,4 @@ makeIntegral :: (ToDigit a , Integral b) => b -> [a] -> Safe b
 makeIntegral base digits = digitsToIntegral base (toDigit <$> digits)
 
 class ToDigit t where
-  toDigit :: Integral a => t -> Safe a
+  toDigit :: (MonadSafeError m, Integral a) => t -> m a

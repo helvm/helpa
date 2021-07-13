@@ -8,19 +8,18 @@ module HelVM.Common.Safe (
   liftExceptT,
   liftSafe,
   liftLegacySafe,
-  liftErrorTuple,
-  liftError,
+  
   liftMaybeOrErrorTupleList,
   liftMaybeOrErrorTuple,
   liftMaybeOrError,
 
+  liftErrorTupleList,
+  liftErrorTuple,
+  liftError,
+
   safe,
   legacySafeToSafe,
   safeToLegacySafe,
-
-  safeErrorTupleList,
-  safeErrorTuple,
-  safeError,
 
   appendErrorTupleList,
   appendErrorTuple,
@@ -68,11 +67,7 @@ liftSafe = liftEither
 liftLegacySafe :: MonadSafeError m => LegacySafe a -> m a
 liftLegacySafe = liftSafe . legacySafeToSafe
 
-liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
-liftErrorTuple = liftError . tupleToError
-
-liftError :: MonadSafeError m => Error -> m a
-liftError = throwError
+-- Lift from Maybe
 
 liftMaybeOrErrorTupleList :: MonadSafeError m => [ErrorTuple] -> Maybe a -> m a
 liftMaybeOrErrorTupleList = liftMaybeOrError . tupleListToError
@@ -82,6 +77,17 @@ liftMaybeOrErrorTuple = liftMaybeOrError . tupleToError
 
 liftMaybeOrError :: MonadSafeError m => Error -> Maybe a -> m a
 liftMaybeOrError e = liftSafe . maybeToRight e
+
+-- Lift from Error
+
+liftErrorTupleList :: MonadSafeError m => [ErrorTuple] -> m a
+liftErrorTupleList = liftError . tupleListToError
+
+liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
+liftErrorTuple = liftError . tupleToError
+
+liftError :: MonadSafeError m => Error -> m a
+liftError = throwError
 
 -- Create Safe
 
@@ -93,17 +99,6 @@ legacySafeToSafe = first toText
 
 safeToLegacySafe :: Safe a -> LegacySafe a
 safeToLegacySafe = first toString
-
----- Create Error
-
-safeErrorTupleList :: [ErrorTuple] -> Safe a
-safeErrorTupleList = safeError . tupleListToError
-
-safeErrorTuple :: ErrorTuple -> Safe a
-safeErrorTuple = safeError . tupleToError
-
-safeError :: Error -> Safe a
-safeError = Left
 
 ---- Append Error
 
