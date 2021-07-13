@@ -42,6 +42,7 @@ library
 
         HelVM.Common.ReadText
         HelVM.Common.Safe
+        HelVM.Common.SafeMonadT
         HelVM.Common.Util
 
         HelVM.HelPA.Assembler.API
