@@ -39,7 +39,7 @@ replaceLabels addresses il = sequenceA $ replaceLabel addresses <$> il
 
 replaceLabel :: LabelAddresses -> Instruction -> Safe Instruction
 replaceLabel addresses (N (Variable l)) = N . Literal <$> indexSafeByKey l addresses
-replaceLabel _          i               = safe i
+replaceLabel _          i               = pure i
 
 ----
 
