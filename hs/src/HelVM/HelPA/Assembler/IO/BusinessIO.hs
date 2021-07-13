@@ -15,4 +15,4 @@ instance BusinessIO IO where
   wReadFile = readFileText
 
 instance BusinessIO (SafeExceptT IO) where
-  wReadFile = hoistMonad . readFileText
+  wReadFile = liftMonad . readFileText

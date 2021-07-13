@@ -3,9 +3,9 @@ module HelVM.Common.Safe (
   safeToIO,
   exceptTToIO,
   userErrorText,
-  
+
+  liftExceptT,
   liftMonad,
-  hoistMonad,
   liftError,
   liftSafe,
 
@@ -48,18 +48,18 @@ safeToIO :: Safe a -> IO a
 safeToIO = exceptTToIO . liftSafe
 
 exceptTToIO :: SafeExceptT IO a -> IO a
-exceptTToIO = liftMonad . withExceptT userErrorText
+exceptTToIO = liftExceptT . withExceptT userErrorText
 
 userErrorText :: Text -> IOException
 userErrorText = userError . toString
 
 ---- Lift
 
-hoistMonad :: Monad m => m a -> SafeExceptT m a
-hoistMonad a = ExceptT $ safe <$> a
+liftMonad :: Monad m => m a -> SafeExceptT m a
+liftMonad a = ExceptT $ safe <$> a
 
-liftMonad :: MonadError e m => ExceptT e m a -> m a
-liftMonad m = liftEither =<< runExceptT m
+liftExceptT :: MonadError e m => ExceptT e m a -> m a
+liftExceptT m = liftEither =<< runExceptT m
 
 liftSafe :: MonadSafeError m => Safe a -> m a
 liftSafe = liftEither
