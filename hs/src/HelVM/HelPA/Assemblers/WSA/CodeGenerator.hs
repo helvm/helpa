@@ -35,7 +35,7 @@ generateTLForInstruction _    _     EOL = pure [R]
 generateTLForInstruction True debug i   = ([E] <>) <$> generateTLForInstruction' debug i
 generateTLForInstruction _    debug i   = generateTLForInstruction' debug i
 
-generateTLForInstruction' :: Bool -> Instruction -> Safe TokenList
+generateTLForInstruction' :: MonadSafeError m => Bool -> Instruction -> m TokenList
 -- Stack instructions
 generateTLForInstruction' _ (Push (Literal value)) = ([S,S] <>) <$> valueToTL value
 generateTLForInstruction' _  Dup                   = pure [S,N,S]
@@ -71,16 +71,16 @@ generateTLForInstruction' False DebugPrintStack    = pure []
 generateTLForInstruction' False DebugPrintHeap     = pure []
 generateTLForInstruction' _ i = liftErrorTuple ("Can not handle instruction" , show i)
 
-valueToTL :: Integer -> Safe TokenList
+valueToTL :: MonadSafeError m => Integer -> m TokenList
 valueToTL value = integerToTL value <&> (<> [N])
 
-integerToTL :: Integer -> Safe TokenList
+integerToTL :: MonadSafeError m => Integer -> m TokenList
 integerToTL value
   | 0 <= value = (S : ) <$> naturalToTL (fromIntegral value)
   | otherwise  = (T : ) <$> naturalToTL (fromIntegral (- value))
 
-naturalToTL :: Natural -> Safe TokenList
-naturalToTL v = sequenceA $ fromDigit <$> naturalToDigits2 v
+naturalToTL :: MonadSafeError m => Natural -> m TokenList
+naturalToTL v = liftSafe $ sequenceA $ fromDigit <$> naturalToDigits2 v
 
 identifierToTL :: Identifier -> TokenList
 identifierToTL v = (charToTL =<< unwrapIdentifier v) <> [N]
