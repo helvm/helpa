@@ -1,14 +1,12 @@
 module HelVM.Common.Safe (
+  safeIOToIO,
+  safeToIO,
   exceptTToIO,
   liftMonad,
   hoistMonad,
   liftError,
   liftSafe,
   userErrorText,
-
-  safeFailToFail,
-  safeToFail,
-  safeLegacyToFail,
 
   safe,
   safeLegacyToSafe,
@@ -33,7 +31,6 @@ module HelVM.Common.Safe (
 
   MonadSafeError,
   SafeExceptT,
-  SafeFail,
   Safe,
   Error,
 ) where
@@ -42,6 +39,12 @@ import Control.Exception.Base
 import Control.Monad.Except hiding (ExceptT , runExceptT)
 
 import System.IO.Error
+
+safeIOToIO :: IO (Safe a) -> IO a
+safeIOToIO a = join $ safeToIO <$> a
+
+safeToIO :: Safe a -> IO a
+safeToIO = exceptTToIO . liftSafe
 
 exceptTToIO :: SafeExceptT IO a -> IO a
 exceptTToIO a = liftMonad (withExceptT userErrorText a)
@@ -60,16 +63,6 @@ liftSafe = liftEither
 
 liftError :: MonadSafeError m => Error -> m a
 liftError = throwError
-
-safeFailToFail ::  MonadFail m => SafeFail m a -> m a
-safeFailToFail m = safeToFail =<< m
-
-safeToFail ::  MonadFail m => Safe a -> m a
-safeToFail = safeLegacyToFail . safeToSafeLegacy
-
-safeLegacyToFail :: MonadFail m => SafeLegacy a -> m a
-safeLegacyToFail (Right a) = pure a
-safeLegacyToFail (Left a)  = fail a
 
 -- Create Safe
 
@@ -136,8 +129,6 @@ unsafe (Left a) = error a
 type MonadSafeError m = MonadError Error m
 
 type SafeExceptT m = ExceptT Error m
-
-type SafeFail m a = m (Safe a)
 
 type SafeLegacy = Either String
 

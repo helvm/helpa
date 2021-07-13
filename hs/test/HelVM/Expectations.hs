@@ -30,11 +30,11 @@ goldenShouldSafeExceptT actualOutput = goldenShouldReturn (exceptTToIO actualOut
 
 infix 1 `goldenShouldSafe`
 goldenShouldSafe :: (Typeable a , Show a) => Safe a -> FilePath -> WrappedGoldenIO Text
-goldenShouldSafe actualOutput = goldenShouldReturn (safeToFail actualOutput)
+goldenShouldSafe actualOutput = goldenShouldReturn (safeToIO actualOutput)
 
 infix 1 `goldenShouldSafeReturn`
-goldenShouldSafeReturn :: (Typeable a , Show a) => SafeFail IO a -> FilePath -> WrappedGoldenIO Text
-goldenShouldSafeReturn = goldenShouldReturn . safeFailToFail
+goldenShouldSafeReturn :: (Typeable a , Show a) => IO (Safe a) -> FilePath -> WrappedGoldenIO Text
+goldenShouldSafeReturn = goldenShouldReturn . safeIOToIO
 
 infix 1 `goldenShouldReturn`
 goldenShouldReturn :: (Typeable a , Show a) => IO a -> FilePath -> WrappedGoldenIO Text
@@ -56,7 +56,7 @@ goldenShouldBe actualOutput fileName =
 ----
 
 infix 1 `ioShouldSafe`
-ioShouldSafe :: (Show a , Eq a) => SafeFail IO a -> IO a -> Expectation
+ioShouldSafe :: (Show a , Eq a) => IO (Safe a) -> IO a -> Expectation
 ioShouldSafe action expected = join $ liftA2 shouldSafe action expected
 
 infix 1 `shouldSafe`
@@ -75,8 +75,8 @@ shouldSafeExceptT action = shouldReturn (exceptTToIO action)
 
 
 infix 1 `shouldSafeReturn`
-shouldSafeReturn :: (Show a , Eq a) => SafeFail IO a -> a -> Expectation
-shouldSafeReturn action = shouldReturn (safeFailToFail action)
+shouldSafeReturn :: (Show a , Eq a) => IO (Safe a) -> a -> Expectation
+shouldSafeReturn action = shouldReturn (safeIOToIO action)
 
 infix 1 `shouldBeDo`
 shouldBeDo :: (HasCallStack , Show a , Eq a) => a -> IO a -> Expectation
