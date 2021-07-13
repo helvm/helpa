@@ -1,13 +1,12 @@
 {-# LANGUAGE UndecidableInstances #-}
 module HelVM.HelPA.Assembler.IO.BusinessIO (
   BIO,
-  wReadFile,
   BusinessIO,
+  wReadFile,
 ) where
 
 import HelVM.Common.Safe
 
---type BIO m = (WithLog env Text m , MonadSafeError m , BusinessIO m)
 type BIO m = (MonadSafeError m , BusinessIO m)
 
 class (Monad m , MonadIO m) => BusinessIO m where
