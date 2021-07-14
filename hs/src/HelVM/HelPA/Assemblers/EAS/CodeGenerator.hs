@@ -18,7 +18,7 @@ reduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
 reduceAndGenerateCode il = generateCode =<< reduce il
 
 generateCode :: MonadSafeError m => InstructionList -> m Text
-generateCode il = mconcat <$> (sequenceA $ generateCode' <$> il)
+generateCode il = mconcat <$> sequenceA (generateCode' <$> il)
 
 generateCode' :: MonadSafeError m => Instruction -> m Text
 generateCode' (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
