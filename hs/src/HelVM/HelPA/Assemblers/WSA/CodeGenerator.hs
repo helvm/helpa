@@ -79,7 +79,7 @@ naturalToTL :: MonadSafeError m => Natural -> m TokenList
 naturalToTL v = liftSafe $ sequenceA $ fromDigit <$> naturalToDigits2 v
 
 identifierToTL :: MonadSafeError m => Identifier -> m TokenList
-identifierToTL v = (join <$> (sequenceA $ (charToTL <$> unwrapIdentifier v))) <&> (<> [N])
+identifierToTL v = (join <$> (sequenceA (charToTL <$> unwrapIdentifier v))) <&> (<> [N])
 
 charToTL :: MonadSafeError m => Char -> m TokenList
 charToTL v = sequenceA $ fromDigit <$> toBits8 (ord v `mod` 256)
