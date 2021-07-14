@@ -29,7 +29,7 @@ spec = do
           , ("bottles"  , bottlesILReduced)
           , ("euclid"   , euclidILReduced)
           ] $ \(fileName , ilReduced) -> do
-      it fileName $ do generateCode ilReduced `goldenShouldBe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
+      it fileName $ do generateCode ilReduced `goldenShouldSafe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
 
   describe "naturalToDigitString" $ do
     forM_ [ (0      , "")

@@ -15,10 +15,10 @@ import HelVM.Common.Containers.Lookup
 import HelVM.Common.Safe
 
 reduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
-reduceAndGenerateCode il = liftSafe $ generateCode <$> reduce il
+reduceAndGenerateCode il = generateCode =<< reduce il
 
-generateCode :: InstructionList -> Text
-generateCode il = mconcat $ unsafe $ sequenceA $ generateCode' <$> il
+generateCode :: MonadSafeError m => InstructionList -> m Text
+generateCode il = mconcat <$> (sequenceA $ generateCode' <$> il)
 
 generateCode' :: MonadSafeError m => Instruction -> m Text
 generateCode' (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
