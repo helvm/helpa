@@ -43,8 +43,8 @@ spec = do
     it "valueToTL -7" $ do valueToTL (-7) `shouldSafe` [T,T,T,T,N]
 
   describe "identifierToTL" $ do
-    it "identifierToTL \" \"" $ do identifierToTL " " `shouldBe` [S,S,T,S,S,S,S,S , N]
-    it "identifierToTL \"A\"" $ do identifierToTL "A" `shouldBe` [S,T,S,S,S,S,S,T , N]
-    it "identifierToTL \"Z\"" $ do identifierToTL "Z" `shouldBe` [S,T,S,T,T,S,T,S , N]
-    it "identifierToTL \"a\"" $ do identifierToTL "a" `shouldBe` [S,T,T,S,S,S,S,T , N]
-    it "identifierToTL \"z\"" $ do identifierToTL "z" `shouldBe` [S,T,T,T,T,S,T,S , N]
+    it "identifierToTL \" \"" $ do identifierToTL " " `shouldSafe` [S,S,T,S,S,S,S,S , N]
+    it "identifierToTL \"A\"" $ do identifierToTL "A" `shouldSafe` [S,T,S,S,S,S,S,T , N]
+    it "identifierToTL \"Z\"" $ do identifierToTL "Z" `shouldSafe` [S,T,S,T,T,S,T,S , N]
+    it "identifierToTL \"a\"" $ do identifierToTL "a" `shouldSafe` [S,T,T,S,S,S,S,T , N]
+    it "identifierToTL \"z\"" $ do identifierToTL "z" `shouldSafe` [S,T,T,T,T,S,T,S , N]

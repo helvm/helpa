@@ -47,11 +47,11 @@ generateTLForInstruction' _ (Mod Nothing)          = pure [T,S,T,T]
 generateTLForInstruction' _ (Store Nothing)        = pure [T,T,S]
 generateTLForInstruction' _ (Load  Nothing)        = pure [T,T,T]
 -- Control
-generateTLForInstruction' _ (Mark    label)        = pure $ [N,S,S] <> identifierToTL label
-generateTLForInstruction' _ (Call    label)        = pure $ [N,S,T] <> identifierToTL label
-generateTLForInstruction' _ (Branch  label)        = pure $ [N,S,N] <> identifierToTL label
-generateTLForInstruction' _ (BranchZ label)        = pure $ [N,T,S] <> identifierToTL label
-generateTLForInstruction' _ (BranchM label)        = pure $ [N,T,T] <> identifierToTL label
+generateTLForInstruction' _ (Mark    label)        = ([N,S,S] <>) <$> identifierToTL label
+generateTLForInstruction' _ (Call    label)        = ([N,S,T] <> ) <$> identifierToTL label
+generateTLForInstruction' _ (Branch  label)        = ([N,S,N] <> ) <$> identifierToTL label
+generateTLForInstruction' _ (BranchZ label)        = ([N,T,S] <> ) <$> identifierToTL label
+generateTLForInstruction' _ (BranchM label)        = ([N,T,T] <> ) <$>identifierToTL label
 generateTLForInstruction' _  Return                = pure [N,T,N]
 generateTLForInstruction' _  End                   = pure [N,N,N]
 -- IO instructions
@@ -78,11 +78,11 @@ integerToTL value
 naturalToTL :: MonadSafeError m => Natural -> m TokenList
 naturalToTL v = liftSafe $ sequenceA $ fromDigit <$> naturalToDigits2 v
 
-identifierToTL :: Identifier -> TokenList
-identifierToTL v = (charToTL =<< unwrapIdentifier v) <> [N]
+identifierToTL :: MonadSafeError m => Identifier -> m TokenList
+identifierToTL v = (join <$> (sequenceA $ (charToTL <$> unwrapIdentifier v))) <&> (<> [N])
 
-charToTL :: Char -> TokenList
-charToTL v = unsafe $ sequenceA $ fromDigit <$> toBits8 (ord v `mod` 256)
+charToTL :: MonadSafeError m => Char -> m TokenList
+charToTL v = sequenceA $ fromDigit <$> toBits8 (ord v `mod` 256)
 
 toBits8 :: Int -> [Natural]
 toBits8 = toBitsBySize 8
