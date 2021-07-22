@@ -1,11 +1,11 @@
-{-# Language DataKinds          #-}
-{-# Language ExplicitNamespaces #-}
+{-# LANGUAGE DataKinds          #-}
+{-# LANGUAGE ExplicitNamespaces #-}
 
 module AppOptions where
 
-import HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assembler.TokenType
 
-import Options.Applicative
+import           Options.Applicative
 
 optionParser :: Parser AppOptions
 optionParser = AppOptions
@@ -67,5 +67,5 @@ langs = [HAPAPL , EAS , WSA]
 
 computeLang :: String -> Lang
 computeLang raw = valid $ readMaybe raw where
-  valid (Just a)  = a
-  valid Nothing = error $ "Lang '" <> toText raw <> "' is not valid lang. Valid langs are : " <> show langs
+  valid (Just a) = a
+  valid Nothing  = error $ "Lang '" <> toText raw <> "' is not valid lang. Valid langs are : " <> show langs

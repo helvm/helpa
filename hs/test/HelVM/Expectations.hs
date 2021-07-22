@@ -7,9 +7,9 @@ module HelVM.Expectations  (
   shouldBeDo,
 ) where
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import Test.Hspec.Expectations.Pretty
+import           Test.Hspec.Expectations.Pretty
 
 infix 1 `ioShouldSafe`
 ioShouldSafe :: (Show a , Eq a) => IO (Safe a) -> IO a -> Expectation

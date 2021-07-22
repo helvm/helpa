@@ -1,7 +1,16 @@
 module HelVM.HelPA.Assemblers.WSA.Instruction where
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
+import           HelVM.Common.Collections.SList
+
+pushLiteral :: Integer -> Instruction
+pushLiteral = Push . Literal
+
+pushSLiteral :: SString -> Instruction
+pushSLiteral = PushS . Literal
+
+----
 data Instruction =
 -- Stack instructions
     Push  !IntegerValue
@@ -9,7 +18,7 @@ data Instruction =
   | Pop
   | Dup
   | Swap
---Arithmetic
+-- Arithmetic
   | Add !(Maybe IntegerValue)
   | Sub !(Maybe IntegerValue)
   | Mul !(Maybe IntegerValue)
@@ -42,7 +51,7 @@ data Instruction =
 -- Pseudo instructions
   | Include      !Identifier
   | Test         !Integer
-  | ValueString  !Identifier !String
+  | ValueString  !Identifier !SString
   | ValueInteger !Identifier !Natural
   | IfOption     !Identifier
   | ElseOption

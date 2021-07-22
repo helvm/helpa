@@ -13,3 +13,5 @@ Currently, 🧑‍🏭 **HELPA** can assemble:
 [comment]: <> (* 🖤 WMachine Assembler Language)
 
 For more see [CHANGELOG](CHANGELOG.md).
+
+## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄

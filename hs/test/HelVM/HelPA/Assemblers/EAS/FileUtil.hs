@@ -5,7 +5,7 @@ module HelVM.HelPA.Assemblers.EAS.FileUtil (
   easDir
 ) where
 
-import System.FilePath.Posix
+import           System.FilePath.Posix
 
 buildAbsolutePathToEtaFile :: FilePath -> FilePath
 buildAbsolutePathToEtaFile fileName = dir </> "eta" </> fileName <.> "eta"

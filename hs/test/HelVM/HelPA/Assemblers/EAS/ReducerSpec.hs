@@ -1,11 +1,11 @@
 module HelVM.HelPA.Assemblers.EAS.ReducerSpec where
 
-import HelVM.HelPA.Assemblers.EAS.Reducer
-import HelVM.HelPA.Assemblers.EAS.TestData
+import           HelVM.HelPA.Assemblers.EAS.Reducer
+import           HelVM.HelPA.Assemblers.EAS.TestData
 
-import HelVM.Expectations
+import           HelVM.Expectations
 
-import Test.Hspec (Spec , describe , it)
+import           Test.Hspec                          (Spec, describe, it)
 
 spec :: Spec
 spec = do

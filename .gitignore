@@ -35,3 +35,4 @@ _site
 out/
 
 /stan.html
+*.tix

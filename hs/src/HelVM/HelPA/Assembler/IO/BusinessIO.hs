@@ -4,7 +4,7 @@ module HelVM.HelPA.Assembler.IO.BusinessIO (
   wReadFile,
 ) where
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
 type BIO m = (MonadSafeError m , BusinessIO m)
 

@@ -1,8 +1,10 @@
 module HelVM.HelPA.Assemblers.WSA.Reducer where
 
-import HelVM.HelPA.Assemblers.WSA.Instruction
+import           HelVM.HelPA.Assemblers.WSA.Instruction
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
+
+import qualified Data.ListLike                          as LL
 
 reduce :: Bool ->  InstructionList -> InstructionList
 reduce True  il = reduceInstruction =<< addEndOfLine =<< il
@@ -12,8 +14,7 @@ addEndOfLine :: Instruction -> InstructionList
 addEndOfLine i = [i , EOL]
 
 reduceInstruction :: Instruction -> InstructionList
-reduceInstruction (PushS (Literal [])) = [Push (Literal 0)]
-reduceInstruction (PushS (Literal (x:xs))) = reduceInstruction (PushS (Literal xs)) <> [Push (Literal (fromIntegral (ord x)))]
+reduceInstruction (PushS (Literal s)) = reducePushS s
 
 reduceInstruction (Test v)         = [Dup , Push (Literal v), Sub Nothing]
 reduceInstruction (Load  (Just v)) = [Push v , Load Nothing]
@@ -39,6 +40,11 @@ reduceInstruction (BranchNP l) = [Dup , BranchM l1 , Dup , BranchZ l1 , Branch l
   l2 = calculateLocalLabel l 2
 
 reduceInstruction i = [i]
+
+reducePushS :: LL.ListLike t Char => t -> InstructionList
+reducePushS s = reducePushS' $ LL.uncons s where
+  reducePushS'  Nothing        = [pushLiteral 0]
+  reducePushS' (Just (x , xs)) = reducePushS xs <> [pushLiteral $ fromIntegral $ ord x]
 
 calculateLocalLabel :: Identifier -> Integer -> Identifier
 calculateLocalLabel label suffix = label <> ":" <> show suffix

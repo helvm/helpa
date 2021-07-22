@@ -1,13 +1,13 @@
 module HelVM.HelPA.Assemblers.WSA.Token where
 
-import HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assembler.TokenType
 
-import HelVM.Common.Digit.Digitable
-import HelVM.Common.Digit.ToDigit
-import HelVM.Common.Safe
-import HelVM.Common.Containers.Util
+import           HelVM.Common.Containers.Util
+import           HelVM.Common.Digit.Digitable
+import           HelVM.Common.Digit.ToDigit
+import           HelVM.Common.Safe
 
-import Text.Read
+import           Text.Read
 
 import qualified Text.Show
 
@@ -68,7 +68,7 @@ instance Show WhiteToken where
   show (WhiteToken N) = "\n"
   show (WhiteToken _) = ""
 
--- Scanner
+-- | Scanner
 instance Read WhiteToken where
   readsPrec _ " "  = [( WhiteToken S , "")]
   readsPrec _ "\t" = [( WhiteToken T , "")]

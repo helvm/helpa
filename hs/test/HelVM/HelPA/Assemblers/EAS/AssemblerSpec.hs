@@ -1,15 +1,15 @@
 module HelVM.HelPA.Assemblers.EAS.AssemblerSpec where
 
-import HelVM.HelPA.Assemblers.EAS.Assembler
-import HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.Assembler
+import           HelVM.HelPA.Assemblers.EAS.FileUtil
 
-import HelVM.GoldenExpectations
+import           HelVM.GoldenExpectations
 
-import HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.API
 
-import System.FilePath.Posix
+import           System.FilePath.Posix
 
-import Test.Hspec (Spec , describe , it)
+import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
 spec = do

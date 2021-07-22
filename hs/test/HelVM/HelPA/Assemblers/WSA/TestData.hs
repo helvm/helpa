@@ -1,9 +1,9 @@
 module HelVM.HelPA.Assemblers.WSA.TestData where
 
-import HelVM.HelPA.Assemblers.WSA.Instruction
-import HelVM.HelPA.Assemblers.WSA.Token
+import           HelVM.HelPA.Assemblers.WSA.Instruction
+import           HelVM.HelPA.Assemblers.WSA.Token
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
 ioIL :: InstructionList
 ioIL =

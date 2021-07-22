@@ -2,16 +2,16 @@ module HelVM.HelPA.Assemblers.WSA.AsmParser (
   parseAssemblyText,
 ) where
 
-import HelVM.HelPA.Assemblers.WSA.Instruction
+import           HelVM.HelPA.Assemblers.WSA.Instruction
 
-import HelVM.HelPA.Assembler.AsmParserUtil
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.AsmParserUtil
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import Control.Type.Operator
-import Data.Attoparsec.Text hiding (I , D)
-import Data.Char
+import           Control.Type.Operator
+import           Data.Attoparsec.Text                   hiding (D, I)
+import           Data.Char
 
 parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
 parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <*skipSpace <* endOfInput)
@@ -81,7 +81,7 @@ pushParser :: Parser Instruction
 pushParser = Push . Literal <$> (asciiCI "push" *> skip1HorizontalSpace *> integerParser)
 
 pushSParser :: Parser Instruction
-pushSParser = PushS . Literal <$> (asciiCI "pushs" *> skipHorizontalSpace *> stringParser)
+pushSParser = PushS . Literal . fromString <$> (asciiCI "pushs" *> skipHorizontalSpace *> stringParser)
 
 ----
 

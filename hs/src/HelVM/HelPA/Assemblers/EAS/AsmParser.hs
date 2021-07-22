@@ -2,15 +2,15 @@ module HelVM.HelPA.Assemblers.EAS.AsmParser (
   parseAssemblyText,
 ) where
 
-import HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Assembler.AsmParserUtil
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.AsmParserUtil
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import Data.Attoparsec.Text hiding (I , D)
-import Data.Char
+import           Data.Attoparsec.Text                   hiding (D, I)
+import           Data.Char
 
 parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
 parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <* endOfInput)
@@ -49,7 +49,7 @@ naturalNumberParser = N <$> (
   )
 
 unescapedStringParser :: Parser Instruction
-unescapedStringParser = U <$> stringParser
+unescapedStringParser = U . fromString <$> stringParser
 
 labelDefinitionParser :: Parser Instruction
 labelDefinitionParser = L <$> (char '>' *> identifierParser <* char ':')

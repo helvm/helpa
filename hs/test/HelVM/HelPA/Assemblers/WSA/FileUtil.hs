@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.WSA.FileUtil where
 
-import System.FilePath.Posix
+import           System.FilePath.Posix
 
 buildAbsolutePathToWsFile :: FilePath -> FilePath
 buildAbsolutePathToWsFile fileName = wsaDir </> "ws" </> fileName <.> "ws"

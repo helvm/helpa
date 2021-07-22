@@ -1,20 +1,20 @@
-{-# Language NamedFieldPuns   #-}
+{-# LANGUAGE NamedFieldPuns #-}
 module Main where
 
-import HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.API
 
-import HelVM.HelPA.Assembler.AssemblyOptions
-import HelVM.HelPA.Assembler.IO.BusinessIO
-import HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assembler.AssemblyOptions
+import           HelVM.HelPA.Assembler.IO.BusinessIO
+import           HelVM.HelPA.Assembler.TokenType
 
-import qualified HelVM.HelPA.Assemblers.EAS.Assembler as EAS
-import qualified HelVM.HelPA.Assemblers.WSA.Assembler as WSA
+import qualified HelVM.HelPA.Assemblers.EAS.Assembler  as EAS
+import qualified HelVM.HelPA.Assemblers.WSA.Assembler  as WSA
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import AppOptions
+import           AppOptions
 
-import Options.Applicative
+import           Options.Applicative
 
 main :: IO ()
 main = run =<< execParser opts where

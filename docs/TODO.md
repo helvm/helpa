@@ -14,3 +14,5 @@ Features to do:
 You can propose  languages and features by [GitHub](https://github.com/helvm/helap/issues).
 
 For more see [ROADMAP](ROADMAP.md).
+
+## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄

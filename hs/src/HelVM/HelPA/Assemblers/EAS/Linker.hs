@@ -3,12 +3,12 @@ module HelVM.HelPA.Assemblers.EAS.Linker (
   linkApp
 ) where
 
-import HelVM.HelPA.Assemblers.EAS.AsmParser
-import HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.AsmParser
+import           HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Assembler.API
-import HelVM.HelPA.Assembler.IO.BusinessIO
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.IO.BusinessIO
+import           HelVM.HelPA.Assembler.Value
 
 linkLib :: BIO m => SourcePath -> m InstructionList
 linkLib sourcePath = linkApp (absolutePath sourcePath)

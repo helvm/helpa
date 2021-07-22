@@ -1,14 +1,14 @@
 module HelVM.HelPA.Assemblers.WSA.Linker where
 
-import HelVM.HelPA.Assemblers.WSA.AsmParser
-import HelVM.HelPA.Assemblers.WSA.Instruction
+import           HelVM.HelPA.Assemblers.WSA.AsmParser
+import           HelVM.HelPA.Assemblers.WSA.Instruction
 
-import HelVM.HelPA.Assembler.API
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.HelPA.Assembler.IO.BusinessIO
+import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import Control.Type.Operator
+import           Control.Type.Operator
 
 linkLib :: BIO m => SourcePath -> m InstructionList
 linkLib = expectTLinkLib
@@ -30,10 +30,10 @@ sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list) --
 
 exceptTIncludeLib :: BIO m => FilePath -> Instruction -> m $ Block InstructionList
 exceptTIncludeLib dir (Include libName) = Included <$> expectTLinkLib (SourcePath {dirPath = dir , filePath = unwrapIdentifier libName <> ".wsa"})
-exceptTIncludeLib _ i = pure $ Normal [i]
+exceptTIncludeLib _ i                   = pure $ Normal [i]
 
 unwrap :: Block a -> a
-unwrap (Normal a) = a
+unwrap (Normal a)   = a
 unwrap (Included a) = a
 
 isNormal :: Block a -> Bool

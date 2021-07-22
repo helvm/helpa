@@ -6,13 +6,13 @@ module HelVM.GoldenExpectations (
   goldenShouldBe,
 ) where
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import Control.Type.Operator
-import System.FilePath.Posix
+import           Control.Type.Operator
+import           System.FilePath.Posix
 
-import Test.Hspec.Golden
-import Test.Hspec.Core.Spec
+import           Test.Hspec.Core.Spec
+import           Test.Hspec.Golden
 
 infixl 1 <->
 (<->) :: FilePath -> FilePath -> FilePath

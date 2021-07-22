@@ -24,9 +24,15 @@ cabal new-test --test-show-details=streaming
 You can run Helpa by `cabal` or directly:
 ```bash
 cabal run helpa assembler_file library_dictionary
-dist-newstyle/build/x86_64-osx/ghc-8.10.1/helpa-0.1.0.0/x/helpa/build/helpa/helpa assembler_file library_dictionary
+```
+
+or after build:
+```bash
+dist-newstyle/build/x86_64-linux/ghc-8.10.5/helpa-0.3.5.0/build/helpa/helpa assembler_file library_dictionary
 ```
 
 ## Other
 
 For more see [CONTRIBUTING](CONTRIBUTING.md).
+
+## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄

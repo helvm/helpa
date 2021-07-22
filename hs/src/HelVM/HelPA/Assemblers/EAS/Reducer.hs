@@ -3,14 +3,16 @@ module HelVM.HelPA.Assemblers.EAS.Reducer (
   reduce
 ) where
 
-import HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.Common.Containers.Util
-import HelVM.Common.Safe
+import           HelVM.Common.Containers.Util
+import           HelVM.Common.Safe
 
-import Data.List.Split
+import           Data.List.Split
+
+import qualified Data.ListLike                          as LL
 
 reduce :: MonadSafeError m => InstructionList -> m InstructionList
 reduce il = replaceStrings <$> replaceLabels addresses il where addresses = addressOfLabels il
@@ -47,7 +49,7 @@ replaceStrings :: InstructionList -> InstructionList
 replaceStrings il = replaceString =<< il
 
 replaceString :: Instruction -> InstructionList
-replaceString (U s) = charToInstruction <$> reverse s
+replaceString (U s) = charToInstruction <$> toList (LL.reverse s)
 replaceString  i    = [i]
 
 charToInstruction :: Char -> Instruction

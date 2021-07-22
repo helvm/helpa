@@ -1,120 +1,127 @@
-cabal-version:       2.4
+cabal-version:         2.4
 
-name:                helpa
-version:             0.3.4.0
+name:                  helpa
+version:               0.3.5.0
 
-synopsis:            HELPA - Heavenly Esoteric Little Para Assembler to esoteric languages implemented in Haskell/Eta
-description:         Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
-homepage:            https://helvm.github.io/helpa/
-bug-reports:         https://github.com/helvm/helpa/issues
+synopsis:              HELPA - Heavenly Esoteric Little Para Assembler to esoteric languages
+description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
+homepage:              https://helvm.github.io/helpa/
+bug-reports:           https://github.com/helvm/helpa/issues
 
-license:             Apache-2.0
-license-file:        docs/LICENSE
-author:              Kamil Adam
-maintainer:          kamil.adam.zabinski@gmail.com
-copyright:           2020-2021 WriteOnly Developers
+license:               Apache-2.0
+license-file:          docs/LICENSE-APACHE
+author:                Kamil Adam
+maintainer:            kamil.adam.zabinski@gmail.com
+copyright:             2020-2021 WriteOnly Developers
 
-category:            Language
-build-type:          Simple
+category:              Language
+build-type:            Simple
 extra-source-files:
   docs/CHANGELOG.md
   docs/README.md
 
-tested-with:         GHC == 8.10.5
+tested-with:           GHC == 9.0.1
 
 source-repository head
-  type:              git
-  location:          https://github.com/helvm/helpa
+  type:                git
+  location:            https://github.com/helvm/helpa
+
+flag ghcoptions
+    description: compile with options
+    manual     : True
+    default    : False
 
 common common-options
   build-depends:
-      base
-    , relude               == 1.0.0.0
+      base                 <  4.16
+    , relude               == 1.0.0.1
   mixins:
       base hiding (Prelude)
     , relude (Relude as Prelude, Relude.Extra, Data.Text)
-  ghc-options:
---Extensions
-    -XEmptyDataDecls
-    -XExistentialQuantification
-    -XFlexibleContexts
-    -XFlexibleInstances
-    -XFunctionalDependencies
-    -XGADTs
-    -XGeneralizedNewtypeDeriving
-    -XInstanceSigs
-    -XKindSignatures
-    -XLambdaCase
-    -XMultiParamTypeClasses
-    -XMultiWayIf
-    -XNamedFieldPuns
---    -XNoImplicitPrelude
-    -XOverloadedStrings
-    -XPartialTypeSignatures
-    -XPatternGuards
-    -XPolyKinds
-    -XRankNTypes
-    -XRecordWildCards
-    -XScopedTypeVariables
-    -XStandaloneDeriving
-    -XTupleSections
-    -XTypeFamilies
-    -XTypeSynonymInstances
-    -XViewPatterns
---    -XCPP
---    -XTemplateHaskell
---    -XForeignFunctionInterface
---    -XMagicHash
---    -XUnliftedFFITypes
-    -XTypeOperators
---    -XUnboxedTuples
---    -XPackageImports
---    -XQuasiQuotes
---    -XDeriveAnyClass
---    -XDeriveLift
---    -XStaticPointers
-    -XDerivingStrategies
-    -XConstraintKinds
-    -XStrictData
---Warnings
-    -Wall
-    -Wcompat
-    -Widentities
-    -Wincomplete-uni-patterns
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wnoncanonical-monad-instances
-    -fhide-source-paths
---    -Wmissing-export-lists FIXME
-    -Wpartial-fields
-    -Wmissing-deriving-strategies
-    -fwrite-ide-info
-    -hiedir=.hie
-    -Wunused-packages
-    -Werror
-    -fprint-potential-instances
-
   default-language:    Haskell2010
+  default-extensions:
+    EmptyDataDecls
+    ExistentialQuantification
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    InstanceSigs
+    KindSignatures
+    LambdaCase
+    MultiParamTypeClasses
+    MultiWayIf
+    NamedFieldPuns
+--    NoImplicitPrelude
+    OverloadedStrings
+    PartialTypeSignatures
+    PatternGuards
+    PolyKinds
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    StandaloneDeriving
+    TupleSections
+    TypeFamilies
+    TypeSynonymInstances
+    ViewPatterns
+--    CPP
+--    TemplateHaskell
+--    ForeignFunctionInterface
+--    MagicHash
+--    UnliftedFFITypes
+    TypeOperators
+--    UnboxedTuples
+--    PackageImports
+--    QuasiQuotes
+--    DeriveAnyClass
+--    DeriveLift
+--    StaticPointers
+    DerivingStrategies
+    ConstraintKinds
+    StrictData
+  if flag(ghcoptions)
+    ghc-options:
+      -Wall
+      -Wcompat
+      -Widentities
+      -Wincomplete-uni-patterns
+      -Wincomplete-record-updates
+      -Wredundant-constraints
+      -Wnoncanonical-monad-instances
+      -fhide-source-paths
+--    -Wmissing-export-lists FIXME
+      -Wpartial-fields
+      -Wmissing-deriving-strategies
+      -fwrite-ide-info
+      -hiedir=.hie
+      -Wunused-packages
+      -fprint-potential-instances
+      -Werror
 
 library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.Common.Containers.ChunksOf
-    HelVM.Common.Containers.FromList
-    HelVM.Common.Containers.Insert
-    HelVM.Common.Containers.Lookup
-    HelVM.Common.Containers.Pop
-    HelVM.Common.Containers.Reverse
-    HelVM.Common.Containers.SplitAt
+    HelVM.Common.Collections.MapList
+    HelVM.Common.Collections.SList
+
+    HelVM.Common.Containers.LLIndexSafe
+    HelVM.Common.Containers.LLInsertDef
+    HelVM.Common.Containers.MTIndexSafe
+    HelVM.Common.Containers.MTInsertDef
     HelVM.Common.Containers.Util
 
     HelVM.Common.Digit.Digitable
     HelVM.Common.Digit.Digits
     HelVM.Common.Digit.ToDigit
 
+    HelVM.Common.ListLikeUtil
+    HelVM.Common.NamedValue
     HelVM.Common.ReadText
     HelVM.Common.Safe
+    HelVM.Common.SequencesUtil
     HelVM.Common.Util
 
     HelVM.HelPA.Assembler.API
@@ -142,10 +149,13 @@ library
       attoparsec
     , containers           == 0.6.2.1
     , data-default
+    , dlist
     , ilist
-    , list-singleton
+    , ListLike
+    , mono-traversable
     , mtl
     , pretty-simple
+    , slist
     , split
     , type-operators
   ghc-options:
@@ -175,7 +185,8 @@ test-suite helpa-test
     HelVM.CartesianProduct
     HelVM.Expectations
     HelVM.GoldenExpectations
-    HelVM.MonadErrorSpec
+
+    HelVM.HelPA.Assemblers.AssemblyOptionsUtil
 
     HelVM.HelPA.Assemblers.EAS.AsmParserSpec
     HelVM.HelPA.Assemblers.EAS.AssemblerSpec
@@ -193,31 +204,35 @@ test-suite helpa-test
     HelVM.HelPA.Assemblers.WSA.ReducerSpec
     HelVM.HelPA.Assemblers.WSA.TestData
   build-depends:
-      helpa
-
-    , filepath
-    , mtl
-    , type-operators
-
-    , hspec
+      hspec
     , hspec-core
     , hspec-expectations-pretty-diff
     , hspec-golden
     , hspec-slow
+
+    , helpa
+
+    , filepath
+--    , mtl
+    , type-operators
+
   build-tool-depends:  hspec-discover:hspec-discover == 2.*
   ghc-options:
     -threaded
     -rtsopts
     -with-rtsopts=-N
 
---benchmark helpa-benchmark
---  import:              common-options
---  type:                exitcode-stdio-1.0
---  hs-source-dirs:      hs/benchmark
---  main-is:             Main.hs
---  build-depends:
---    helpa
---  ghc-options:
---    -threaded
---    -rtsopts
---    -with-rtsopts=-N
+benchmark helpa-benchmark
+  import:              common-options
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      hs/benchmark
+  main-is:             Main.hs
+  build-depends:
+      gauge
+
+--    , helpa
+
+  ghc-options:
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N

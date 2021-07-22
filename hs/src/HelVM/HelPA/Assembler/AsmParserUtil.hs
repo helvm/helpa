@@ -1,12 +1,12 @@
 module HelVM.HelPA.Assembler.AsmParserUtil where
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.Common.ReadText
+import           HelVM.Common.ReadText
 
-import Data.Attoparsec.Combinator
-import Data.Attoparsec.Text hiding (I , D)
-import Data.Char
+import           Data.Attoparsec.Combinator
+import           Data.Attoparsec.Text        hiding (D, I)
+import           Data.Char
 
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser

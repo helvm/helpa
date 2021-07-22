@@ -1,38 +1,40 @@
 module HelVM.HelPA.Assemblers.WSA.AssemblerSpec (spec) where
 
-import HelVM.HelPA.Assemblers.WSA.Assembler
-import HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.AssemblyOptionsUtil
+import           HelVM.HelPA.Assemblers.WSA.Assembler
+import           HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import HelVM.HelPA.Assembler.API
-import HelVM.HelPA.Assembler.AssemblyOptions
+import           HelVM.HelPA.Assembler.API
 
-import HelVM.CartesianProduct
-import HelVM.GoldenExpectations
+import           HelVM.Common.NamedValue
 
-import System.FilePath.Posix
+import           HelVM.CartesianProduct
+import           HelVM.GoldenExpectations
 
-import Test.Hspec (Spec , describe , it)
+import           System.FilePath.Posix
+
+import           Test.Hspec                                 (Spec, describe, it)
 
 spec :: Spec
 spec = do
-  let assembleLibFile = \ fileName options -> assembleFile SourcePath {dirPath = libDir , filePath = libDir </> fileName <.> ext} options
-  let assembleAppFile = \ fileName options -> assembleFile SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext} options
+  let assembleLibFile fileName = assembleFile SourcePath {dirPath = libDir , filePath = libDir </> fileName <.> ext}
+  let assembleAppFile fileName = assembleFile SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext}
 
   describe "assembleLib" $ do
     forM_ ([ "io"
            , "memory"
-           ] |><< manyOptionsWithName) $ \(fileName , name , options) -> do
-      let assembleLib = assembleLibFile fileName options
-      let minorPath = name </> fileName
+           ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+      let assembleLib = assembleLibFile fileName $ value namedOptions
+      let minorPath = name namedOptions </> fileName
       it minorPath $ do
         assembleLib `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
 
   describe "assembleApp" $ do
     describe "original" $ do
       forM_ ([ "prim"
-             ] |><< manyOptionsWithName) $ \(fileName , name , options) -> do
-        let assembleApp = assembleAppFile fileName options
-        let minorPath = name </> fileName
+             ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+        let assembleApp = assembleAppFile fileName $ value namedOptions
+        let minorPath = name namedOptions </> fileName
         it minorPath $ do
           assembleApp `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
 
@@ -54,9 +56,9 @@ spec = do
   --           , "fact"
              , "bottles"
   --           , "euclid"
-              ] |><< manyOptionsWithName) $ \(fileName , name , options) -> do
-        let assemble = assembleFile SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext} options
-        let minorPath = name </> fileName
+              ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+        let assemble = assembleFile SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext} $ value namedOptions
+        let minorPath = name namedOptions </> fileName
         it minorPath $ do
           assemble `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
 

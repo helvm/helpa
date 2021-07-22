@@ -5,29 +5,29 @@ module HelVM.HelPA.Assemblers.EAS.CodeGenerator (
   naturalToDigitString
 ) where
 
-import HelVM.HelPA.Assemblers.EAS.Instruction
-import HelVM.HelPA.Assemblers.EAS.Reducer
+import           HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.Reducer
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
-import HelVM.Common.Digit.Digits
-import HelVM.Common.Containers.Lookup
-import HelVM.Common.Safe
+import           HelVM.Common.Containers.MTIndexSafe
+import           HelVM.Common.Digit.Digits
+import           HelVM.Common.Safe
 
 reduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
 reduceAndGenerateCode il = generateCode =<< reduce il
 
 generateCode :: MonadSafeError m => InstructionList -> m Text
-generateCode il = mconcat <$> sequenceA (generateCode' <$> il)
+generateCode il = mconcat <$> sequenceA (generateCodeForInstruction <$> il)
 
-generateCode' :: MonadSafeError m => Instruction -> m Text
-generateCode' (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
-generateCode' (N (Variable i)) = liftError $ show i
-generateCode' (D i)            = liftError $ show i
-generateCode' (U i)            = liftError $ show i
-generateCode' (L _)            = pure ""
-generateCode' R                = pure "\n"
-generateCode' i                = pure $ show i
+generateCodeForInstruction :: MonadSafeError m => Instruction -> m Text
+generateCodeForInstruction (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
+generateCodeForInstruction (N (Variable i)) = liftError $ show i
+generateCodeForInstruction (D i)            = liftError $ show i
+generateCodeForInstruction (U i)            = liftError $ show i
+generateCodeForInstruction (L _)            = pure ""
+generateCodeForInstruction R                = pure "\n"
+generateCodeForInstruction i                = pure $ show i
 
 naturalToDigitText :: MonadSafeError m => Natural -> m Text
 naturalToDigitText value = toText <$> naturalToDigitString value

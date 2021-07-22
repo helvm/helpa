@@ -1,10 +1,10 @@
 module HelVM.HelPA.Assemblers.WSA.ReducerSpec (spec) where
 
-import HelVM.HelPA.Assemblers.WSA.Reducer
-import HelVM.HelPA.Assemblers.WSA.TestData
+import           HelVM.HelPA.Assemblers.WSA.Reducer
+import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import Test.Hspec (Spec , describe , it)
-import Test.Hspec.Expectations.Pretty
+import           Test.Hspec                          (Spec, describe, it)
+import           Test.Hspec.Expectations.Pretty
 
 spec :: Spec
 spec = do

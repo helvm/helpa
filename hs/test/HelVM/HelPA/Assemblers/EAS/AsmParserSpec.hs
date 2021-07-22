@@ -1,15 +1,15 @@
 module HelVM.HelPA.Assemblers.EAS.AsmParserSpec (spec) where
 
-import HelVM.HelPA.Assemblers.EAS.AsmParser
-import HelVM.HelPA.Assemblers.EAS.Instruction
-import HelVM.HelPA.Assemblers.EAS.FileUtil
-import HelVM.HelPA.Assemblers.EAS.TestData
+import           HelVM.HelPA.Assemblers.EAS.AsmParser
+import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.TestData
 
-import HelVM.Expectations
+import           HelVM.Expectations
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
-import Test.Hspec (Spec , describe , it)
+import           Test.Hspec                             (Spec, describe, it)
 
 spec :: Spec
 spec = do

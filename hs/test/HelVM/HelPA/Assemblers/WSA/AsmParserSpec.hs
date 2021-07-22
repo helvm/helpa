@@ -1,20 +1,20 @@
 module HelVM.HelPA.Assemblers.WSA.AsmParserSpec (spec) where
 
-import HelVM.HelPA.Assemblers.WSA.AsmParser
-import HelVM.HelPA.Assemblers.WSA.Instruction
-import HelVM.HelPA.Assemblers.WSA.TestData
-import HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.AsmParser
+import           HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.Instruction
+import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import HelVM.Common.Safe
+import           HelVM.Common.Safe
 
-import HelVM.Expectations
-import HelVM.GoldenExpectations
+import           HelVM.Expectations
+import           HelVM.GoldenExpectations
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
-import System.FilePath.Posix
+import           System.FilePath.Posix
 
-import Test.Hspec (Spec , describe , it)
+import           Test.Hspec                             (Spec, describe, it)
 
 spec :: Spec
 spec = do

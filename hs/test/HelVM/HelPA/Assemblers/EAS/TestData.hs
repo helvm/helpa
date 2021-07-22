@@ -1,8 +1,8 @@
 module HelVM.HelPA.Assemblers.EAS.TestData where
 
-import HelVM.HelPA.Assemblers.EAS.Instruction
+import           HelVM.HelPA.Assemblers.EAS.Instruction
 
-import HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assembler.Value
 
 trueIL :: InstructionList
 trueIL = []

@@ -1,15 +1,15 @@
 module HelVM.HelPA.Assemblers.EAS.LinkerSpec where
 
-import HelVM.HelPA.Assemblers.EAS.Linker
+import           HelVM.HelPA.Assemblers.EAS.Linker
 
-import HelVM.HelPA.Assemblers.EAS.TestData
-import HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.TestData
 
-import HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.API
 
-import HelVM.Expectations
+import           HelVM.Expectations
 
-import Test.Hspec (Spec , describe , it)
+import           Test.Hspec                          (Spec, describe, it)
 
 spec :: Spec
 spec = do

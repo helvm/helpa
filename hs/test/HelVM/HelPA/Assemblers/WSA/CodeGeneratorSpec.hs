@@ -1,19 +1,21 @@
 module HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec (spec) where
 
-import HelVM.HelPA.Assemblers.WSA.CodeGenerator
-import HelVM.HelPA.Assemblers.WSA.Token
-import HelVM.HelPA.Assemblers.WSA.TestData
-import HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.CodeGenerator
+import           HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.TestData
+import           HelVM.HelPA.Assemblers.WSA.Token
 
-import HelVM.CartesianProduct
-import HelVM.Expectations
-import HelVM.GoldenExpectations
+import           HelVM.HelPA.Assemblers.AssemblyOptionsUtil
 
-import HelVM.HelPA.Assembler.AssemblyOptions
+import           HelVM.Common.NamedValue
 
-import System.FilePath.Posix
+import           HelVM.CartesianProduct
+import           HelVM.Expectations
+import           HelVM.GoldenExpectations
 
-import Test.Hspec (Spec , describe , it)
+import           System.FilePath.Posix
+
+import           Test.Hspec                                 (Spec, describe, it)
 
 spec :: Spec
 spec = do
@@ -21,9 +23,9 @@ spec = do
     forM_ ([ ("io"     , ioILReduced)
            , ("memory" , memoryILReduced)
            , ("prim"   , primILReduced <> ioILReduced)
-           ] >><< manyOptionsWithName) $ \(fileName , il , name , options) -> do
-      it (name </> fileName) $ do
-        reduceAndGenerateCode options il `goldenShouldSafe` buildAbsolutePathToWsFile ("codeGenerator" </> name </> fileName)
+           ] >><| manyOptionsWithName) $ \(fileName , il , namedOptions) -> do
+      it (name namedOptions </> fileName) $ do
+        reduceAndGenerateCode (value namedOptions) il `goldenShouldSafe` buildAbsolutePathToWsFile ("codeGenerator" </> name namedOptions </> fileName)
 
   describe "valueToTL" $ do
     it "valueToTL 0"  $ do valueToTL   0  `shouldSafe` [S,N]
