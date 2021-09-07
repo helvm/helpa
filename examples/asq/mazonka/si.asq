@@ -1,0 +1,138 @@
+start:
+
+## [A1] = [PC]
+#       subleq A1   A1
+#       subleq PC   ZERO
+#       subleq ZERO A1
+#       subleq ZERO ZERO
+
+a1; pc zero; zero a1; zero
+
+## Code below (after modification from above) is equivalent to [A] = [[PC]]
+#       subleq A    A
+#A1:    data   0
+#       data   ZERO
+#       data   A2
+#A2:    subleq ZERO A
+#       subleq ZERO ZERO
+
+a; a1:0 zero a2; a2:zero a; zero
+
+## [A] = [A] + [LEN]
+#       subleq NEGL A
+
+negl a;
+
+## [PC] = [PC] + 1
+#       subleq NEG1 PC
+
+neg1 pc;
+
+## [B1] = [PC]
+#       subleq B1   B1
+#       subleq PC   ZERO
+#       subleq ZERO B1
+#      subleq ZERO ZERO
+
+b1; pc zero; zero b1; zero;
+
+
+## Code below (after modification from above) is equivalent to [B] = [[PC] + 1]
+#       subleq B    B
+#B1:    data   0
+#       data   ZERO
+#       data   B2
+#B2:    subleq ZERO B
+#       subleq ZERO ZERO
+
+b; b1:0 zero b2; b2:zero b; zero;
+
+## [B] = [B] + [LEN]
+#       subleq NEGL B
+
+negl b;
+
+## We have to copy [C] now, just in case the emulated subtraction modifies [[PC] + 2].
+## [PC] = [PC] + 1
+#       subleq NEG1  PC
+
+neg1 pc
+
+## [C1] = [PC]
+#       subleq C1    C1
+#       subleq PC    ZERO
+#       subleq ZERO  C1
+#       subleq ZERO  ZERO
+
+c1; pc zero; zero c1; zero;
+
+## Code below (after modification from above) is equivalent to [C] = [[PC] + 2]
+#       subleq C    C
+#C1:    data   0
+#       data   ZERO
+#       data   C2
+#C2:    subleq ZERO C
+#      subleq ZERO ZERO
+
+c; c1:0 zero c2; c2:zero c; zero;
+
+## [[B]] = [[B]] - [[A]];
+## if [[B]] <= 0 goto LEQZ
+#
+## Earlier code referring to addresses A and B has modified the next
+## couple of words to create the equivalent of "subleq [A] [B] LEQZ"
+## This is where we're "emulating" the subtraction...
+
+#A:     data   0
+#B:     data   0
+#       data   LEQZ
+
+a:0 b:0 leqz;
+
+## [PC] += 1
+#       subleq NEG1  PC
+#       subleq ZERO  ZERO START
+
+neg1 pc; zero zero start;
+
+## We come to address LEQZ when the emulated subleq is going to take
+## the branch to the emulated address C.
+#LEQZ:
+
+leqz:
+
+## First save the "raw" new PC
+## [PC] = [C]
+#       subleq PC    PC
+#       subleq C     ZERO
+#       subleq ZERO  PC
+#       subleq ZERO  ZERO
+
+pc; c zero; zero pc; zero
+
+## Check if [C] is less than zero. Halt if it is.
+## We don't care about changing [C] as we've already copied the value to [PC] above.
+#       subleq NEG1  C     -1
+
+neg1 c (-1); # I had to change this to avoid (c-1) meaning !
+
+## [PC] = [PC] + [LEN]
+#       subleq NEGL  PC
+
+negl pc;
+
+## Go back to the start of the loop ready for the next instruction
+#       subleq ZERO  ZERO  START
+zero zero start;
+
+#NEGL:  data  -119   # make this == -PROG (my assembler is too primitive!)
+#NEG1:  data  -1
+#ZERO:  data   0
+
+#C:     data   0
+#PC:    data   PROG
+
+. negl:-(pc+1) neg1:-1 zero:0 c:0 pc:PROG  # PROG is same as pc+1
+
+# Code for the program to be interpreted must start at the PROG address...
+PROG:

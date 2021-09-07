@@ -10,7 +10,7 @@ import           HelVM.HelPA.Assembler.Value
 import           HelVM.Common.Safe
 
 import           Control.Type.Operator
-import           Data.Attoparsec.Text                   hiding (D, I)
+import           Data.Attoparsec.Text
 import           Data.Char
 
 parseAssemblyText :: MonadSafeError m => Text -> m InstructionList

@@ -18,7 +18,7 @@ reduceAndGenerateCode :: MonadSafeError m => InstructionList -> m Text
 reduceAndGenerateCode il = generateCode =<< reduce il
 
 generateCode :: MonadSafeError m => InstructionList -> m Text
-generateCode il = mconcat <$> sequenceA (generateCodeForInstruction <$> il)
+generateCode il = mconcat <$> traverse generateCodeForInstruction il
 
 generateCodeForInstruction :: MonadSafeError m => Instruction -> m Text
 generateCodeForInstruction (N (Literal  n)) = generateNatural <$> naturalToDigitText n where generateNatural t = "N" <> t <> "e"
@@ -33,7 +33,7 @@ naturalToDigitText :: MonadSafeError m => Natural -> m Text
 naturalToDigitText value = toText <$> naturalToDigitString value
 
 naturalToDigitString :: MonadSafeError m => Natural -> m String
-naturalToDigitString value = sequenceA $ naturalToDigitChar <$> naturalToDigits7 value
+naturalToDigitString value = traverse naturalToDigitChar $ naturalToDigits7 value
 
 naturalToDigitChar :: MonadSafeError m => Natural -> m Char
 naturalToDigitChar i = liftSafe $ ['h', 't', 'a', 'o', 'i', 'n', 's'] `naturalIndexSafe` i

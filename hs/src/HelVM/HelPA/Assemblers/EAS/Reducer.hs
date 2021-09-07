@@ -1,10 +1,10 @@
-{-# LANGUAGE TupleSections #-}
 module HelVM.HelPA.Assemblers.EAS.Reducer (
   reduce
 ) where
 
 import           HelVM.HelPA.Assemblers.EAS.Instruction
 
+import           HelVM.HelPA.Assembler.Util
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.Common.Containers.Util
@@ -19,25 +19,13 @@ reduce il = replaceStrings <$> replaceLabels addresses il where addresses = addr
 
 ----
 
-type LabelAddresses = Map Identifier Natural
-
 addressOfLabels :: InstructionList -> LabelAddresses
-addressOfLabels il = fromList $ setDefault =<< zip (labelsToIdentifiers2 il) [1..]
-
-labelsToIdentifiers2 :: InstructionList -> [[Identifier]]
-labelsToIdentifiers2 il = labelsToIdentifiers <$> splitOn [R] il
-
-labelsToIdentifiers :: InstructionList -> [Identifier]
-labelsToIdentifiers il = labelToIdentifiers =<< il
-
-labelToIdentifiers :: Instruction -> [Identifier]
-labelToIdentifiers (L s) = [s]
-labelToIdentifiers  _    = []
+addressOfLabels il = flippedToMapFromLists [1..] $ (labelToIdentifiers =<<) <$> splitOn [R] il
 
 ----
 
 replaceLabels ::  MonadSafeError m => LabelAddresses -> InstructionList -> m InstructionList
-replaceLabels addresses il = sequenceA $ replaceLabel addresses <$> il
+replaceLabels addresses = traverse (replaceLabel addresses)
 
 replaceLabel :: MonadSafeError m => LabelAddresses -> Instruction -> m Instruction
 replaceLabel addresses (N (Variable l)) = N . Literal <$> indexSafeByKey l addresses
@@ -54,8 +42,3 @@ replaceString  i    = [i]
 
 charToInstruction :: Char -> Instruction
 charToInstruction = N . Literal . fromIntegral . ord
-
-----
-
-setDefault :: ([k] , v) -> [(k , v)]
-setDefault (keys , value) = (, value) <$> keys

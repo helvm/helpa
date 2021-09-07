@@ -4,6 +4,12 @@ import           HelVM.Common.Collections.SList
 
 import           HelVM.HelPA.Assembler.Value
 
+labelToIdentifiers :: Instruction -> [Identifier]
+labelToIdentifiers (L s) = [s]
+labelToIdentifiers  _    = []
+
+type InstructionList = [Instruction]
+
 data Instruction
   = E
   | T
@@ -18,5 +24,3 @@ data Instruction
   | L !Identifier
   | U !SString
   deriving stock (Eq , Show , Ord)
-
-type InstructionList = [Instruction]

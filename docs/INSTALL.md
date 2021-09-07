@@ -12,11 +12,9 @@ cd helpa
 
 ## Compile
 
-To compile you need `cabal`:
+To compile you need `cabal` and `make`:
 ```bash
-cabal update
-cabal new-clean && cabal new-build && cabal new-test
-cabal new-test --test-show-details=streaming
+make
 ```
 
 ## Run

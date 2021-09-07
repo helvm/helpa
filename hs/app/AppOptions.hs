@@ -3,7 +3,9 @@
 
 module AppOptions where
 
-import           HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
+import           HelVM.HelPA.Assemblers.ASQ.API.Separator
+import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           Options.Applicative
 
@@ -14,6 +16,18 @@ optionParser = AppOptions
                    <> metavar "[LANG]"
                    <> help   ("Language to exceptTAssembleFile " <> show langs)
                    <> value (show HAPAPL)
+                   <> showDefault
+                   )
+  <*> strOption    (  long    "separator"
+                   <> short   'S'
+                   <> help    "Type of separator (only for SQ)"
+                   <> value (show defaultSeparator)
+                   <> showDefault
+                   )
+  <*> strOption    (  long    "questionMark"
+                   <> short   'Q'
+                   <> help    "Type of Question Mark (only for SQ)"
+                   <> value (show defaultQuestionMark)
                    <> showDefault
                    )
   <*> strOption    (  long    "tokenType"
@@ -49,6 +63,8 @@ optionParser = AppOptions
 
 data AppOptions = AppOptions
   { lang               :: !String --Lang
+  , separator          :: !String --Separator
+  , questionMark       :: !String --QuestionMark
   , tokenType          :: !String --TokenType
   , debug              :: !Bool
   , startOfInstruction :: !Bool
@@ -59,13 +75,13 @@ data AppOptions = AppOptions
 
 ----
 
-data Lang = HAPAPL | EAS | WSA
+data Lang = HAPAPL | ASQ | EAS | WSA
   deriving stock (Eq , Read , Show)
 
 langs :: [Lang]
-langs = [HAPAPL , EAS , WSA]
+langs = [HAPAPL , ASQ, EAS , WSA]
 
 computeLang :: String -> Lang
 computeLang raw = valid $ readMaybe raw where
   valid (Just a) = a
-  valid Nothing  = error $ "Lang '" <> toText raw <> "' is not valid lang. Valid langs are : " <> show langs
+  valid Nothing  = error $ "'" <> toText raw <> "lang ' is not valid lang. Valid langs are : " <> show langs

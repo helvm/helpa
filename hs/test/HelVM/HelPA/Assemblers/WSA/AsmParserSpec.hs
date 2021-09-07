@@ -65,78 +65,90 @@ spec = do
     it "prim"   $ do parseAssemblyApp "prim"   `shouldSafeIO` (Include "io" : primIL)
 
   describe "Commands without operands" $ do
-    it "parse 'pop'"  $ do parseAssemblyText "pop"  `shouldSafe` [Pop]
-    it "parse 'doub'" $ do parseAssemblyText "doub" `shouldSafe` [Dup]
-    it "parse 'swap'" $ do parseAssemblyText "swap" `shouldSafe` [Swap]
-    it "parse 'ret'"  $ do parseAssemblyText "ret"  `shouldSafe` [Return]
-    it "parse 'exit'" $ do parseAssemblyText "exit" `shouldSafe` [End]
-    it "parse 'outn'" $ do parseAssemblyText "outn" `shouldSafe` [OutputNum]
-    it "parse 'outc'" $ do parseAssemblyText "outc" `shouldSafe` [OutputChar]
-    it "parse 'inn'"  $ do parseAssemblyText "inn"  `shouldSafe` [InputNum]
-    it "parse 'inc'"  $ do parseAssemblyText "inc"  `shouldSafe` [InputChar]
+    forM_ [ ("pop"  , [Pop])
+          , ("doub" , [Dup])
+          , ("swap" , [Swap])
+          , ("ret"  , [Return])
+          , ("exit" , [End])
+          , ("outn" , [OutputNum])
+          , ("outc" , [OutputChar])
+          , ("inn"  , [InputNum])
+          , ("inc"  , [InputChar])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with maybe natural operand" $ do
-    it "parse 'add'"   $ do parseAssemblyText "add"   `shouldSafe` [Add Nothing]
-    it "parse 'add 0'" $ do parseAssemblyText "add 0" `shouldSafe` [Add (Just (Literal 0))]
-    it "parse 'add 1'" $ do parseAssemblyText "add 1" `shouldSafe` [Add (Just (Literal 1))]
+    forM_ [ ( "add"       , [Add Nothing])
+          , ( "add 0"     , [Add (Just (Literal 0))])
+          , ( "add 1"     , [Add (Just (Literal 1))])
 
-    it "parse 'sub'"   $ do parseAssemblyText "sub"   `shouldSafe` [Sub Nothing]
-    it "parse 'sub 0'" $ do parseAssemblyText "sub 0" `shouldSafe` [Sub (Just (Literal 0))]
-    it "parse 'sub 1'" $ do parseAssemblyText "sub 1" `shouldSafe` [Sub (Just (Literal 1))]
+          , ( "sub"       , [Sub Nothing])
+          , ( "sub 0"     , [Sub (Just (Literal 0))])
+          , ( "sub 1"     , [Sub (Just (Literal 1))])
 
-    it "parse 'mul'"   $ do parseAssemblyText "mul"   `shouldSafe` [Mul Nothing]
-    it "parse 'mul 0'" $ do parseAssemblyText "mul 0" `shouldSafe` [Mul (Just (Literal 0))]
-    it "parse 'mul 1'" $ do parseAssemblyText "mul 1" `shouldSafe` [Mul (Just (Literal 1))]
+          , ( "mul"       , [Mul Nothing])
+          , ( "mul 0"     , [Mul (Just (Literal 0))])
+          , ( "mul 1"     , [Mul (Just (Literal 1))])
 
-    it "parse 'div'"   $ do parseAssemblyText "div"   `shouldSafe` [Div Nothing]
-    it "parse 'div 0'" $ do parseAssemblyText "div 0" `shouldSafe` [Div (Just (Literal 0))]
-    it "parse 'div 1'" $ do parseAssemblyText "div 1" `shouldSafe` [Div (Just (Literal 1))]
+          , ( "div"       , [Div Nothing])
+          , ( "div 0"     , [Div (Just (Literal 0))])
+          , ( "div 1"     , [Div (Just (Literal 1))])
 
-    it "parse 'mod'"   $ do parseAssemblyText "mod"   `shouldSafe` [Mod Nothing]
-    it "parse 'mod 0'" $ do parseAssemblyText "mod 0" `shouldSafe` [Mod (Just (Literal 0))]
-    it "parse 'mod 1'" $ do parseAssemblyText "mod 1" `shouldSafe` [Mod (Just (Literal 1))]
+          , ( "mod"       , [Mod Nothing])
+          , ( "mod 0"     , [Mod (Just (Literal 0))])
+          , ( "mod 1"     , [Mod (Just (Literal 1))])
 
-    it "parse 'store'"     $ do parseAssemblyText "store"     `shouldSafe` [Store Nothing]
-    it "parse 'store 0'"   $ do parseAssemblyText "store 0"   `shouldSafe` [Store (Just (Literal 0))]
-    it "parse 'store 1'"   $ do parseAssemblyText "store 1"   `shouldSafe` [Store (Just (Literal 1))]
+          , ( "store"     , [Store Nothing])
+          , ( "store 0"   , [Store (Just (Literal 0))])
+          , ( "store 1"   , [Store (Just (Literal 1))])
 
-    it "parse 'retrive'"   $ do parseAssemblyText "retrive"   `shouldSafe` [Load Nothing]
-    it "parse 'retrive 0'" $ do parseAssemblyText "retrive 0" `shouldSafe` [Load (Just (Literal 0))]
-    it "parse 'retrive 1'" $ do parseAssemblyText "retrive 1" `shouldSafe` [Load (Just (Literal 1))]
+          , ( "retrive"   , [Load Nothing])
+          , ( "retrive 0" , [Load (Just (Literal 0))])
+          , ( "retrive 1" , [Load (Just (Literal 1))])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with identifier operand" $ do
-    it "parse 'label L'"   $ do parseAssemblyText "label L"   `shouldSafe` [Mark "L"]
-    it "parse 'call L'"    $ do parseAssemblyText "call L"    `shouldSafe` [Call "L"]
-    it "parse 'jump L'"    $ do parseAssemblyText "jump L"    `shouldSafe` [Branch "L"]
-    it "parse 'jumpz L'"   $ do parseAssemblyText "jumpz L"   `shouldSafe` [BranchZ "L"]
-    it "parse 'jumpn L'"   $ do parseAssemblyText "jumpn L"   `shouldSafe` [BranchM "L"]
-    it "parse 'jumpp L'"   $ do parseAssemblyText "jumpp L"   `shouldSafe` [BranchP "L"]
-    it "parse 'jumpnz L'"  $ do parseAssemblyText "jumpnz L"  `shouldSafe` [BranchNP "L"]
-    it "parse 'jumppz L'"  $ do parseAssemblyText "jumppz L"  `shouldSafe` [BranchNM "L"]
-    it "parse 'include L'" $ do parseAssemblyText "include L" `shouldSafe` [Include "L"]
+    forM_ [ ("label L"    , [Mark "L"])
+          , ("call L"     , [Call "L"])
+          , ("jump L"     , [Branch "L"])
+          , ("jumpz L"    , [BranchZ "L"])
+          , ("jumpn L"    , [BranchM "L"])
+          , ("jumpp L"    , [BranchP "L"])
+          , ("jumpnz L"   , [BranchNP "L"])
+          , ("jumppz L"   , [BranchNM "L"])
+          , ("include L"  , [Include "L"])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with natural operand" $ do
-    it "parse 'push 0'" $ do parseAssemblyText "push 0" `shouldSafe` [Push (Literal 0)]
-    it "parse 'push 1'" $ do parseAssemblyText "push 1" `shouldSafe` [Push (Literal 1)]
-    it "parse 'test 0'" $ do parseAssemblyText "test 0" `shouldSafe` [Test 0]
-    it "parse 'test 1'" $ do parseAssemblyText "test 1" `shouldSafe` [Test 1]
+    forM_ [ ("push 0" , [Push (Literal 0)])
+          , ("push 1" , [Push (Literal 1)])
+          , ("test 0" , [Test 0])
+          , ("test 1" , [Test 1])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with other operand" $ do
-    it "parse 'pushs \"\"'"  $ do parseAssemblyText "pushs \"\""  `shouldSafe` [PushS (Literal "")]
-    it "parse 'pushs \"0\"'" $ do parseAssemblyText "pushs \"0\"" `shouldSafe` [PushS (Literal "0")]
-    it "parse 'pushs \"1\"'" $ do parseAssemblyText "pushs \"1\"" `shouldSafe` [PushS (Literal "1")]
+    forM_ [ ("pushs \"\""  , [PushS (Literal "")])
+          , ("pushs \"0\"" , [PushS (Literal "0")])
+          , ("pushs \"1\"" , [PushS (Literal "1")])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Comments" $ do
-    it "parse ''"                           $ do parseAssemblyText ""                            `shouldSafe` []
-    it "parse ';'"                          $ do parseAssemblyText ";"                           `shouldSafe` []
-    it "parse '\n'"                         $ do parseAssemblyText "\n"                          `shouldSafe` []
-    it "parse ';\n'"                        $ do parseAssemblyText ";\n"                         `shouldSafe` []
-    it "parse '\n;'"                        $ do parseAssemblyText "\n;"                         `shouldSafe` []
-    it "parse '\n\n'"                       $ do parseAssemblyText "\n\n"                        `shouldSafe` []
-    it "parse 'label L;"                    $ do parseAssemblyText "label L;"                    `shouldSafe` [Mark "L"]
-    it "parse 'label L;\n"                  $ do parseAssemblyText "label L;\n"                  `shouldSafe` [Mark "L"]
-    it "parse 'label L\n;"                  $ do parseAssemblyText "label L\n;"                  `shouldSafe` [Mark "L"]
-    it "parse 'label L\nlabel L\n"          $ do parseAssemblyText "label L\nlabel L\n"          `shouldSafe` [Mark "L", Mark "L"]
-    it "parse 'label L\n;label L"           $ do parseAssemblyText "label L\n;label L"           `shouldSafe` [Mark "L"]
-    it "parse 'label L\n;label L\n"         $ do parseAssemblyText "label L\n;label L\n"         `shouldSafe` [Mark "L"]
-    it "parse 'label L\nlabel L\nlabel L\n" $ do parseAssemblyText "label L\nlabel L\nlabel L\n" `shouldSafe` [Mark "L", Mark "L", Mark "L"]
+    forM_ [ (""                            , [])
+          , (";"                           , [])
+          , ("\n"                          , [])
+          , (";\n"                         , [])
+          , ("\n;"                         , [])
+          , ("\n\n"                        , [])
+          , ("label L;"                    , [Mark "L"])
+          , ("label L;\n"                  , [Mark "L"])
+          , ("label L\n;"                  , [Mark "L"])
+          , ("label L\nlabel L\n"          , [Mark "L", Mark "L"])
+          , ("label L\n;label L"           , [Mark "L"])
+          , ("label L\n;label L\n"         , [Mark "L"])
+          , ("label L\nlabel L\nlabel L\n" , [Mark "L", Mark "L", Mark "L"])
+          ] $ \(line , il) -> do
+      it line $ do parseAssemblyText (toText line) `shouldSafe` il

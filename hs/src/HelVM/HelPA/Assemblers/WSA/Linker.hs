@@ -11,26 +11,20 @@ import           HelVM.HelPA.Assembler.IO.BusinessIO
 import           Control.Type.Operator
 
 linkLib :: BIO m => SourcePath -> m InstructionList
-linkLib = expectTLinkLib
+linkLib = linkApp . absolutePath
 
 linkApp :: BIO m => SourcePath -> m InstructionList
-linkApp = exceptTLinkApp
+linkApp path = (includeLibs (dirPath path) =<<) $ parseAssemblyText =<< wReadFile (filePath path)
 
-expectTLinkLib :: BIO m => SourcePath -> m InstructionList
-expectTLinkLib = exceptTLinkApp . absolutePath
-
-exceptTLinkApp :: BIO m => SourcePath -> m InstructionList
-exceptTLinkApp path = (exceptTIncludeLibs (dirPath path) =<<) $ parseAssemblyText =<< wReadFile (filePath path)
-
-exceptTIncludeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
-exceptTIncludeLibs dir il = sortBlocks <$> mapM (exceptTIncludeLib dir) il
+includeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
+includeLibs dir il = sortBlocks <$> mapM (includeLib dir) il
 
 sortBlocks :: [Block InstructionList] -> InstructionList
 sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list) --FIXME groupBy ?
 
-exceptTIncludeLib :: BIO m => FilePath -> Instruction -> m $ Block InstructionList
-exceptTIncludeLib dir (Include libName) = Included <$> expectTLinkLib (SourcePath {dirPath = dir , filePath = unwrapIdentifier libName <> ".wsa"})
-exceptTIncludeLib _ i                   = pure $ Normal [i]
+includeLib :: BIO m => FilePath -> Instruction -> m $ Block InstructionList
+includeLib dir (Include libName) = Included <$> linkLib (SourcePath {dirPath = dir , filePath = unwrapIdentifier libName <> ".wsa"})
+includeLib _ i                   = pure $ Normal [i]
 
 unwrap :: Block a -> a
 unwrap (Normal a)   = a

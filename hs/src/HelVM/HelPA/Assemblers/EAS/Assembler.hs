@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.EAS.Assembler (
   assembleFile,
-  assembleText
+  assembleText,
 ) where
 
 import           HelVM.HelPA.Assemblers.EAS.AsmParser

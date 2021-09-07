@@ -1,5 +1,9 @@
 # 📅 Revision history for HelPA
 
+## 0.4.0.0 -- 2021-12-13
+
+* Add `Assembler of SubLeq`
+
 ## 0.3.5.0 -- 2021-09-07
 
 * Use `Vector`

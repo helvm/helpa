@@ -3,7 +3,7 @@ cabal-version:         2.4
 name:                  helpa
 version:               0.3.5.0
 
-synopsis:              HELPA - Heavenly Esoteric Little Para Assembler to esoteric languages
+synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
 homepage:              https://helvm.github.io/helpa/
 bug-reports:           https://github.com/helvm/helpa/issues
@@ -125,11 +125,26 @@ library
     HelVM.Common.Util
 
     HelVM.HelPA.Assembler.API
-    HelVM.HelPA.Assembler.AssemblyOptions
     HelVM.HelPA.Assembler.AsmParserUtil
     HelVM.HelPA.Assembler.IO.BusinessIO
-    HelVM.HelPA.Assembler.TokenType
+    HelVM.HelPA.Assembler.Util
     HelVM.HelPA.Assembler.Value
+
+    HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
+    HelVM.HelPA.Assemblers.ASQ.API.Separator
+    HelVM.HelPA.Assemblers.ASQ.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.Assembler
+    HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
+    HelVM.HelPA.Assemblers.ASQ.CodeGenerator
+    HelVM.HelPA.Assemblers.ASQ.Instruction
+    HelVM.HelPA.Assemblers.ASQ.Line
+    HelVM.HelPA.Assemblers.ASQ.Linker
+    HelVM.HelPA.Assemblers.ASQ.Reducer
+    HelVM.HelPA.Assemblers.ASQ.Reducers.ExpressionReducer
+    HelVM.HelPA.Assemblers.ASQ.Reducers.InstructionReducer
+    HelVM.HelPA.Assemblers.ASQ.Reducers.ItemReducer
+    HelVM.HelPA.Assemblers.ASQ.Reducers.LabelReducer
+    HelVM.HelPA.Assemblers.ASQ.Reducers.QuestionMarkReducer
 
     HelVM.HelPA.Assemblers.EAS.AsmParser
     HelVM.HelPA.Assemblers.EAS.Assembler
@@ -138,8 +153,10 @@ library
     HelVM.HelPA.Assemblers.EAS.Linker
     HelVM.HelPA.Assemblers.EAS.Reducer
 
+    HelVM.HelPA.Assemblers.WSA.API.TokenType
     HelVM.HelPA.Assemblers.WSA.AsmParser
     HelVM.HelPA.Assemblers.WSA.Assembler
+    HelVM.HelPA.Assemblers.WSA.AssemblyOptions
     HelVM.HelPA.Assemblers.WSA.CodeGenerator
     HelVM.HelPA.Assemblers.WSA.Instruction
     HelVM.HelPA.Assemblers.WSA.Linker
@@ -186,7 +203,9 @@ test-suite helpa-test
     HelVM.Expectations
     HelVM.GoldenExpectations
 
-    HelVM.HelPA.Assemblers.AssemblyOptionsUtil
+    HelVM.HelPA.Assemblers.ASQ.AsmParserSpec
+    HelVM.HelPA.Assemblers.ASQ.AssemblerSpec
+    HelVM.HelPA.Assemblers.ASQ.FileUtil
 
     HelVM.HelPA.Assemblers.EAS.AsmParserSpec
     HelVM.HelPA.Assemblers.EAS.AssemblerSpec
@@ -198,6 +217,7 @@ test-suite helpa-test
 
     HelVM.HelPA.Assemblers.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.WSA.AssemblerSpec
+    HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
     HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
     HelVM.HelPA.Assemblers.WSA.FileUtil
     HelVM.HelPA.Assemblers.WSA.LinkerSpec
@@ -213,7 +233,7 @@ test-suite helpa-test
     , helpa
 
     , filepath
---    , mtl
+--    , ilist
     , type-operators
 
   build-tool-depends:  hspec-discover:hspec-discover == 2.*

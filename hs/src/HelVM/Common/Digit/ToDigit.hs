@@ -20,13 +20,13 @@ import qualified HelVM.Common.Collections.SList as SList
 import qualified Data.ListLike                  as LL
 
 makeDigitString :: (MonadSafeError m , ToDigit a) => SList a -> m SString
-makeDigitString xs = sequenceA $ toDigitChar <$> xs
+makeDigitString = traverse toDigitChar
 
 makeAsciiString28 :: (MonadSafeError m , ToDigit a) => SList a -> m SString
 makeAsciiString28 = makeAsciiString 2 8
 
 makeAsciiString :: (MonadSafeError m , ToDigit a) => Int -> Int -> SList a -> m SString
-makeAsciiString base n xs = sequenceA $ makeChar base <$> SList.chunksOf n xs
+makeAsciiString base n xs = traverse (makeChar base) $ SList.chunksOf n xs
 
 makeChar :: (MonadSafeError m , ToDigit a) => Int -> SList a -> m Char
 makeChar base xs = chr <$> makeIntegral base (LL.reverse xs)

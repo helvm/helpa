@@ -1,8 +1,8 @@
-module HelVM.HelPA.Assemblers.AssemblyOptionsUtil where
+module HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil where
 
-import           HelVM.HelPA.Assembler.AssemblyOptions
+import           HelVM.HelPA.Assemblers.WSA.AssemblyOptions
 
-import           HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           HelVM.Common.NamedValue
 

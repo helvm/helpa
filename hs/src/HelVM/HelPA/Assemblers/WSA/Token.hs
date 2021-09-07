@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.WSA.Token where
 
-import           HelVM.HelPA.Assembler.TokenType
+import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           HelVM.Common.Containers.Util
 import           HelVM.Common.Digit.Digitable

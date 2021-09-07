@@ -5,13 +5,13 @@ module HelVM.HelPA.Assemblers.WSA.CodeGenerator (
   identifierToTL
 ) where
 
+import           HelVM.HelPA.Assemblers.WSA.AssemblyOptions
 import           HelVM.HelPA.Assemblers.WSA.Instruction
 import           HelVM.HelPA.Assemblers.WSA.Reducer
 import           HelVM.HelPA.Assemblers.WSA.Token
 
-import           HelVM.HelPA.Assembler.AssemblyOptions
-import           HelVM.HelPA.Assembler.TokenType
 import           HelVM.HelPA.Assembler.Value
+import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           HelVM.Common.Digit.Digitable
 import           HelVM.Common.Safe
@@ -23,7 +23,7 @@ generateCode :: MonadSafeError m => TokenType -> Bool -> Bool -> InstructionList
 generateCode tokenType startOfInstruction debug il = showTLByType tokenType <$> generateTL startOfInstruction debug il
 
 generateTL :: MonadSafeError m => Bool -> Bool -> InstructionList -> m TokenList
-generateTL startOfInstruction debug il = join <$> sequenceA (generateTLForInstruction startOfInstruction debug <$> il)
+generateTL startOfInstruction debug il = join <$> traverse (generateTLForInstruction startOfInstruction debug) il
 
 generateTLForInstruction :: MonadSafeError m => Bool -> Bool -> Instruction -> m TokenList
 generateTLForInstruction _    _     EOL = pure [R]
