@@ -4,9 +4,8 @@ import           HelVM.HelPA.Assemblers.WSA.Assembler
 import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
 import           HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import           HelVM.HelPA.Assembler.API
-
 import           HelVM.Common.NamedValue
+import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.CartesianProduct
 import           HelVM.GoldenExpectations

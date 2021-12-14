@@ -16,11 +16,15 @@ import           Control.Type.Operator
 
 import qualified Data.Map                               as Map
 
-reduceLabels :: MonadSafeError m => LineList -> m ExpressionList
-reduceLabels l = reduceForTEList (addressOfLabels l) $ extractExpressions l
+reduceLabels :: MonadSafeError m => Bool -> LineList -> m ExpressionList
+reduceLabels addOutLabel l = reduceForTEList (addressOfLabels addOutLabel l) $ extractExpressions l
 
-addressOfLabels :: LineList -> LabelSymbols
-addressOfLabels l = Map.insert "OUT" (-1) (toMap $ withSymbols $ labelList <$> l)
+addressOfLabels :: Bool -> LineList -> LabelSymbols
+addressOfLabels addOutLabel l = addOutLabelSymbol addOutLabel $ toMap $ withSymbols $ labelList <$> l
+
+addOutLabelSymbol :: Bool -> LabelSymbols -> LabelSymbols
+addOutLabelSymbol True = Map.insert "OUT" (-1)
+addOutLabelSymbol _    = id
 
 reduceForTEList :: MonadSafeError m => LabelSymbols -> ExpressionList -> m ExpressionList
 reduceForTEList addresses = traverse (reduceForTE addresses)

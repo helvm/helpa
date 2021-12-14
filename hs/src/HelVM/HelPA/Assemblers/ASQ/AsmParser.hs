@@ -5,15 +5,13 @@ module HelVM.HelPA.Assemblers.ASQ.AsmParser (
 import           HelVM.HelPA.Assemblers.ASQ.Instruction
 
 import           HelVM.HelPA.Assembler.AsmParserUtil
-import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.Common.Safe
 
 import           Data.Attoparsec.Text
 
 parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
---parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <* endOfInput)
-parseAssemblyText = liftEitherLegacy . parseOnly instructionListParser
+parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <* endOfInput)
 
 instructionListParser :: Parser InstructionList
 instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace <* skipManyComment)
@@ -23,10 +21,10 @@ instructionParser :: Parser Instruction
 instructionParser = instructionDataParser <|> instructionCodeParser
 
 instructionDataParser :: Parser Instruction
-instructionDataParser = Instruction Data <$> (char '.' *> skipHorizontalSpace *> itemListParser)
+instructionDataParser = makeDataInstruction <$> (char '.' *> skipHorizontalSpace *> itemListParser)
 
 instructionCodeParser :: Parser Instruction
-instructionCodeParser = Instruction Code <$> itemListParser
+instructionCodeParser = makeCodeInstruction <$> itemListParser
 
 itemListParser :: Parser ItemList
 itemListParser = many itemParser <* endLineParser
@@ -36,9 +34,6 @@ itemParser =
       (ItemLabel             <$> labelParser)
   <|> (ItemExpression        <$> expressionParser)
   <|> (ItemString . unEscape <$> stringParser <* skipHorizontalSpace)
-
-labelParser :: Parser Identifier
-labelParser = identifierParser <* char ':' <* skipHorizontalSpace
 
 expressionParser :: Parser Expression
 expressionParser = (termWithPMExpressionParser <|> termWithoutPMExpressionParser) <* skipHorizontalSpace
@@ -83,4 +78,3 @@ skipMany1EndLine = many1 (char '\n')
 
 commentChar :: Char
 commentChar = '#'
-

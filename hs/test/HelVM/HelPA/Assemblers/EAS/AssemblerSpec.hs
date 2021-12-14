@@ -5,8 +5,7 @@ import           HelVM.HelPA.Assemblers.EAS.FileUtil
 
 import           HelVM.GoldenExpectations
 
-import           HelVM.HelPA.Assembler.API
-
+import           HelVM.HelPA.Assembler.API.SourcePath
 import           System.FilePath.Posix
 
 import           Test.Hspec                           (Spec, describe, it)

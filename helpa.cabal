@@ -124,14 +124,15 @@ library
     HelVM.Common.SequencesUtil
     HelVM.Common.Util
 
-    HelVM.HelPA.Assembler.API
+    HelVM.HelPA.Assembler.API.Separator
+    HelVM.HelPA.Assembler.API.SourcePath
+    HelVM.HelPA.Assembler.API.SwitchEnum
     HelVM.HelPA.Assembler.AsmParserUtil
     HelVM.HelPA.Assembler.IO.BusinessIO
     HelVM.HelPA.Assembler.Util
     HelVM.HelPA.Assembler.Value
 
     HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-    HelVM.HelPA.Assemblers.ASQ.API.Separator
     HelVM.HelPA.Assemblers.ASQ.AsmParser
     HelVM.HelPA.Assemblers.ASQ.Assembler
     HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
@@ -153,6 +154,14 @@ library
     HelVM.HelPA.Assemblers.EAS.Linker
     HelVM.HelPA.Assemblers.EAS.Reducer
 
+    HelVM.HelPA.Assemblers.SQA.AsmParser
+    HelVM.HelPA.Assemblers.SQA.Assembler
+    HelVM.HelPA.Assemblers.SQA.CodeGenerator
+    HelVM.HelPA.Assemblers.SQA.Instruction
+    HelVM.HelPA.Assemblers.SQA.Line
+    HelVM.HelPA.Assemblers.SQA.Linker
+    HelVM.HelPA.Assemblers.SQA.Reducer
+
     HelVM.HelPA.Assemblers.WSA.API.TokenType
     HelVM.HelPA.Assemblers.WSA.AsmParser
     HelVM.HelPA.Assemblers.WSA.Assembler
@@ -167,6 +176,7 @@ library
     , containers           == 0.6.2.1
     , data-default
     , dlist
+    , filepath
     , ilist
     , ListLike
     , mono-traversable
@@ -214,6 +224,9 @@ test-suite helpa-test
     HelVM.HelPA.Assemblers.EAS.LinkerSpec
     HelVM.HelPA.Assemblers.EAS.TestData
     HelVM.HelPA.Assemblers.EAS.ReducerSpec
+
+    HelVM.HelPA.Assemblers.SQA.AsmParserSpec
+    HelVM.HelPA.Assemblers.SQA.FileUtil
 
     HelVM.HelPA.Assemblers.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.WSA.AssemblerSpec

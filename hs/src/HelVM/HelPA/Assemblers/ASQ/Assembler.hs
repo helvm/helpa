@@ -8,7 +8,7 @@ import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
 import           HelVM.HelPA.Assemblers.ASQ.CodeGenerator
 import           HelVM.HelPA.Assemblers.ASQ.Linker
 
-import           HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
 import           HelVM.Common.Safe

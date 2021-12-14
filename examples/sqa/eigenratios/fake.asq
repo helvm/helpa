@@ -1,0 +1,153 @@
+# Self interpreter for OISC ("One Instruction Set Computer") using "      ".
+#
+# This uses "      " as the "one instruction" where A, B and C are memory
+# addresses, and in the explanations and comments [A] means the integer value
+# stored at address A. Memory is a zero based array of integers of some
+# suitable "width". Signed 32 bit values are perfectly adequate.
+#
+# A single "      " instruction written like this
+#
+#           A B C
+#
+# and is stored in memory as three addresses A B and C in consecutive
+# locations. The following pseudocode describes what happens when one
+# instruction is executed.
+#
+#    [B] = [B] - [A]
+#    if [B] <= 0 goto C
+#
+# Note that value of C is taken to be the value before the subtraction.
+#
+# Omitting the C operand (i.e. writing just "       A B") is understood to be
+# shorthand for specifying C as the address of the next instruction. When the
+# program starts running, the program counter is 0. It halts when a branch
+# to a negative address happens.
+#
+# This self-interpreter expects the program that it should run to appear
+# directly after its own code/.    in memory.
+#
+# Written by Clive Gifford, 29/30 August 2006 based on the Wikipedia
+# description of a OISC using the "      " instruction.
+# 3 Sep 2006: did some "constant folding", removing a few instructions.
+# 8 Sep 2006, a few more changes resulting in smaller memory footprint.
+
+start:
+
+# [A1] = [PC]
+
+              A1   A1
+              PC   ZERO
+              ZERO A1
+              ZERO ZERO
+
+# Code below (after modification from above) is equivalent to [A] = [[PC]]
+
+              A    A
+A1:    .      0
+       .      ZERO
+       .      A2
+A2:           ZERO A
+              ZERO ZERO
+
+# [A] = [A] + [LEN]
+
+              NEGL A
+
+# [PC] = [PC] + 1
+
+              NEG1 PC
+
+# [B1] = [PC]
+
+              B1   B1
+              PC   ZERO
+              ZERO B1
+              ZERO ZERO
+
+
+# Code below (after modification from above) is equivalent to [B] = [[PC] + 1]
+
+              B    B
+B1:    .      0
+       .      ZERO
+       .      B2
+B2:           ZERO B
+              ZERO ZERO
+
+# [B] = [B] + [LEN]
+
+              NEGL B
+
+# We have to copy [C] now, just in case the emulated subtraction modifies [[PC] + 2].
+
+# [PC] = [PC] + 1
+
+              NEG1  PC
+
+# [C1] = [PC]
+
+              C1    C1
+              PC    ZERO
+              ZERO  C1
+              ZERO  ZERO
+
+# Code below (after modification from above) is equivalent to [C] = [[PC] + 2]
+
+              C    C
+C1:    .      0
+       .      ZERO
+       .      C2
+C2:           ZERO C
+              ZERO ZERO
+
+# [[B]] = [[B]] - [[A]];
+# if [[B]] <= 0 goto LEQZ
+
+# Earlier code referring to addresses A and B has modified the next
+# couple of words to create the equivalent of "       [A] [B] LEQZ"
+# This is where we're "emulating" the subtraction...
+
+A:     .      0
+B:     .      0
+       .      LEQZ
+
+# [PC] += 1
+
+              NEG1  PC
+              ZERO  ZERO START
+
+# We come to address LEQZ when the emulated        is going to take
+# the branch to the emulated address C.
+
+LEQZ:
+
+# First save the "raw" new PC
+# [PC] = [C]
+
+              PC    PC
+              C     ZERO
+              ZERO  PC
+              ZERO  ZERO
+
+# Check if [C] is less than zero. Halt if it is.
+# We don't care about changing [C] as we've already copied the value to [PC] above.
+
+              NEG1  C     -1
+
+# [PC] = [PC] + [LEN]
+
+              NEGL  PC
+
+# Go back to the start of the loop ready for the next instruction
+
+              ZERO  ZERO  START
+
+NEGL:  .     -119   # make this == -PROG (my assembler is too primitive!)
+NEG1:  .     -1
+ZERO:  .      0
+
+C:     .      0
+PC:    .      PROG
+
+# Code for the program to be interpreted must start at the PROG address...
+PROG:

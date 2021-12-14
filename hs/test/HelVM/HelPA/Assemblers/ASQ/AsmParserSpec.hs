@@ -24,6 +24,10 @@ spec = do
           , "mazonka"  </> "helloWorld"
           , "mazonka"  </> "siout"
           , "mazonka"  </> "si"
+--          , "current"  </> "99-bottles-of-beer"
+--          , "current"  </> "99-bottles-of-beer1"
+--          , "next"     </> "99-bottles-of-beer"
+--          , "next"     </> "99-bottles-of-beer1"
           ] $ \fileName -> do
       let parseAssembly = parseAssemblyFile $ buildAbsolutePathToAsqFile fileName
       it fileName $ do safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyText" </> fileName)

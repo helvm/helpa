@@ -12,8 +12,8 @@ reduceIL :: MonadSafeError m => QuestionMark -> InstructionList -> m ItemList
 reduceIL qm il = join <$> traverse (reduceInstruction qm) il
 
 reduceInstruction :: MonadSafeError m => QuestionMark -> Instruction -> m ItemList
-reduceInstruction _  (Instruction Data a) = pure a
-reduceInstruction qm (Instruction Code a) = buildItems qm a
+reduceInstruction _  (Instruction Data its) = pure its
+reduceInstruction qm (Instruction Code its) = buildItems qm its
 
 buildItems :: MonadSafeError m => QuestionMark -> ItemList -> m ItemList
 buildItems qm its = checkItems $ filter isExpression its where

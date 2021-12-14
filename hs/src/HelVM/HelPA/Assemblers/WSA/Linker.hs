@@ -3,7 +3,7 @@ module HelVM.HelPA.Assemblers.WSA.Linker where
 import           HelVM.HelPA.Assemblers.WSA.AsmParser
 import           HelVM.HelPA.Assemblers.WSA.Instruction
 
-import           HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelPA.Assembler.IO.BusinessIO

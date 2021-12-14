@@ -31,6 +31,31 @@ isExpression :: Item -> Bool
 isExpression (ItemExpression _) = True
 isExpression                 _  = False
 
+execPM :: Num a => PM -> a -> a -> a
+execPM Plus  = (+)
+execPM Minus = (-)
+
+-- Constructors for Instruction
+makeDataInstructionFromIntegerValue :: IntegerValue -> Instruction
+makeDataInstructionFromIntegerValue = makeDataInstruction . pure . makeItemFromIntegerValue
+
+makeCodeInstructionFromIntegerValueList :: [IntegerValue] -> Instruction
+makeCodeInstructionFromIntegerValueList l = makeCodeInstruction $ makeItemFromIntegerValue <$> l
+
+makeDataInstruction :: ItemList -> Instruction
+makeDataInstruction = Instruction Data
+
+makeCodeInstruction :: ItemList -> Instruction
+makeCodeInstruction = Instruction Code
+
+-- Constructors for Item
+makeItemFromIdentifier :: Identifier -> Item
+makeItemFromIdentifier = ItemExpression . makeExpressionFromIdentifier
+
+makeItemFromIntegerValue :: IntegerValue -> Item
+makeItemFromIntegerValue = ItemExpression . makeExpressionFromIntegerValue
+
+-- Constructors for Expression
 makeCurrentAddress :: Expression
 makeCurrentAddress = makeExpressionWithoutPM TermQuestionMark
 
@@ -46,8 +71,14 @@ makeOne = makeExpressionFromInteger 1
 makeExpressionFromChar :: Char -> Expression
 makeExpressionFromChar = makeExpressionFromInteger . toInteger . ord
 
+makeExpressionFromIdentifier :: Identifier -> Expression
+makeExpressionFromIdentifier = makeExpressionFromIntegerValue . Variable
+
 makeExpressionFromInteger :: Integer -> Expression
-makeExpressionFromInteger = makeExpressionWithoutPM . TermSymbol . Literal
+makeExpressionFromInteger = makeExpressionFromIntegerValue . Literal
+
+makeExpressionFromIntegerValue :: IntegerValue -> Expression
+makeExpressionFromIntegerValue = makeExpressionWithoutPM . TermSymbol
 
 makeExpressionWithoutPM :: Term -> Expression
 makeExpressionWithoutPM = makeExpression Nothing
@@ -57,10 +88,6 @@ makeExpressionWithPM pm = makeExpression (Just pm)
 
 makeExpression :: Maybe PMExpression -> Term -> Expression
 makeExpression = Expression
-
-execPM :: Num a => PM -> a -> a -> a
-execPM Plus  = (+)
-execPM Minus = (-)
 
 -- Types
 type InstructionList = [Instruction]
@@ -84,7 +111,6 @@ type ExpressionWithSymbol = WithSymbol Expression
 
 type ExpressionList = [Expression]
 
--- FIXME
 data Expression = Expression !(Maybe PMExpression) !Term
   deriving stock (Eq, Show, Ord)
 

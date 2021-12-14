@@ -3,8 +3,6 @@
 
 module AppOptions where
 
-import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-import           HelVM.HelPA.Assemblers.ASQ.API.Separator
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           Options.Applicative
@@ -18,16 +16,18 @@ optionParser = AppOptions
                    <> value (show HAPAPL)
                    <> showDefault
                    )
-  <*> strOption    (  long    "separator"
+  <*> switch       (  long    "eolSeparator"
                    <> short   'S'
-                   <> help    "Type of separator (only for SQ)"
-                   <> value (show defaultSeparator)
+                   <> help    "EOL separator (only for SQ)"
                    <> showDefault
                    )
-  <*> strOption    (  long    "questionMark"
+  <*> switch       (  long    "nextAddressForQuestionMark"
                    <> short   'Q'
                    <> help    "Type of Question Mark (only for SQ)"
-                   <> value (show defaultQuestionMark)
+                   <> showDefault
+                   )
+  <*> switch       (  long    "addOutLabel"
+                   <> help    "Add OUT label (only for SQ)"
                    <> showDefault
                    )
   <*> strOption    (  long    "tokenType"
@@ -62,24 +62,25 @@ optionParser = AppOptions
                    )
 
 data AppOptions = AppOptions
-  { lang               :: !String --Lang
-  , separator          :: !String --Separator
-  , questionMark       :: !String --QuestionMark
-  , tokenType          :: !String --TokenType
-  , debug              :: !Bool
-  , startOfInstruction :: !Bool
-  , endOfLine          :: !Bool
-  , file               :: !String
-  , dir                :: !String
+  { lang                       :: !String --Lang
+  , eolSeparator               :: !Bool
+  , nextAddressForQuestionMark :: !Bool
+  , addOutLabel                :: !Bool
+  , tokenType                  :: !String --TokenType
+  , debug                      :: !Bool
+  , startOfInstruction         :: !Bool
+  , endOfLine                  :: !Bool
+  , file                       :: !String
+  , dir                        :: !String
   }
 
 ----
 
-data Lang = HAPAPL | ASQ | EAS | WSA
+data Lang = HAPAPL | ASQ | EAS | SQA | WSA
   deriving stock (Eq , Read , Show)
 
 langs :: [Lang]
-langs = [HAPAPL , ASQ, EAS , WSA]
+langs = [HAPAPL , ASQ, EAS , SQA , WSA]
 
 computeLang :: String -> Lang
 computeLang raw = valid $ readMaybe raw where

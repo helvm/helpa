@@ -1,0 +1,26 @@
+module HelVM.HelPA.Assemblers.SQA.CodeGenerator (
+  reduceAndGenerateCode,
+  generateCode,
+) where
+
+import           HelVM.HelPA.Assemblers.SQA.Instruction
+import           HelVM.HelPA.Assemblers.SQA.Reducer
+
+import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
+
+import           HelVM.HelPA.Assembler.API.Separator
+import           HelVM.HelPA.Assembler.Util
+
+import           HelVM.Common.Safe
+
+import qualified Data.Text                                  as T
+
+reduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
+reduceAndGenerateCode options il = generateCode (separator options) <$> reduce (addOutLabel options) (questionMark options) il
+
+generateCode :: Separator -> SymbolList -> Text
+generateCode EOL   l = mconcat $ formatSymbol <$> l
+generateCode Space l = T.intercalate " " $ show <$> l
+
+formatSymbol :: Symbol -> Text
+formatSymbol s = show s <> "\n"
