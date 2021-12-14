@@ -1,13 +1,15 @@
 module HelVM.HelPA.Assemblers.ASQ.API.QuestionMark where
 
+import           HelVM.HelPA.Assembler.API.SwitchEnum
+
 data QuestionMark = CurrentAddress | NextAddress
-  deriving stock (Eq , Read , Show)
+  deriving stock (Bounded , Enum , Eq , Read , Show)
 
 questionMarks :: [QuestionMark]
-questionMarks = [CurrentAddress , NextAddress]
+questionMarks = bothEnums
 
 defaultQuestionMark :: QuestionMark
-defaultQuestionMark = CurrentAddress
+defaultQuestionMark = defaultEnum
 
 parseQuestionMark :: String -> QuestionMark
 parseQuestionMark raw = valid $ readMaybe raw where

@@ -1,0 +1,153 @@
+# Self interpreter for OISC ("One Instruction Set Computer") using "subleq".
+#
+# This uses "subleq" as the "one instruction" where A, B and C are memory
+# addresses, and in the explanations and comments [A] means the integer value
+# stored at address A. Memory is a zero based array of integers of some
+# suitable "width". Signed 32 bit values are perfectly adequate.
+#
+# A single "subleq" instruction written like this
+#
+#    subleq A B C
+#
+# and is stored in memory as three addresses A B and C in consecutive
+# locations. The following pseudocode describes what happens when one
+# instruction is executed.
+#
+#    [B] = [B] - [A]
+#    if [B] <= 0 goto C
+#
+# Note that value of C is taken to be the value before the subtraction.
+#
+# Omitting the C operand (i.e. writing just "subleq A B") is understood to be
+# shorthand for specifying C as the address of the next instruction. When the
+# program starts running, the program counter is 0. It halts when a branch
+# to a negative address happens.
+#
+# This self-interpreter expects the program that it should run to appear
+# directly after its own code/data in memory.
+#
+# Written by Clive Gifford, 29/30 August 2006 based on the Wikipedia
+# description of a OISC using the "subleq" instruction.
+# 3 Sep 2006: did some "constant folding", removing a few instructions.
+# 8 Sep 2006, a few more changes resulting in smaller memory footprint.
+
+START:
+
+# [A1] = [PC]
+
+       subleq A1   A1
+       subleq PC   ZERO
+       subleq ZERO A1
+       subleq ZERO ZERO
+
+# Code below (after modification from above) is equivalent to [A] = [[PC]]
+
+       subleq A    A
+A1:    data   0
+       data   ZERO
+       data   A2
+A2:    subleq ZERO A
+       subleq ZERO ZERO
+
+# [A] = [A] + [LEN]
+
+       subleq NEGL A
+
+# [PC] = [PC] + 1
+
+       subleq NEG1 PC
+
+# [B1] = [PC]
+
+       subleq B1   B1
+       subleq PC   ZERO
+       subleq ZERO B1
+       subleq ZERO ZERO
+
+
+# Code below (after modification from above) is equivalent to [B] = [[PC] + 1]
+
+       subleq B    B
+B1:    data   0
+       data   ZERO
+       data   B2
+B2:    subleq ZERO B
+       subleq ZERO ZERO
+
+# [B] = [B] + [LEN]
+
+       subleq NEGL B
+
+# We have to copy [C] now, just in case the emulated subtraction modifies [[PC] + 2].
+
+# [PC] = [PC] + 1
+
+       subleq NEG1  PC
+
+# [C1] = [PC]
+
+       subleq C1    C1
+       subleq PC    ZERO
+       subleq ZERO  C1
+       subleq ZERO  ZERO
+
+# Code below (after modification from above) is equivalent to [C] = [[PC] + 2]
+
+       subleq C    C
+C1:    data   0
+       data   ZERO
+       data   C2
+C2:    subleq ZERO C
+       subleq ZERO ZERO
+
+# [[B]] = [[B]] - [[A]];
+# if [[B]] <= 0 goto LEQZ
+
+# Earlier code referring to addresses A and B has modified the next
+# couple of words to create the equivalent of "subleq [A] [B] LEQZ"
+# This is where we're "emulating" the subtraction...
+
+A:     data   0
+B:     data   0
+       data   LEQZ
+
+# [PC] += 1
+
+       subleq NEG1  PC
+       subleq ZERO  ZERO START
+
+# We come to address LEQZ when the emulated subleq is going to take
+# the branch to the emulated address C.
+
+LEQZ:
+
+# First save the "raw" new PC
+# [PC] = [C]
+
+       subleq PC    PC
+       subleq C     ZERO
+       subleq ZERO  PC
+       subleq ZERO  ZERO
+
+# Check if [C] is less than zero. Halt if it is.
+# We don't care about changing [C] as we've already copied the value to [PC] above.
+
+       subleq NEG1  C     -1
+
+# [PC] = [PC] + [LEN]
+
+       subleq NEGL  PC
+
+# Go back to the start of the loop ready for the next instruction
+
+       subleq ZERO  ZERO  START
+
+NEGL:  data  -119   # make this == -PROG (my assembler is too primitive!)
+NEG1:  data  -1
+ZERO:  data   0
+
+C:     data   0
+PC:    data   PROG
+
+# Code for the program to be interpreted must start at the PROG address...
+PROG:

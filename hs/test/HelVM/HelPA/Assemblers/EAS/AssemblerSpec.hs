@@ -5,8 +5,7 @@ import           HelVM.HelPA.Assemblers.EAS.FileUtil
 
 import           HelVM.GoldenExpectations
 
-import           HelVM.HelPA.Assembler.API
-
+import           HelVM.HelPA.Assembler.API.SourcePath
 import           System.FilePath.Posix
 
 import           Test.Hspec                           (Spec, describe, it)
@@ -35,5 +34,6 @@ spec = do
           , "bottles3"
           , "euclid"
           ] $ \fileName -> do
-      let assemble = assembleFile SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
+      let path = SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
+      let assemble = assembleFile path
       it fileName $ do assemble `goldenShouldSafeExceptT` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)

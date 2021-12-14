@@ -1,13 +1,15 @@
 module HelVM.HelPA.Assemblers.ASQ.API.Separator where
 
-data Separator = EOL | Space
-  deriving stock (Eq , Read , Show)
+import           HelVM.HelPA.Assembler.API.SwitchEnum
+
+data Separator = Space | EOL
+  deriving stock (Bounded , Enum , Eq , Read , Show)
 
 separators :: [Separator]
-separators = [EOL , Space]
+separators = bothEnums
 
 defaultSeparator :: Separator
-defaultSeparator = Space
+defaultSeparator = defaultEnum
 
 parseSeparator :: String -> Separator
 parseSeparator raw = valid $ readMaybe raw where

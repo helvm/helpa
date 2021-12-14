@@ -3,18 +3,21 @@ module HelVM.HelPA.Assemblers.ASQ.Assembler (
   assembleText,
 ) where
 
-import           HelVM.HelPA.Assemblers.ASQ.AsmParser
-import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
-import           HelVM.HelPA.Assemblers.ASQ.CodeGenerator
-import           HelVM.HelPA.Assemblers.ASQ.Linker
+import           HelVM.HelPA.Assemblers.ASQ.API.Version
 
-import           HelVM.HelPA.Assembler.API
+import           HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
+
+import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
 import           HelVM.Common.Safe
 
-assembleFile :: BIO m => SourcePath -> AssemblyOptions -> m Text
-assembleFile sourcePath options = reduceAndGenerateCode options =<< linkApp sourcePath
+import qualified HelVM.HelPA.Assemblers.ASQ.Eigenratios.Assembler as Eigenratios
+import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler    as EsoLangs
 
-assembleText :: MonadSafeError m => Text -> AssemblyOptions -> m Text
-assembleText code options = reduceAndGenerateCode options =<< parseAssemblyText code
+assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
+assembleFile options sourcePath = assembleText (version options) options =<< wReadFile (filePath sourcePath)
+
+assembleText :: MonadSafeError m => Version -> AssemblyOptions -> Text -> m Text
+assembleText Eigenratios = Eigenratios.assembleText
+assembleText EsoLangs    = EsoLangs.assembleText
