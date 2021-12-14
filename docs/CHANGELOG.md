@@ -1,5 +1,9 @@
 # 📅 Revision history for HelPA
 
+## 0.4.0.3 -- 2021-12-14
+
+* Fix version in cabal
+
 ## 0.4.0.0 -- 2021-12-13
 
 * Add `Assembler of SubLeq`
