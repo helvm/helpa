@@ -5,11 +5,10 @@ import           HelVM.HelPA.Assemblers.EAS.Linker
 import           HelVM.HelPA.Assemblers.EAS.FileUtil
 import           HelVM.HelPA.Assemblers.EAS.TestData
 
-import           HelVM.HelPA.Assembler.API
-
 import           HelVM.Expectations
+import           HelVM.HelPA.Assembler.API.SourcePath
 
-import           Test.Hspec                          (Spec, describe, it)
+import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
 spec = do

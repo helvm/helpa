@@ -4,16 +4,15 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.HelPA.Assemblers.WSA.Linker
 import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import           HelVM.HelPA.Assembler.API
-
 import           HelVM.Common.Util
+import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
 
 import           System.FilePath.Posix
 
-import           Test.Hspec                          (Spec, describe, it)
+import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
 spec = do

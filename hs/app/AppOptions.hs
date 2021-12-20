@@ -3,8 +3,7 @@
 
 module AppOptions where
 
-import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-import           HelVM.HelPA.Assemblers.ASQ.API.Separator
+import           HelVM.HelPA.Assemblers.ASQ.API.Version
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           Options.Applicative
@@ -18,16 +17,24 @@ optionParser = AppOptions
                    <> value (show HAPAPL)
                    <> showDefault
                    )
-  <*> strOption    (  long    "separator"
-                   <> short   'S'
-                   <> help    "Type of separator (only for SQ)"
-                   <> value (show defaultSeparator)
+  <*> strOption    (  long    "version"
+                   <> short   'V'
+                   <> help    "Version of Assembler (only for SQ)"
+                   <> value (show defaultVersion)
                    <> showDefault
                    )
-  <*> strOption    (  long    "questionMark"
+  <*> switch       (  long    "eolSeparator"
+                   <> short   'S'
+                   <> help    "EOL separator (only for SQ)"
+                   <> showDefault
+                   )
+  <*> switch       (  long    "nextAddressForQuestionMark"
                    <> short   'Q'
                    <> help    "Type of Question Mark (only for SQ)"
-                   <> value (show defaultQuestionMark)
+                   <> showDefault
+                   )
+  <*> switch       (  long    "addOutLabel"
+                   <> help    "Add OUT label (only for SQ)"
                    <> showDefault
                    )
   <*> strOption    (  long    "tokenType"
@@ -62,15 +69,17 @@ optionParser = AppOptions
                    )
 
 data AppOptions = AppOptions
-  { lang               :: !String --Lang
-  , separator          :: !String --Separator
-  , questionMark       :: !String --QuestionMark
-  , tokenType          :: !String --TokenType
-  , debug              :: !Bool
-  , startOfInstruction :: !Bool
-  , endOfLine          :: !Bool
-  , file               :: !String
-  , dir                :: !String
+  { lang                       :: !String --Lang
+  , version                    :: !String --Version
+  , eolSeparator               :: !Bool
+  , nextAddressForQuestionMark :: !Bool
+  , addOutLabel                :: !Bool
+  , tokenType                  :: !String --TokenType
+  , debug                      :: !Bool
+  , startOfInstruction         :: !Bool
+  , endOfLine                  :: !Bool
+  , file                       :: !String
+  , dir                        :: !String
   }
 
 ----

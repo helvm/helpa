@@ -13,7 +13,8 @@ import           Test.Hspec                             (Spec, describe, it)
 
 spec :: Spec
 spec = do
-  describe "parseAssemblyText" $ do
+  describe "parseAssemblyFile" $ do
+    let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
     forM_ [ ("true"     , trueIL)
           , ("hello"    , helloIL)
           , ("pip"      , pipIL)
@@ -31,7 +32,7 @@ spec = do
           , ("bottles"  , bottlesIL)
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
-      let parseAssembly = parseAssemblyText <$> readFileText (buildAbsolutePathToEasFile fileName)
+      let parseAssembly = parseAssemblyFile $ buildAbsolutePathToEasFile fileName
       it fileName $ do parseAssembly `shouldSafeIO` il
 
   describe "empty" $ do

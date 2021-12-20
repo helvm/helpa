@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.0.3
+version:               0.4.1.0
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -124,27 +124,38 @@ library
     HelVM.Common.SequencesUtil
     HelVM.Common.Util
 
-    HelVM.HelPA.Assembler.API
+    HelVM.HelPA.Assembler.API.SourcePath
+    HelVM.HelPA.Assembler.API.SwitchEnum
     HelVM.HelPA.Assembler.AsmParserUtil
     HelVM.HelPA.Assembler.IO.BusinessIO
     HelVM.HelPA.Assembler.Util
     HelVM.HelPA.Assembler.Value
 
+    HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
     HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
     HelVM.HelPA.Assemblers.ASQ.API.Separator
-    HelVM.HelPA.Assemblers.ASQ.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.API.Version
+
     HelVM.HelPA.Assemblers.ASQ.Assembler
-    HelVM.HelPA.Assemblers.ASQ.AssemblyOptions
-    HelVM.HelPA.Assemblers.ASQ.CodeGenerator
-    HelVM.HelPA.Assemblers.ASQ.Instruction
-    HelVM.HelPA.Assemblers.ASQ.Line
-    HelVM.HelPA.Assemblers.ASQ.Linker
-    HelVM.HelPA.Assemblers.ASQ.Reducer
-    HelVM.HelPA.Assemblers.ASQ.Reducers.ExpressionReducer
-    HelVM.HelPA.Assemblers.ASQ.Reducers.InstructionReducer
-    HelVM.HelPA.Assemblers.ASQ.Reducers.ItemReducer
-    HelVM.HelPA.Assemblers.ASQ.Reducers.LabelReducer
-    HelVM.HelPA.Assemblers.ASQ.Reducers.QuestionMarkReducer
+
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Assembler
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Instruction
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Reducer
+
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Line
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducer
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.ExpressionReducer
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.InstructionReducer
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.ItemReducer
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.LabelReducer
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.QuestionMarkReducer
+
+    HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.Util.CodeGenerator
 
     HelVM.HelPA.Assemblers.EAS.AsmParser
     HelVM.HelPA.Assemblers.EAS.Assembler
@@ -167,6 +178,7 @@ library
     , containers           == 0.6.2.1
     , data-default
     , dlist
+    , filepath
     , ilist
     , ListLike
     , mono-traversable
@@ -203,9 +215,14 @@ test-suite helpa-test
     HelVM.Expectations
     HelVM.GoldenExpectations
 
-    HelVM.HelPA.Assemblers.ASQ.AsmParserSpec
-    HelVM.HelPA.Assemblers.ASQ.AssemblerSpec
+    HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
     HelVM.HelPA.Assemblers.ASQ.FileUtil
+
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParserSpec
+    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AssemblerSpec
+
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParserSpec
+    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AssemblerSpec
 
     HelVM.HelPA.Assemblers.EAS.AsmParserSpec
     HelVM.HelPA.Assemblers.EAS.AssemblerSpec

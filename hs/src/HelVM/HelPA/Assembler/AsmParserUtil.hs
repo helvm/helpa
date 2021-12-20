@@ -8,11 +8,20 @@ import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 import           Data.Char
 
+labelParser :: Parser Identifier
+labelParser = identifierParser <* char ':' <* skipHorizontalSpace
+
 integerValueParser2 :: Parser IntegerValue
 integerValueParser2 = Literal <$> integerParser2 <|> Variable <$> identifierParser
 
+signedIntegerValueParser :: Parser IntegerValue
+signedIntegerValueParser = Literal <$> signedIntegerParser <|> Variable <$> identifierParser
+
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser
+
+signedIntegerParser :: Parser Integer
+signedIntegerParser = signedIntegerLiteralParser <|> ordCharLiteralParser
 
 integerParser :: Parser Integer
 integerParser = integerLiteralParser <|> ordCharLiteralParser
@@ -22,6 +31,9 @@ integerParser2 = integerLiteralParser <|> ordCharLiteralParser2
 
 naturalLiteralParser :: Parser Natural
 naturalLiteralParser = readUnsafe <$> many1 digit
+
+signedIntegerLiteralParser :: Parser Integer
+signedIntegerLiteralParser = signed integerLiteralParser
 
 integerLiteralParser :: Parser Integer
 integerLiteralParser = readUnsafe <$> many1 digit
