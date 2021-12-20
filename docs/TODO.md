@@ -3,17 +3,21 @@
 **Future Features**
 
 Features to do for concrete languages:
-* [ ] 🌈 BrainFuck Assembler Language - [FBF](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck)
-* [x] ❤️ [ETA](http://www.miketaylor.org.uk/tech/eta/doc/) Assembler Language - [EAS](http://www.miketaylor.org.uk/tech/eta/doc/easman.html)
+* [ ] 🌈 BrainFuck Assembler Language -
+[FBF](http://www.inshame.com/search/label/My%20Progs%3A%20FuckBrainfuck) ([code backup](https://github.com/esovm/FuckBrainFuck))
+* [x] ❤️ [ETA](http://www.miketaylor.org.uk/tech/eta/doc/) Assembler Language - [EAS](http://www.miketaylor.org.uk/tech/eta/doc/easman.html) ([code backup](https://github.com/helvm/eta))
 * [ ] 💛 [Malbolge](https://lutter.cc/malbolge/) Assembler Language:
-  * [LMAO](https://lutter.cc/malbolge/assembler.html)
-  * [LAL](https://www.trs.cm.is.nagoya-u.ac.jp/projects/Malbolge/lal/lal-def.html.en)
-* [ ] 💚 [Piet](https://www.dangermouse.net/esoteric/piet.html) Assembler Language - [Piet](https://www.toothycat.net/wiki/wiki.pl?MoonShadow/Piet) [Backup](https://github.com/helvm/Piet)
+  * [LMAO](https://lutter.cc/malbolge/assembler.html) ([code](https://github.com/esoteric-programmer/LMAO))
+  * [LMFAO](https://lutter.cc/unshackled/assembler.html) ([code](https://github.com/esoteric-programmer/LMFAO))
+  * [LAL](https://www.trs.cm.is.nagoya-u.ac.jp/projects/Malbolge/lal/lal-def.html.en) ([code](https://git.trs.css.i.nagoya-u.ac.jp/malbolge/lowass)) 
+  * [HAL](https://www.trs.cm.is.nagoya-u.ac.jp/projects/Malbolge/hal/hal-def.html.en) ([code](https://git.trs.css.i.nagoya-u.ac.jp/malbolge/ternary))
+* [ ] 💚 [Piet](https://www.dangermouse.net/esoteric/piet.html) Assembler Language -
+[Piet](https://www.toothycat.net/wiki/wiki.pl?MoonShadow/Piet) ([code backup](https://github.com/helvm/Piet))
 * [x] 💙 [SubLeq](http://mazonka.com/subleq/) Assembler Language:
   * [x] [ASQ](http://mazonka.com/subleq/)
-  * [ ] [sblasm](https://techtinkering.com/articles/subleq-a-one-instruction-set-computer/)
-  * [ ] [subleq](http://eigenratios.blogspot.com/2006/09/mark-ii-oisc-self-interpreter.html)
-* [x] 🤍 [WhiteSpace](https://helvm.github.io/wspace/tutorial.html) Assembler Language - [WSA](https://helvm.github.io/wsa/intro.html)
+  * [ ] [eigenratios](http://eigenratios.blogspot.com/2006/09/mark-ii-oisc-self-interpreter.html)
+  * [ ] [sblasm](https://techtinkering.com/articles/subleq-a-one-instruction-set-computer/) ([code](https://github.com/lawrencewoodman/sblasm))
+* [x] 🤍 [WhiteSpace](https://helvm.github.io/wspace/tutorial.html) Assembler Language - [WSA](https://helvm.github.io/wsa/intro.html) ([code backup](https://github.com/helvm/wsa))
 * [ ] 🖤 WMachine Assembler Language
 * [ ] 🦄 [Zot](https://github.com/helvm/zot_haskell) Assembler Language
 
