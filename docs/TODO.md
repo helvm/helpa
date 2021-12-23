@@ -15,7 +15,7 @@ Features to do for concrete languages:
 [Piet](https://www.toothycat.net/wiki/wiki.pl?MoonShadow/Piet) ([code backup](https://github.com/helvm/Piet))
 * [x] 💙 [SubLeq](http://mazonka.com/subleq/) Assembler Language:
   * [x] [ASQ](http://mazonka.com/subleq/)
-  * [ ] [eigenratios](http://eigenratios.blogspot.com/2006/09/mark-ii-oisc-self-interpreter.html)
+  * [x] [eigenratios](http://eigenratios.blogspot.com/2006/09/mark-ii-oisc-self-interpreter.html)
   * [ ] [sblasm](https://techtinkering.com/articles/subleq-a-one-instruction-set-computer/) ([code](https://github.com/lawrencewoodman/sblasm))
 * [x] 🤍 [WhiteSpace](https://helvm.github.io/wspace/tutorial.html) Assembler Language - [WSA](https://helvm.github.io/wsa/intro.html) ([code backup](https://github.com/helvm/wsa))
 * [ ] 🖤 WMachine Assembler Language

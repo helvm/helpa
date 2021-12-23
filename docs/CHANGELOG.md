@@ -1,5 +1,9 @@
 # 📅 Revision history for HelPA
 
+## 0.4.1.0 -- 2021-12-23
+
+* Add `Assembler of SubLeq` from eigenratios
+
 ## 0.4.0.3 -- 2021-12-14
 
 * Fix version in cabal
