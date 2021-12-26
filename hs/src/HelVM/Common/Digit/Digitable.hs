@@ -7,19 +7,19 @@ import           HelVM.Common.Safe
 
 -- | Public functions
 
-naturalToDL :: (MonadSafeError m , Digitable a) => Natural -> m [a]
+naturalToDL :: (MonadSafe m , Digitable a) => Natural -> m [a]
 naturalToDL = liftSafe . traverse fromDigit . naturalToDigits2
 
-stringToDL :: (MonadSafeError m , Digitable a) => String -> m [a]
+stringToDL :: (MonadSafe m , Digitable a) => String -> m [a]
 stringToDL s = join <$> traverse charToDL s
 
-charToDL :: (MonadSafeError m, Digitable a) => Char -> m [a]
+charToDL :: (MonadSafe m, Digitable a) => Char -> m [a]
 charToDL c = traverse fromDigit $ toBits8 $ ord c `mod` 256
 
 -- | Type Classes
 
 class ToDigit t => Digitable t where
-  fromDigit :: (MonadSafeError m , Show a , Integral a) => a -> m t
+  fromDigit :: (MonadSafe m , Show a , Integral a) => a -> m t
 
 -- | Internal functions
 

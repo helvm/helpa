@@ -6,7 +6,7 @@ module HelVM.HelPA.Assembler.IO.BusinessIO (
 
 import           HelVM.Common.Safe
 
-type BIO m = (MonadSafeError m , BusinessIO m)
+type BIO m = (MonadSafe m , BusinessIO m)
 
 class Monad m => BusinessIO m where
   wReadFile :: FilePath -> m Text

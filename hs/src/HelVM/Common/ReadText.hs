@@ -13,7 +13,7 @@ readTextUnsafe = unsafe . readTextSafe where
   unsafe (Right a) = a
   unsafe (Left a)  = (error . errorsToText) a
 
-readTextSafe :: (MonadSafeError m , Read a) => Text -> m a
+readTextSafe :: (MonadSafe m , Read a) => Text -> m a
 readTextSafe a = (appendError a . liftEitherError . readEither . toString) a
 
 readTextMaybe :: Read a => Text -> Maybe a
@@ -24,5 +24,5 @@ readUnsafe = unsafe . readSafe where
   unsafe (Right a) = a
   unsafe (Left a)  = (error . errorsToText) a
 
-readSafe :: (MonadSafeError m , Read a) => String -> m a
+readSafe :: (MonadSafe m , Read a) => String -> m a
 readSafe a = (appendError (toText a) . liftEitherError . readEither) a

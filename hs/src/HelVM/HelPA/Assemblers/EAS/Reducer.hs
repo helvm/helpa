@@ -14,7 +14,7 @@ import           Data.List.Split
 
 import qualified Data.ListLike                          as LL
 
-reduce :: MonadSafeError m => InstructionList -> m InstructionList
+reduce :: MonadSafe m => InstructionList -> m InstructionList
 reduce il = replaceStrings <$> replaceLabels addresses il where addresses = addressOfLabels il
 
 ----
@@ -24,10 +24,10 @@ addressOfLabels il = flippedToMapFromLists [1..] $ (labelToIdentifiers =<<) <$> 
 
 ----
 
-replaceLabels ::  MonadSafeError m => LabelAddresses -> InstructionList -> m InstructionList
+replaceLabels ::  MonadSafe m => LabelAddresses -> InstructionList -> m InstructionList
 replaceLabels addresses = traverse (replaceLabel addresses)
 
-replaceLabel :: MonadSafeError m => LabelAddresses -> Instruction -> m Instruction
+replaceLabel :: MonadSafe m => LabelAddresses -> Instruction -> m Instruction
 replaceLabel addresses (N (Variable l)) = N . Literal <$> indexSafeByKey l addresses
 replaceLabel _          i               = pure i
 

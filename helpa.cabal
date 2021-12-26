@@ -176,12 +176,14 @@ library
   build-depends:
       attoparsec
     , containers           == 0.6.2.1
+--    , co-log
     , data-default
     , dlist
     , filepath
     , ilist
     , ListLike
     , mono-traversable
+    , monad-logger
     , mtl
     , pretty-simple
     , slist

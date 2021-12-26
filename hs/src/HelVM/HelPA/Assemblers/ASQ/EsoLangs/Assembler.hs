@@ -18,8 +18,8 @@ import           HelVM.Common.Safe
 assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
 assembleFile options sourcePath = assembleText options =<< wReadFile (filePath sourcePath)
 
-assembleText :: MonadSafeError m => AssemblyOptions -> Text -> m Text
+assembleText :: MonadSafe m => AssemblyOptions -> Text -> m Text
 assembleText options code = reduceAndGenerateCode options =<< parseAssemblyText code
 
-reduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
+reduceAndGenerateCode :: MonadSafe m => AssemblyOptions -> InstructionList -> m Text
 reduceAndGenerateCode options il = generateCode (separator options) <$> reduce (addOutLabel options) (questionMark options) il

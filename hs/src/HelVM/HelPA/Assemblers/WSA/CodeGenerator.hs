@@ -16,21 +16,21 @@ import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 import           HelVM.Common.Digit.Digitable
 import           HelVM.Common.Safe
 
-reduceAndGenerateCode :: MonadSafeError m => AssemblyOptions -> InstructionList -> m Text
+reduceAndGenerateCode :: MonadSafe m => AssemblyOptions -> InstructionList -> m Text
 reduceAndGenerateCode options il = generateCode (tokenType options) (startOfInstruction options) (debug options) $ reduce (endOfLine options) il
 
-generateCode :: MonadSafeError m => TokenType -> Bool -> Bool -> InstructionList -> m Text
+generateCode :: MonadSafe m => TokenType -> Bool -> Bool -> InstructionList -> m Text
 generateCode tokenType startOfInstruction debug il = showTLByType tokenType <$> generateTL startOfInstruction debug il
 
-generateTL :: MonadSafeError m => Bool -> Bool -> InstructionList -> m TokenList
+generateTL :: MonadSafe m => Bool -> Bool -> InstructionList -> m TokenList
 generateTL startOfInstruction debug il = join <$> traverse (generateTLForInstruction startOfInstruction debug) il
 
-generateTLForInstruction :: MonadSafeError m => Bool -> Bool -> Instruction -> m TokenList
+generateTLForInstruction :: MonadSafe m => Bool -> Bool -> Instruction -> m TokenList
 generateTLForInstruction _    _     EOL = pure [R]
 generateTLForInstruction True debug i   = ([E] <>) <$> generateTLForInstruction' debug i
 generateTLForInstruction _    debug i   = generateTLForInstruction' debug i
 
-generateTLForInstruction' :: MonadSafeError m => Bool -> Instruction -> m TokenList
+generateTLForInstruction' :: MonadSafe m => Bool -> Instruction -> m TokenList
 -- | Stack instructions
 generateTLForInstruction' _ (Push (Literal value)) = ([S,S] <>) <$> valueToTL value
 generateTLForInstruction' _  Dup                   = pure [S,N,S]
@@ -66,13 +66,13 @@ generateTLForInstruction' False DebugPrintStack    = pure []
 generateTLForInstruction' False DebugPrintHeap     = pure []
 generateTLForInstruction' _ i                      = liftErrorTuple ("Can not handle instruction" , show i)
 
-valueToTL :: MonadSafeError m => Integer -> m TokenList
+valueToTL :: MonadSafe m => Integer -> m TokenList
 valueToTL value = integerToTL value <&> (<> [N])
 
-integerToTL :: MonadSafeError m => Integer -> m TokenList
+integerToTL :: MonadSafe m => Integer -> m TokenList
 integerToTL value
   | 0 <= value = (S : ) <$> naturalToDL (fromIntegral value)
   | otherwise  = (T : ) <$> naturalToDL (fromIntegral (- value))
 
-identifierToTL :: MonadSafeError m => Identifier -> m TokenList
+identifierToTL :: MonadSafe m => Identifier -> m TokenList
 identifierToTL i = stringToDL (unwrapIdentifier i) <&> (<> [N])

@@ -14,5 +14,5 @@ import           HelVM.HelPA.Assembler.Util
 
 import           HelVM.Common.Safe
 
-reduce :: MonadSafeError m => Bool -> QuestionMark -> InstructionList -> m SymbolList
+reduce :: MonadSafe m => Bool -> QuestionMark -> InstructionList -> m SymbolList
 reduce addOutLabel qm il = reduceExpressions =<< (reduceQuestionMarks qm =<< (reduceLabels addOutLabel . reduceItemList =<< reduceIL qm il))

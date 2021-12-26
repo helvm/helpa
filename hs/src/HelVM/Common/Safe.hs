@@ -28,7 +28,7 @@ module HelVM.Common.Safe (
   tupleListToError,
   tupleToError,
 
-  MonadSafeError,
+  MonadSafe,
   SafeExceptT,
   EitherLegacy,
   EitherError,
@@ -41,6 +41,10 @@ import           HelVM.Common.Util
 import           Control.Monad.Except      hiding (ExceptT, runExceptT)
 
 import           Control.Monad.Writer.Lazy
+
+--import           Colog.Monad
+
+import           Control.Monad.Logger
 
 import           System.IO.Error
 
@@ -55,11 +59,24 @@ safeIOToIO a = safeToIO =<< a
 safeToIO :: Safe a -> IO a
 safeToIO = exceptTToIO . liftSafe
 
+--FIXME
+--writerTToIO :: SafeWriterT IO a -> IO a
+--writerTToIO = liftWriterT . evalWriter
+
 exceptTToIO :: SafeExceptT IO a -> IO a
 exceptTToIO = liftExceptT . withExceptT (userError . errorsToString)
 
+--aaa :: MonadSafe m => m a -> SafeExceptT IO a
+--aaa :: (MonadSafe m , MonadSafeError m2) => m a -> m2 a
+--aaa = id
+
+evalWriter :: Writer c a -> a
+evalWriter = fst . runWriter
+
 safeExceptT :: Monad m => m a -> SafeExceptT m a
 safeExceptT a = ExceptT $ pure <$> a
+
+
 
 safeToEitherLegacy :: Safe a -> EitherLegacy a
 safeToEitherLegacy = first errorsToString
@@ -72,16 +89,19 @@ errorsToText = unlines . DList.toList
 
 -- | Lift
 
+--liftWriterT :: MonadError e m => WriterT e m a -> m a
+--liftWriterT m = writer =<< runWriterT m
+
 liftExceptT :: MonadError e m => ExceptT e m a -> m a
 liftExceptT m = liftEither =<< runExceptT m
 
-liftSafe :: MonadSafeError m => Safe a -> m a
+liftSafe :: MonadSafe m => Safe a -> m a
 liftSafe = liftEither
 
-liftEitherError :: MonadSafeError m => Either Text a -> m a
+liftEitherError :: MonadSafe m => Either Text a -> m a
 liftEitherError = liftSafe . first DList.singleton
 
-liftEitherLegacy :: MonadSafeError m => EitherLegacy a -> m a
+liftEitherLegacy :: MonadSafe m => EitherLegacy a -> m a
 liftEitherLegacy = liftSafe . first stringToErrors
 
 stringToErrors :: String -> Errors
@@ -89,35 +109,35 @@ stringToErrors = DList.singleton . toText
 
 -- | Lift from Maybe
 
-liftMaybeOrErrorTupleList :: MonadSafeError m => [ErrorTuple] -> Maybe a -> m a
+liftMaybeOrErrorTupleList :: MonadSafe m => [ErrorTuple] -> Maybe a -> m a
 liftMaybeOrErrorTupleList = liftMaybeOrError . tupleListToError
 
-liftMaybeOrErrorTuple :: MonadSafeError m => ErrorTuple -> Maybe a -> m a
+liftMaybeOrErrorTuple :: MonadSafe m => ErrorTuple -> Maybe a -> m a
 liftMaybeOrErrorTuple = liftMaybeOrError . tupleToError
 
-liftMaybeOrError :: MonadSafeError m => Error -> Maybe a -> m a
+liftMaybeOrError :: MonadSafe m => Error -> Maybe a -> m a
 liftMaybeOrError e = liftSafe . maybeToRight (DList.singleton e)
 
 -- | Lift from Error
 
-liftErrorTupleList :: MonadSafeError m => [ErrorTuple] -> m a
+liftErrorTupleList :: MonadSafe m => [ErrorTuple] -> m a
 liftErrorTupleList = liftError . tupleListToError
 
-liftErrorTuple :: MonadSafeError m => ErrorTuple -> m a
+liftErrorTuple :: MonadSafe m => ErrorTuple -> m a
 liftErrorTuple = liftError . tupleToError
 
-liftError :: MonadSafeError m => Error -> m a
+liftError :: MonadSafe m => Error -> m a
 liftError = throwError . DList.singleton
 
 -- | Append Error
 
-appendErrorTupleList :: MonadSafeError m => [ErrorTuple] -> m a -> m a
+appendErrorTupleList :: MonadSafe m => [ErrorTuple] -> m a -> m a
 appendErrorTupleList = appendError . tupleListToError
 
-appendErrorTuple :: MonadSafeError m => ErrorTuple -> m a -> m a
+appendErrorTuple :: MonadSafe m => ErrorTuple -> m a -> m a
 appendErrorTuple = appendError . tupleToError
 
-appendError :: MonadSafeError m => Error -> m a -> m a
+appendError :: MonadSafe m => Error -> m a -> m a
 appendError message a = catchError a appendAndThrow where appendAndThrow es = throwError (es `DList.snoc` message)
 
 ----
@@ -132,9 +152,13 @@ tupleToError (prefix , showed) = " [" <> format prefix <> showed <> "]" where
 
 ----
 
-type MonadSafeError m = (MonadSafeError' m , MonadWriter Errors m)
+--type MonadSafe m = (MonadSafeError m , WithLog env Message m)
+type MonadSafe m = (MonadSafeError m , MonadLogger m)
+--type MonadSafe m = (MonadSafeError m)
 
-type MonadSafeError' m = (MonadError Errors m)
+type MonadSafeError m = (MonadError Errors m)
+
+--type SafeWriterT m = WriterT Errors m
 
 type SafeExceptT m = ExceptT Errors m
 

@@ -12,7 +12,7 @@ import           HelVM.Common.Safe
 
 import           Data.Attoparsec.Text
 
-parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
+parseAssemblyText :: MonadSafe m => Text -> m InstructionList
 parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <* endOfInput)
 
 instructionListParser :: Parser InstructionList

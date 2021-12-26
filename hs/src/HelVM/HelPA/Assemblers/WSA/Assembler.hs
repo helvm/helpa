@@ -16,5 +16,5 @@ import           HelVM.Common.Safe
 assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
 assembleFile options sourcePath = reduceAndGenerateCode options =<< linkApp sourcePath
 
-assembleText :: MonadSafeError m => AssemblyOptions -> Text -> m Text
+assembleText :: MonadSafe m => AssemblyOptions -> Text -> m Text
 assembleText options code = reduceAndGenerateCode options =<< parseAssemblyText code

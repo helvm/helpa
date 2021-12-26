@@ -18,6 +18,6 @@ import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler    as EsoLangs
 assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
 assembleFile options sourcePath = assembleText (version options) options =<< wReadFile (filePath sourcePath)
 
-assembleText :: MonadSafeError m => Version -> AssemblyOptions -> Text -> m Text
+assembleText :: MonadSafe m => Version -> AssemblyOptions -> Text -> m Text
 assembleText Eigenratios = Eigenratios.assembleText
 assembleText EsoLangs    = EsoLangs.assembleText

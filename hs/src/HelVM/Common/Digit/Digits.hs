@@ -7,10 +7,10 @@ module HelVM.Common.Digit.Digits (
 import           HelVM.Common.Collections.SList
 import           HelVM.Common.Safe
 
-digitsToIntegral :: (MonadSafeError m , Integral a) => a -> SList (m a) -> m a
+digitsToIntegral :: (MonadSafe m , Integral a) => a -> SList (m a) -> m a
 digitsToIntegral base = foldr (liftedMulAndAdd base) (pure 0)
 
-liftedMulAndAdd :: (MonadSafeError m , Integral a)  => a -> m a -> m a -> m a
+liftedMulAndAdd :: (MonadSafe m , Integral a)  => a -> m a -> m a -> m a
 liftedMulAndAdd base = liftA2 (mulAndAdd base)
 
 mulAndAdd :: Integral a => a -> a -> a -> a
