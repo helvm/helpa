@@ -38,11 +38,13 @@ module HelVM.Common.Safe (
 
 import           HelVM.Common.Util
 
-import           Control.Monad.Except hiding (ExceptT, runExceptT)
+import           Control.Monad.Except      hiding (ExceptT, runExceptT)
+
+import           Control.Monad.Writer.Lazy
 
 import           System.IO.Error
 
-import qualified Data.DList           as DList
+import qualified Data.DList                as DList
 
 safeIOToPTextIO :: Show a => IO (Safe a) -> IO Text
 safeIOToPTextIO a = showP <$> safeIOToIO a
@@ -130,7 +132,9 @@ tupleToError (prefix , showed) = " [" <> format prefix <> showed <> "]" where
 
 ----
 
-type MonadSafeError m = MonadError Errors m
+type MonadSafeError m = (MonadError Errors m , MonadWriter Errors m)
+
+
 
 type SafeExceptT m = ExceptT Errors m
 
