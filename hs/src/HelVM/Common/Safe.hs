@@ -132,9 +132,9 @@ tupleToError (prefix , showed) = " [" <> format prefix <> showed <> "]" where
 
 ----
 
-type MonadSafeError m = (MonadError Errors m , MonadWriter Errors m)
+type MonadSafeError m = (MonadSafeError' m , MonadWriter Errors m)
 
-
+type MonadSafeError' m = (MonadError Errors m)
 
 type SafeExceptT m = ExceptT Errors m
 
