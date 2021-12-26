@@ -117,10 +117,12 @@ library
     HelVM.Common.Digit.Digits
     HelVM.Common.Digit.ToDigit
 
+    HelVM.Common.Message.Message
+    HelVM.Common.Message.Safe
+
     HelVM.Common.ListLikeUtil
     HelVM.Common.NamedValue
     HelVM.Common.ReadText
-    HelVM.Common.Safe
     HelVM.Common.SequencesUtil
     HelVM.Common.Util
 
@@ -176,14 +178,12 @@ library
   build-depends:
       attoparsec
     , containers           == 0.6.2.1
---    , co-log
     , data-default
     , dlist
     , filepath
     , ilist
     , ListLike
     , mono-traversable
-    , monad-logger
     , mtl
     , pretty-simple
     , slist
@@ -252,7 +252,6 @@ test-suite helpa-test
     , helpa
 
     , filepath
---    , ilist
     , type-operators
 
   build-tool-depends:  hspec-discover:hspec-discover == 2.*
