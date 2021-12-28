@@ -19,7 +19,7 @@ import           Test.Hspec                                     (Spec, describe,
 
 spec :: Spec
 spec = do
-  describe "assembleFile" $ do
+  describe "assembleFile" $
     forM_ [ (CurrentAddress , "esolangs" </> "currentAddress" </> "helloWorld")
           , (NextAddress    , "esolangs" </> "nextAddress"    </> "echo"      )
           , (NextAddress    , "esolangs" </> "nextAddress"    </> "hi"        )
@@ -31,7 +31,7 @@ spec = do
       let options  = defaultAssemblyOptionsForTest {questionMark = address}
       let path     = SourcePath {dirPath = asqDir , filePath = buildAbsolutePathToAsqFile fileName}
       let assemble = assembleFile options path
-      it fileName $ do assemble `goldenShouldSafeExceptT` buildAbsolutePathToSqFile ("assembleFile" </> fileName)
+      it fileName $ assemble `goldenShouldControlT` buildAbsolutePathToSqFile ("assembleFile" </> fileName)
 
   describe "assembleTextWithCurrentAddress" $ do
     describe "CurrentAddress" $ do
@@ -44,8 +44,9 @@ spec = do
             , ("? ?;"      , "0 1 3")
             , ("?;"        , "0 0 3")
             , ("e ?;e:;"   , "3 1 3")
-            ] $ \(line , sq) -> do
-        it line $ do assembleTextWithCurrentAddress (toText line) `shouldSafe` sq
+            ] $ \(line , sq) ->
+        it line $ assembleTextWithCurrentAddress (toText line) `shouldSafe` sq
+
     describe "assembleTextWithNextAddress" $ do
       let assembleTextWithNextAddress = assembleText defaultAssemblyOptionsWithNextAddress
       forM_ [ (";"         , "")
@@ -56,5 +57,5 @@ spec = do
             , ("? ?;"      , "1 2 3")
             , ("?;"        , "1 1 3")
             , ("e ?;e:;"   , "3 2 3")
-            ] $ \(line , sq) -> do
-        it line $ do assembleTextWithNextAddress (toText line) `shouldSafe` sq
+            ] $ \(line , sq) ->
+        it line $ assembleTextWithNextAddress (toText line) `shouldSafe` sq

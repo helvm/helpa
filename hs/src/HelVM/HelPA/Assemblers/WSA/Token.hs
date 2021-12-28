@@ -3,9 +3,9 @@ module HelVM.HelPA.Assemblers.WSA.Token where
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           HelVM.Common.Containers.Util
+import           HelVM.Common.Control.Safe
 import           HelVM.Common.Digit.Digitable
 import           HelVM.Common.Digit.ToDigit
-import           HelVM.Common.Safe
 
 import           Text.Read
 

@@ -5,7 +5,7 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.HelPA.Assemblers.WSA.Instruction
 import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
@@ -23,21 +23,21 @@ spec = do
   let parseAssemblyApp  fileName = parseAssemblyFile (appDir </> fileName <.> ext)
   let parseAssemblyEAS  fileName = parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> ext)
 
-  describe "parseAssemblyLib" $ do
+  describe "parseAssemblyLib" $
     forM_ [ "io"
           , "memory"
-          ] $ \fileName -> do
-      it fileName $ do
+          ] $ \fileName ->
+      it fileName $
         safeIOToPTextIO (parseAssemblyLib fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyLib" </> fileName)
 
   describe "parseAssemblyApp" $ do
-    describe "original" $ do
+    describe "original" $
       forM_ [ "prim"
-            ] $ \fileName -> do
-        it fileName $ do
+            ] $ \fileName ->
+        it fileName $
           safeIOToPTextIO (parseAssemblyApp fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "original" </> fileName)
 
-    describe "from-eas" $ do
+    describe "from-eas" $
       forM_ [ "true"
             , "hello"
             , "pip"
@@ -55,16 +55,16 @@ spec = do
   --          , "fact"
             , "bottles"
  --           , "euclid"
-            ] $ \ fileName -> do
-        it fileName $ do
+            ] $ \ fileName ->
+        it fileName $
           safeIOToPTextIO (parseAssemblyEAS fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> "from-eas" </> fileName)
 
   describe "parseAssemblyText" $ do
-    it "io"     $ do parseAssemblyLib "io"     `shouldSafeIO` ioIL
-    it "memory" $ do parseAssemblyLib "memory" `shouldSafeIO` memoryIL
-    it "prim"   $ do parseAssemblyApp "prim"   `shouldSafeIO` (Include "io" : primIL)
+    it "io"     $ parseAssemblyLib "io"     `shouldSafeIO` ioIL
+    it "memory" $ parseAssemblyLib "memory" `shouldSafeIO` memoryIL
+    it "prim"   $ parseAssemblyApp "prim"   `shouldSafeIO` (Include "io" : primIL)
 
-  describe "Commands without operands" $ do
+  describe "Commands without operands" $
     forM_ [ ("pop"  , [Pop])
           , ("doub" , [Dup])
           , ("swap" , [Swap])
@@ -74,10 +74,10 @@ spec = do
           , ("outc" , [OutputChar])
           , ("inn"  , [InputNum])
           , ("inc"  , [InputChar])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il
 
-  describe "Commands with maybe natural operand" $ do
+  describe "Commands with maybe natural operand" $
     forM_ [ ( "add"       , [Add Nothing])
           , ( "add 0"     , [Add (Just (Literal 0))])
           , ( "add 1"     , [Add (Just (Literal 1))])
@@ -105,10 +105,10 @@ spec = do
           , ( "retrive"   , [Load Nothing])
           , ( "retrive 0" , [Load (Just (Literal 0))])
           , ( "retrive 1" , [Load (Just (Literal 1))])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il
 
-  describe "Commands with identifier operand" $ do
+  describe "Commands with identifier operand" $
     forM_ [ ("label L"    , [Mark "L"])
           , ("call L"     , [Call "L"])
           , ("jump L"     , [Branch "L"])
@@ -118,25 +118,25 @@ spec = do
           , ("jumpnz L"   , [BranchNP "L"])
           , ("jumppz L"   , [BranchNM "L"])
           , ("include L"  , [Include "L"])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il
 
-  describe "Commands with natural operand" $ do
+  describe "Commands with natural operand" $
     forM_ [ ("push 0" , [Push (Literal 0)])
           , ("push 1" , [Push (Literal 1)])
           , ("test 0" , [Test 0])
           , ("test 1" , [Test 1])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il
 
-  describe "Commands with other operand" $ do
+  describe "Commands with other operand" $
     forM_ [ ("pushs \"\""  , [PushS (Literal "")])
           , ("pushs \"0\"" , [PushS (Literal "0")])
           , ("pushs \"1\"" , [PushS (Literal "1")])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il
 
-  describe "Comments" $ do
+  describe "Comments" $
     forM_ [ (""                            , [])
           , (";"                           , [])
           , ("\n"                          , [])
@@ -150,5 +150,5 @@ spec = do
           , ("label L\n;label L"           , [Mark "L"])
           , ("label L\n;label L\n"         , [Mark "L"])
           , ("label L\nlabel L\nlabel L\n" , [Mark "L", Mark "L", Mark "L"])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il

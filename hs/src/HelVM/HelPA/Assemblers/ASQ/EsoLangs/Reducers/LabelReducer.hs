@@ -10,13 +10,13 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.Common.Containers.Util
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 import           Control.Type.Operator
 
 import qualified Data.Map                                        as Map
 
-reduceLabels :: MonadSafeError m => Bool -> LineList -> m ExpressionList
+reduceLabels :: MonadSafe m => Bool -> LineList -> m ExpressionList
 reduceLabels addOutLabel l = reduceForTEList (addressOfLabels addOutLabel l) $ extractExpressions l
 
 addressOfLabels :: Bool -> LineList -> LabelSymbols
@@ -26,19 +26,19 @@ addOutLabelSymbol :: Bool -> LabelSymbols -> LabelSymbols
 addOutLabelSymbol True = Map.insert "OUT" (-1)
 addOutLabelSymbol _    = id
 
-reduceForTEList :: MonadSafeError m => LabelSymbols -> ExpressionList -> m ExpressionList
+reduceForTEList :: MonadSafe m => LabelSymbols -> ExpressionList -> m ExpressionList
 reduceForTEList addresses = traverse (reduceForTE addresses)
 
-reduceForTE :: MonadSafeError m => LabelSymbols -> Expression -> m Expression
+reduceForTE :: MonadSafe m => LabelSymbols -> Expression -> m Expression
 reduceForTE addresses (Expression pm t) = liftA2 makeExpression pm' t' where
   pm' = reduceForPmMaybe addresses pm
   t'  = reduceForTerm    addresses t
 
-reduceForPmMaybe :: MonadSafeError m => LabelSymbols -> Maybe PMExpression -> m $ Maybe PMExpression
+reduceForPmMaybe :: MonadSafe m => LabelSymbols -> Maybe PMExpression -> m $ Maybe PMExpression
 reduceForPmMaybe _          Nothing                   = pure Nothing
 reduceForPmMaybe addresses (Just (PMExpression pm e)) = Just . PMExpression pm <$> reduceForTE addresses e
 
-reduceForTerm :: MonadSafeError m => LabelSymbols -> Term -> m Term
+reduceForTerm :: MonadSafe m => LabelSymbols -> Term -> m Term
 reduceForTerm addresses (TermSymbol (Variable identifier)) = TermSymbol . Literal <$> indexSafeByKey identifier addresses
 reduceForTerm addresses (TermMinus t)                      = TermMinus <$> reduceForTerm addresses t
 reduceForTerm addresses (TermExpression e)                 = TermExpression <$> reduceForTE addresses e

@@ -14,11 +14,11 @@ import           System.FilePath.Posix
 import           Test.Hspec                                       (Spec, describe, it)
 
 spec :: Spec
-spec = do
+spec =
   describe "assembleFile" $ do
     let assembleForTest = assembleFile defaultAssemblyOptionsForTest
     forM_ [ "eigenratios" </> "si1"
           , "eigenratios" </> "si2"
           ] $ \fileName -> do
-      let path     = SourcePath {dirPath = asqDir , filePath = buildAbsolutePathToAsqFile fileName}
-      it fileName $ do assembleForTest path `goldenShouldSafeExceptT` buildAbsolutePathToSqFile ("assembleFile" </> fileName)
+      let path = SourcePath {dirPath = asqDir , filePath = buildAbsolutePathToAsqFile fileName}
+      it fileName $ assembleForTest path `goldenShouldControlT` buildAbsolutePathToSqFile ("assembleFile" </> fileName)

@@ -4,9 +4,11 @@ module HelVM.HelPA.Assembler.IO.BusinessIO (
   wReadFile,
 ) where
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Control
+import           HelVM.Common.Control.Logger
+import           HelVM.Common.Control.Safe
 
-type BIO m = (MonadSafeError m , BusinessIO m)
+type BIO m = (MonadControl m , BusinessIO m)
 
 class Monad m => BusinessIO m where
   wReadFile :: FilePath -> m Text
@@ -14,5 +16,11 @@ class Monad m => BusinessIO m where
 instance BusinessIO IO where
   wReadFile = readFileText
 
-instance BusinessIO (SafeExceptT IO) where
-  wReadFile = safeExceptT . readFileText
+instance BusinessIO (SafeT IO) where
+  wReadFile = safeT . readFileText
+
+instance BusinessIO (LoggerT IO) where
+  wReadFile = loggerT . readFileText
+
+instance BusinessIO (ControlT IO) where
+  wReadFile = controlT . readFileText

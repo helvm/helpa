@@ -20,21 +20,21 @@ spec = do
   let linkAppFile  fileName = linkApp SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext}
   let linkAppFile1 fileName = linkApp SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext}
 
-  describe "linkLibFile" $ do
+  describe "linkLibFile" $
     forM_ [ "io"
           , "memory"
-          ] $ \fileName -> do
-      it fileName $ do
-        showP <$> linkLibFile fileName `goldenShouldSafeExceptT` buildAbsolutePathToIlFile ("linkLibFile" </> fileName)
+          ] $ \fileName ->
+      it fileName $
+        showP <$> linkLibFile fileName `goldenShouldControlT` buildAbsolutePathToIlFile ("linkLibFile" </> fileName)
 
   describe "linkAppFile" $ do
-    describe "original" $ do
+    describe "original" $
       forM_ [ "prim"
-            ] $ \fileName -> do
-        it fileName $ do
-          showP <$> linkAppFile fileName `goldenShouldSafeExceptT` buildAbsolutePathToIlFile ("linkAppFile" </> "original" </> fileName)
+            ] $ \fileName ->
+        it fileName $
+          showP <$> linkAppFile fileName `goldenShouldControlT` buildAbsolutePathToIlFile ("linkAppFile" </> "original" </> fileName)
 
-    describe "from-eas" $ do
+    describe "from-eas" $
       forM_ [ "true"
             , "hello"
             , "pip"
@@ -52,11 +52,11 @@ spec = do
   --          , "fact"
             , "bottles"
  --           , "euclid"
-            ] $ \ fileName -> do
-        it fileName $ do
-          showP <$> linkAppFile1 fileName `goldenShouldSafeExceptT` buildAbsolutePathToIlFile ("linkAppFile" </> "from-eas" </> fileName)
+            ] $ \ fileName ->
+        it fileName $
+          showP <$> linkAppFile1 fileName `goldenShouldControlT` buildAbsolutePathToIlFile ("linkAppFile" </> "from-eas" </> fileName)
 
   describe "linkFile" $ do
-    it "io"     $ do linkLibFile "io"     `shouldSafeExceptT` ioIL
-    it "memory" $ do linkLibFile "memory" `shouldSafeExceptT` memoryIL
-    it "prim"   $ do linkAppFile "prim"   `shouldSafeExceptT` (primIL <> ioIL)
+    it "io"     $ linkLibFile "io"     `shouldControlT` ioIL
+    it "memory" $ linkLibFile "memory" `shouldControlT` memoryIL
+    it "prim"   $ linkAppFile "prim"   `shouldControlT` (primIL <> ioIL)

@@ -7,13 +7,13 @@ import           HelVM.HelPA.Assemblers.WSA.Instruction
 import           HelVM.HelPA.Assembler.AsmParserUtil
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 import           Control.Type.Operator
 import           Data.Attoparsec.Text
 import           Data.Char
 
-parseAssemblyText :: MonadSafeError m => Text -> m InstructionList
+parseAssemblyText :: MonadSafe m => Text -> m InstructionList
 parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <*skipSpace <* endOfInput)
 
 instructionListParser :: Parser InstructionList

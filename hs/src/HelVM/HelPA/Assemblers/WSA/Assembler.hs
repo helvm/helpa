@@ -11,10 +11,10 @@ import           HelVM.HelPA.Assemblers.WSA.Linker
 import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
 assembleFile options sourcePath = reduceAndGenerateCode options =<< linkApp sourcePath
 
-assembleText :: MonadSafeError m => AssemblyOptions -> Text -> m Text
+assembleText :: MonadSafe m => AssemblyOptions -> Text -> m Text
 assembleText options code = reduceAndGenerateCode options =<< parseAssemblyText code

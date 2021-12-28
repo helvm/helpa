@@ -2,7 +2,7 @@ module HelVM.Common.Collections.MapList where
 
 import           HelVM.Common.Containers.LLIndexSafe
 import           HelVM.Common.Containers.LLInsertDef
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 import           Data.Default
 

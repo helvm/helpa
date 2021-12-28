@@ -17,7 +17,8 @@ import           HelVM.HelPA.Assembler.IO.BusinessIO
 
 import           HelVM.HelPA.Assembler.API.SwitchEnum
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Control
+import           HelVM.Common.Control.Safe
 
 import           AppOptions
 
@@ -31,8 +32,8 @@ main = run =<< execParser opts where
      <> progDesc "" )
 
 run :: AppOptions -> IO ()
-run AppOptions {lang , version, nextAddressForQuestionMark , eolSeparator , addOutLabel , tokenType , debug , startOfInstruction , endOfLine , dir , file} = do
-  putTextLn =<< exceptTToIO (eval lang' asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
+run AppOptions {lang , version, nextAddressForQuestionMark , eolSeparator , addOutLabel , tokenType , debug , startOfInstruction , endOfLine , dir , file} =
+  putTextLn =<< controlTToIO (eval lang' asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
     asqOptions   = ASQ.AssemblyOptions {version=version', questionMark=questionMark, separator=separator , addOutLabel=addOutLabel}
     wsaOptions   = WSA.AssemblyOptions {tokenType=tokenType', debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
     sourcePath   = SourcePath {dirPath = dir , filePath = file}

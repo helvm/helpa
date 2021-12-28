@@ -8,8 +8,8 @@ import           HelVM.Expectations
 import           Test.Hspec                          (Spec, describe, it)
 
 spec :: Spec
-spec = do
-  describe "reduce" $ do
+spec =
+  describe "reduce" $
     forM_ [ ("true"     , trueIL           , trueIL)
           , ("hello"    , helloIL          , helloIL)
           , ("pip"      , pipIL            , pipILReduced)
@@ -26,5 +26,5 @@ spec = do
           , ("fact"     , factILLinked     , factILReduced)
           , ("bottles"  , bottlesILLinked  , bottlesILReduced)
           , ("euclid"   , euclidIL         , euclidILReduced)
-          ] $ \(fileName , ilLinked , ilReduced) -> do
-      it fileName $ do reduce ilLinked `shouldSafe` ilReduced
+          ] $ \(fileName , ilLinked , ilReduced) ->
+      it fileName $ reduce ilLinked `shouldSafe` ilReduced

@@ -11,8 +11,8 @@ import           HelVM.HelPA.Assembler.API.SourcePath
 import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
-spec = do
-  describe "Files" $ do
+spec =
+  describe "Files" $
     forM_ [ ("true"     , trueIL)
           , ("hello"    , helloIL)
           , ("pip"      , pipIL)
@@ -31,4 +31,4 @@ spec = do
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
       let linkFile = linkLib SourcePath {dirPath = "examples/eas/", filePath = buildEasFileName fileName}
-      it fileName $ do linkFile `shouldSafeExceptT` il
+      it fileName $ linkFile `shouldControlT` il

@@ -9,9 +9,9 @@ import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducer        as ASQ
 
 import           HelVM.HelPA.Assembler.Util
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
-reduce :: MonadSafeError m => Bool -> QuestionMark -> InstructionList -> m SymbolList
+reduce :: MonadSafe m => Bool -> QuestionMark -> InstructionList -> m SymbolList
 reduce addOutLabel qm il = ASQ.reduce addOutLabel qm $ reduceIL il
 
 reduceIL :: InstructionList -> ASQ.InstructionList

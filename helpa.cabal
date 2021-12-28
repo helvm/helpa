@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.1.0
+version:               0.4.2.0
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -113,6 +113,11 @@ library
     HelVM.Common.Containers.MTInsertDef
     HelVM.Common.Containers.Util
 
+    HelVM.Common.Control.Control
+    HelVM.Common.Control.Message
+    HelVM.Common.Control.Logger
+    HelVM.Common.Control.Safe
+
     HelVM.Common.Digit.Digitable
     HelVM.Common.Digit.Digits
     HelVM.Common.Digit.ToDigit
@@ -120,9 +125,9 @@ library
     HelVM.Common.ListLikeUtil
     HelVM.Common.NamedValue
     HelVM.Common.ReadText
-    HelVM.Common.Safe
     HelVM.Common.SequencesUtil
     HelVM.Common.Util
+    HelVM.Common.ZipA
 
     HelVM.HelPA.Assembler.API.SourcePath
     HelVM.HelPA.Assembler.API.SwitchEnum
@@ -211,9 +216,10 @@ test-suite helpa-test
   other-modules:
     Spec
 
-    HelVM.CartesianProduct
     HelVM.Expectations
     HelVM.GoldenExpectations
+
+    HelVM.Common.Control.LoggerSpec
 
     HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
     HelVM.HelPA.Assemblers.ASQ.FileUtil
@@ -249,6 +255,7 @@ test-suite helpa-test
 
     , helpa
 
+    , dlist
     , filepath
 --    , ilist
     , type-operators

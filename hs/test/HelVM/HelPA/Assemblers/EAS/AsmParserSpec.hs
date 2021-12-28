@@ -33,12 +33,12 @@ spec = do
           , ("euclid"   , euclidIL)
           ] $ \(fileName , il) -> do
       let parseAssembly = parseAssemblyFile $ buildAbsolutePathToEasFile fileName
-      it fileName $ do parseAssembly `shouldSafeIO` il
+      it fileName $ parseAssembly `shouldSafeIO` il
 
-  describe "empty" $ do
-    it "parse ''" $ do parseAssemblyText "" `shouldSafe` []
+  describe "empty" $
+    it "parse ''" $ parseAssemblyText "" `shouldSafe` []
 
-  describe "Short Commands" $ do
+  describe "Short Commands" $
     forM_ [ ("E"              , [E])
           , ("T"              , [T])
           , ("A"              , [A])
@@ -62,13 +62,13 @@ spec = do
           , (">LOOP: Input"   , [L "LOOP",I])
           , (">WRITE: Output" , [L "WRITE",O])
           , ("\n"             , [R])
-          ] $ \(line , il) -> do
+          ] $ \(line , il) ->
       describe line $ do
-        it "without space"   $ do parseAssemblyText (toText line       ) `shouldSafe` il
-        it "with prespace"   $ do parseAssemblyText (" " <> toText line) `shouldSafe` il
-        it "with postspace"  $ do parseAssemblyText (toText line <> " ") `shouldSafe` il
+        it "without space"   $ parseAssemblyText (toText line       ) `shouldSafe` il
+        it "with prespace"   $ parseAssemblyText (" " <> toText line) `shouldSafe` il
+        it "with postspace"  $ parseAssemblyText (toText line <> " ") `shouldSafe` il
 
-  describe "Long Commends" $ do
+  describe "Long Commends" $
     forM_ [ ("dividE"             , [E])
           , ("Transfer"           , [T])
           , ("Address"            , [A])
@@ -88,12 +88,10 @@ spec = do
           , ("Number <label"      , [N (Variable "label")])
           , ("A N0 T \nA N0 T \n" , [A,N (Literal 0),T,R,A,N (Literal 0),T,R])
           , (" A N0 T \n "        , [A , N (Literal 0), T , R])
-          , ( "# A N0 T \n "      , [])
+          , ("# A N0 T \n "       , [])
           , (" #A N0 T \n "       , [R])
           , (" A# N0 T \n "       , [A , R])
           , (" A #N0 T \n "       , [A , R])
-          ] $ \(line , il) -> do
-      describe line $ do
-        it "without space"   $ do parseAssemblyText (toText line       ) `shouldSafe` il
---        it "with prespace"   $ do parseAssemblyText (" " <> toText line) `shouldSafe` il
---        it "with postspace"  $ do parseAssemblyText (toText line <> " ") `shouldSafe` il
+          ] $ \(line , il) ->
+      describe line $
+        it "without space"   $ parseAssemblyText (toText line       ) `shouldSafe` il

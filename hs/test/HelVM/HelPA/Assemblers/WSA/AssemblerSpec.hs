@@ -7,7 +7,7 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.Common.NamedValue
 import           HelVM.HelPA.Assembler.API.SourcePath
 
-import           HelVM.CartesianProduct
+import           HelVM.Common.ZipA
 import           HelVM.GoldenExpectations
 
 import           System.FilePath.Posix
@@ -19,7 +19,7 @@ spec = do
   let pathLib fileName = SourcePath {dirPath = libDir , filePath = libDir </> fileName <.> ext}
   let pathApp fileName = SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext}
 
-  describe "assembleLib" $ do
+  describe "assembleLib" $
     forM_ ([ "io"
            , "memory"
            ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
@@ -27,21 +27,21 @@ spec = do
       let path = pathLib fileName
       let assembleLib = assembleFile options path
       let minorPath = name namedOptions </> fileName
-      it minorPath $ do
-        assembleLib `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
+      it minorPath $
+        assembleLib `goldenShouldControlT` buildAbsolutePathToWsFile ("assembleLib" </> minorPath)
 
   describe "assembleApp" $ do
-    describe "original" $ do
+    describe "original" $
       forM_ ([ "prim"
              ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
         let options = value namedOptions
         let path = pathApp fileName
         let assembleApp = assembleFile options path
         let minorPath = name namedOptions </> fileName
-        it minorPath $ do
-          assembleApp `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
+        it minorPath $
+          assembleApp `goldenShouldControlT` buildAbsolutePathToWsFile ("assembleApp" </> "original" </> minorPath)
 
-    describe "from-eas" $ do
+    describe "from-eas" $
       forM_ ([ "true"
              , "hello"
              , "pip"
@@ -64,5 +64,5 @@ spec = do
         let options = value namedOptions
         let assemble = assembleFile options path
         let minorPath = name namedOptions </> fileName
-        it minorPath $ do
-          assemble `goldenShouldSafeExceptT` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)
+        it minorPath $
+          assemble `goldenShouldControlT` buildAbsolutePathToWsFile ("assembleApp" </> "from-eas" </> minorPath)

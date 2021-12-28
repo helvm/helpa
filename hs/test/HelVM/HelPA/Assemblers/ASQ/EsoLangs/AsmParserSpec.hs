@@ -5,7 +5,7 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
 import           HelVM.HelPA.Assemblers.ASQ.FileUtil
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
@@ -27,13 +27,13 @@ spec = do
           , "esolangs" </> "nextAddress"    </> "si"
           ] $ \fileName -> do
       let parseAssembly = parseAssemblyFile $ buildAbsolutePathToAsqFile fileName
-      it fileName $ do safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyFile" </> fileName)
+      it fileName $ safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyFile" </> fileName)
 
-  describe "parseAssemblyText" $ do
+  describe "parseAssemblyText" $
     forM_ [ ("\n"                         , [Instruction Code []])
           , (". \"\\n\";"                 , [Instruction Data [ItemString "\n"]])
           , (". \"Hello, World!\"\n"      , [Instruction Data [ItemString "Hello, World!"]])
           , (". H: \"Hello, World!\n\"\n" , [Instruction Data [ItemLabel "H" , ItemString "Hello, World!\n"]])
           , (". \"Hello\" \"World!\"\n"   , [Instruction Data [ItemString "Hello" , ItemString "World!"]])
-          ] $ \(line , il) -> do
-      it line $ do parseAssemblyText (toText line) `shouldSafe` il
+          ] $ \(line , il) ->
+      it line $ parseAssemblyText (toText line) `shouldSafe` il

@@ -1,5 +1,12 @@
 # 📅 Revision history for HelPA
 
+## 0.4.2.0 -- 2022-01-07
+
+* Add `Logger` based on Writer
+* Refactor `Safe`
+* Replace `CartesianProduct` to `ZipA`
+* Use local `hlint`
+
 ## 0.4.1.0 -- 2021-12-23
 
 * Add `Assembler of SubLeq` from eigenratios

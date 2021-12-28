@@ -6,16 +6,16 @@ import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
 
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
-import           HelVM.Common.Safe
+import           HelVM.Common.Control.Safe
 
-reduceIL :: MonadSafeError m => QuestionMark -> InstructionList -> m ItemList
+reduceIL :: MonadSafe m => QuestionMark -> InstructionList -> m ItemList
 reduceIL qm il = join <$> traverse (reduceInstruction qm) il
 
-reduceInstruction :: MonadSafeError m => QuestionMark -> Instruction -> m ItemList
+reduceInstruction :: MonadSafe m => QuestionMark -> Instruction -> m ItemList
 reduceInstruction _  (Instruction Data its) = pure its
 reduceInstruction qm (Instruction Code its) = buildItems qm its
 
-buildItems :: MonadSafeError m => QuestionMark -> ItemList -> m ItemList
+buildItems :: MonadSafe m => QuestionMark -> ItemList -> m ItemList
 buildItems qm its = checkItems $ filter isExpression its where
   checkItems [it] = pure $ buildSingle qm it $ filter nonExpression its
   checkItems its' = checkLength $ length its' where

@@ -11,8 +11,8 @@ import           System.FilePath.Posix
 import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
-spec = do
-  describe "assembleFile" $ do
+spec =
+  describe "assembleFile" $
     forM_ [ "true"
           , "hello"
           , "pip"
@@ -36,4 +36,4 @@ spec = do
           ] $ \fileName -> do
       let path = SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
       let assemble = assembleFile path
-      it fileName $ do assemble `goldenShouldSafeExceptT` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)
+      it fileName $ assemble `goldenShouldControlT` buildAbsolutePathToEtaFile ("assembleFile" </> fileName)

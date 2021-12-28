@@ -7,10 +7,10 @@ import           Test.Hspec                          (Spec, describe, it)
 import           Test.Hspec.Expectations.Pretty
 
 spec :: Spec
-spec = do
-  describe "reduce" $ do
+spec =
+  describe "reduce" $
     forM_ [ ("io"     , ioIL     , ioILReduced)
           , ("memory" , memoryIL , memoryILReduced)
           , ("prim"   , primIL   , primILReduced)
-          ] $ \(fileName , il , ilReduced) -> do
-      it fileName $ do reduce False il `shouldBe` ilReduced
+          ] $ \(fileName , il , ilReduced) ->
+      it fileName $ reduce False il `shouldBe` ilReduced

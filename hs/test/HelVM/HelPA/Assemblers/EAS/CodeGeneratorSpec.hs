@@ -13,7 +13,7 @@ import           Test.Hspec                               (Spec, describe, it)
 
 spec :: Spec
 spec = do
-  describe "generateCode" $ do
+  describe "generateCode" $
     forM_ [ ("true"     , trueIL)
           , ("pip"      , pipILReduced)
           , ("pip2"     , pip2ILReduced)
@@ -29,10 +29,10 @@ spec = do
           , ("fact"     , factILReduced)
           , ("bottles"  , bottlesILReduced)
           , ("euclid"   , euclidILReduced)
-          ] $ \(fileName , ilReduced) -> do
-      it fileName $ do generateCode ilReduced `goldenShouldSafe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
+          ] $ \(fileName , ilReduced) ->
+      it fileName $ generateCode ilReduced `goldenShouldSafe` buildAbsolutePathToEtaFile ("generateCode" </> fileName)
 
-  describe "naturalToDigitString" $ do
+  describe "naturalToDigitString" $
     forM_ [ (0      , "")
           , (1      , "t")
           , (10     , "to")
@@ -45,5 +45,5 @@ spec = do
           , (11111  , "iiana")
           , (111110 , "sitsos")
           , (111111 , "sitsih")
-          ] $ \(value , shown) -> do
-       it (show value) $ do naturalToDigitString value `shouldSafe` shown
+          ] $ \(value , shown) ->
+       it (show value) $ naturalToDigitString value `shouldSafe` shown
