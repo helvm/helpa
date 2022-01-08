@@ -5,7 +5,7 @@ version:               0.4.2.0
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
-homepage:              https://helvm.github.io/helpa/
+homepage:              http://helvm.org/helpa/
 bug-reports:           https://github.com/helvm/helpa/issues
 
 license:               Apache-2.0
@@ -27,9 +27,9 @@ source-repository head
   location:            https://github.com/helvm/helpa
 
 flag ghcoptions
-    description: compile with options
-    manual     : True
-    default    : False
+  description:         compile with options
+  manual:              True
+  default:             False
 
 common common-options
   build-depends:
@@ -179,8 +179,8 @@ library
     HelVM.HelPA.Assemblers.WSA.Reducer
     HelVM.HelPA.Assemblers.WSA.Token
   build-depends:
-      attoparsec
-    , containers           == 0.6.2.1
+      attoparsec           <  0.14.4
+    , containers           <  0.7
     , data-default
     , dlist
     , filepath
