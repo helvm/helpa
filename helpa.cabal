@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.2.0
+version:               0.4.3.0
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -12,7 +12,7 @@ license:               Apache-2.0
 license-file:          docs/LICENSE-APACHE
 author:                Kamil Adam
 maintainer:            kamil.adam.zabinski@gmail.com
-copyright:             2020-2021 WriteOnly Developers
+copyright:             2020-2022 WriteOnly Developers
 
 category:              Language
 build-type:            Simple
@@ -104,6 +104,13 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
+    HelVM.Common.ListLikeUtil
+    HelVM.Common.NamedValue
+    HelVM.Common.ReadText
+    HelVM.Common.SequencesUtil
+    HelVM.Common.Util
+    HelVM.Common.ZipA
+
     HelVM.Common.Collections.MapList
     HelVM.Common.Collections.SList
 
@@ -122,19 +129,16 @@ library
     HelVM.Common.Digit.Digits
     HelVM.Common.Digit.ToDigit
 
-    HelVM.Common.ListLikeUtil
-    HelVM.Common.NamedValue
-    HelVM.Common.ReadText
-    HelVM.Common.SequencesUtil
-    HelVM.Common.Util
-    HelVM.Common.ZipA
-
-    HelVM.HelPA.Assembler.API.SourcePath
-    HelVM.HelPA.Assembler.API.SwitchEnum
     HelVM.HelPA.Assembler.AsmParserUtil
-    HelVM.HelPA.Assembler.IO.BusinessIO
+    HelVM.HelPA.Assembler.Lexer
     HelVM.HelPA.Assembler.Util
     HelVM.HelPA.Assembler.Value
+
+    HelVM.HelPA.Assembler.API.Separator
+    HelVM.HelPA.Assembler.API.SourcePath
+    HelVM.HelPA.Assembler.API.SwitchEnum
+
+    HelVM.HelPA.Assembler.IO.BusinessIO
 
     HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
     HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
@@ -200,6 +204,7 @@ executable helpa
   main-is:             Main.hs
   other-modules:
     AppOptions
+    Lang
   build-depends:
       helpa
     , optparse-applicative >= 0.14.3.0
@@ -218,6 +223,7 @@ test-suite helpa-test
 
     HelVM.Expectations
     HelVM.GoldenExpectations
+    HelVM.MonadErrorSpec
 
     HelVM.Common.Control.LoggerSpec
 
@@ -257,7 +263,7 @@ test-suite helpa-test
 
     , dlist
     , filepath
---    , ilist
+    , mtl
     , type-operators
 
   build-tool-depends:  hspec-discover:hspec-discover == 2.*

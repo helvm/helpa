@@ -16,8 +16,8 @@ import           Test.Hspec                                     (Spec, describe,
 
 spec :: Spec
 spec = do
-  let pathLib fileName = SourcePath {dirPath = libDir , filePath = libDir </> fileName <.> ext}
-  let pathApp fileName = SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext}
+  let pathLib fileName = SourcePath {dirPath = libDir , filePath = libDir </> fileName <.> lang}
+  let pathApp fileName = SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> lang}
 
   describe "assembleLib" $
     forM_ ([ "io"
@@ -60,7 +60,7 @@ spec = do
              , "bottles"
   --           , "euclid"
               ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
-        let path = SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext}
+        let path = SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> lang}
         let options = value namedOptions
         let assemble = assembleFile options path
         let minorPath = name namedOptions </> fileName

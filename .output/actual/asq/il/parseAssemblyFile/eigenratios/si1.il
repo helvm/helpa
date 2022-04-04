@@ -352,7 +352,7 @@
             ( Variable "C" )
             ( Just
                 ( Literal
-                    ( - 1 )
+                    ( -1 )
                 )
             )
         )
@@ -388,7 +388,7 @@
     ( Just
         ( Data
             ( Literal
-                ( - 3 )
+                ( -3 )
             )
         )
     )
@@ -397,7 +397,7 @@
     ( Just
         ( Data
             ( Literal
-                ( - 2 )
+                ( -2 )
             )
         )
     )
@@ -406,7 +406,7 @@
     ( Just
         ( Data
             ( Literal
-                ( - 1 )
+                ( -1 )
             )
         )
     )

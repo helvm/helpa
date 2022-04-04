@@ -23,4 +23,4 @@ data Instruction
   | D !Identifier
   | L !Identifier
   | U !SString
-  deriving stock (Eq , Show , Ord)
+  deriving stock (Eq , Read , Show)

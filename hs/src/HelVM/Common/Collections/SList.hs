@@ -4,17 +4,22 @@ module HelVM.Common.Collections.SList where
 import           HelVM.Common.Containers.LLInsertDef as LL
 import           HelVM.Common.Containers.MTInsertDef as MT
 
+import           HelVM.Common.ReadText
+
 import           Prelude                             hiding (reverse, uncons)
 
 import           Control.Type.Operator
-import           Data.Default
 
+import           Data.Default
 import qualified Data.Foldable                       as F
 import qualified Data.ListLike                       as LL
 import qualified Data.MonoTraversable                as MT
 import qualified Data.Sequences                      as S
+
 import qualified GHC.Exts                            as I (IsList (..))
 import qualified Slist                               as L
+
+import           Text.Read
 import qualified Text.Show
 
 -- | Public functions
@@ -29,7 +34,6 @@ sListFromList :: [a] -> SList a
 sListFromList = SList . fromList
 
 -- | DeConstruction
-
 sListToList :: SList a -> [a]
 sListToList = toList . unSList
 
@@ -37,11 +41,14 @@ sListToList = toList . unSList
 type SString  = SList Char
 
 newtype SList a = SList { unSList :: L.Slist a}
-  deriving stock (Eq , Ord, Read)
+  deriving stock (Eq , Ord)
   deriving stock (Foldable , Functor , Traversable)
   deriving newtype (Semigroup , Monoid , Applicative , Monad)
 
 -- | Standard instances
+instance Read a => Read (SList a) where
+  readsPrec _ s = [(fromList (readUnsafe s::[a]) , "")]
+
 instance Show a => Show (SList a) where
   show = show . toList
 
@@ -182,7 +189,6 @@ instance Default a => LL.InsertDef (SList a) a where
   insertDef i e = sListFromList. LL.insertDef i e . sListToList
 
 -- | Internals sList
-
 sListCons :: a -> SList a -> SList a
 sListCons e = SList . L.cons e . unSList
 

@@ -1,10 +1,10 @@
 module HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil where
 
 import           HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
-
 import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-import           HelVM.HelPA.Assemblers.ASQ.API.Separator
 import           HelVM.HelPA.Assemblers.ASQ.API.Version
+
+import           HelVM.HelPA.Assembler.API.Separator
 
 defaultAssemblyOptionsForTest:: AssemblyOptions
 defaultAssemblyOptionsForTest = defaultAssemblyOptions {separator = EOL}

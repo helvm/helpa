@@ -15,8 +15,7 @@ import           Text.Pretty.Simple
 
 import qualified Data.Text          as Text
 
---- TextUtil
-
+-- | TextUtil
 toUppers :: Text -> Text
 toUppers = Text.map toUpper
 
@@ -29,13 +28,11 @@ showP = toText . pShowNoColor
 showToText :: (Typeable a , Show a) => a -> Text
 showToText a = show a `fromMaybe` (cast a :: Maybe Text)
 
----- CharUtil
-
+-- | CharUtil
 genericChr :: Integral a => a -> Char
 genericChr = chr . fromIntegral
 
----- MaybeUtil
-
+-- | MaybeUtil
 infixr 0 ???
 (???) :: Maybe a -> a -> a
 (???) = flip fromMaybe

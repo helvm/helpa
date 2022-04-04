@@ -6,9 +6,11 @@ import           HelVM.Common.Digit.ToDigit
 import           HelVM.Common.Control.Safe
 
 -- | Public functions
-
 naturalToDL :: (MonadSafe m , Digitable a) => Natural -> m [a]
-naturalToDL = liftSafe . traverse fromDigit . naturalToDigits2
+naturalToDL = traverse fromDigit . naturalToDigits2
+
+textToDL :: (MonadSafe m , Digitable a) => Text -> m [a]
+textToDL = stringToDL . toString
 
 stringToDL :: (MonadSafe m , Digitable a) => String -> m [a]
 stringToDL s = join <$> traverse charToDL s
@@ -17,12 +19,10 @@ charToDL :: (MonadSafe m, Digitable a) => Char -> m [a]
 charToDL c = traverse fromDigit $ toBits8 $ ord c `mod` 256
 
 -- | Type Classes
-
 class ToDigit t => Digitable t where
   fromDigit :: (MonadSafe m , Show a , Integral a) => a -> m t
 
 -- | Internal functions
-
 toBits8 :: Int -> [Natural]
 toBits8 = toBitsBySize 8
 

@@ -36,7 +36,7 @@ toBTL = map BothToken
 type TokenList = [Token]
 
 data Token =  S | T | N | E | R
-  deriving stock (Eq , Ord , Enum , Read)
+  deriving stock (Bounded , Enum , Eq)
 
 instance Show Token where
   show S = "S"
@@ -60,7 +60,7 @@ instance Digitable Token where
 type WhiteTokenList = [WhiteToken]
 
 newtype WhiteToken = WhiteToken { unWhiteToken :: Token }
-  deriving stock (Eq)
+  deriving stock (Bounded , Eq)
 
 instance Show WhiteToken where
   show (WhiteToken S) = " "
@@ -80,7 +80,7 @@ instance Read WhiteToken where
 type BothTokenList = [BothToken]
 
 newtype BothToken = BothToken { unBothToken :: Token }
-  deriving stock (Eq)
+  deriving stock (Bounded , Eq)
 
 instance Show BothToken where
   show (BothToken S) = " S"

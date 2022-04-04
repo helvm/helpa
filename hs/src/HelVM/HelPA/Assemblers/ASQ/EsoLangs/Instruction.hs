@@ -90,15 +90,15 @@ makeExpression = Expression
 type InstructionList = [Instruction]
 
 data Instruction = Instruction InstructionType !ItemList
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)
 
 data InstructionType = Data | Code
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Bounded , Enum , Eq , Read , Show)
 
 type ItemList = [Item]
 
 data Item = ItemLabel Label | ItemExpression Expression | ItemString String
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)
 
 type LabelList = [Label]
 
@@ -109,13 +109,13 @@ type ExpressionWithSymbol = WithSymbol Expression
 type ExpressionList = [Expression]
 
 data Expression = Expression !(Maybe PMExpression) !Term
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)
 
 data PMExpression = PMExpression !PM !Expression
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)
 
 data PM = Plus | Minus
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Bounded , Enum , Eq , Read , Show)
 
 data Term = TermSymbol IntegerValue | TermQuestionMark | TermMinus !Term | TermExpression !Expression
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)

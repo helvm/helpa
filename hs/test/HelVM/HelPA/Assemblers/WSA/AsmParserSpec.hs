@@ -19,9 +19,9 @@ import           Test.Hspec                             (Spec, describe, it)
 spec :: Spec
 spec = do
   let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
-  let parseAssemblyLib  fileName = parseAssemblyFile (libDir </> fileName <.> ext)
-  let parseAssemblyApp  fileName = parseAssemblyFile (appDir </> fileName <.> ext)
-  let parseAssemblyEAS  fileName = parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> ext)
+  let parseAssemblyLib  fileName = parseAssemblyFile (libDir </> fileName <.> lang)
+  let parseAssemblyApp  fileName = parseAssemblyFile (appDir </> fileName <.> lang)
+  let parseAssemblyEAS  fileName = parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> lang)
 
   describe "parseAssemblyLib" $
     forM_ [ "io"

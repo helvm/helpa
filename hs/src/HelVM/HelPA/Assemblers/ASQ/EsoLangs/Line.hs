@@ -33,4 +33,4 @@ extractExpression = maybeToList . maybeExpression
 type LineList = [Line]
 
 data Line = Line { labelList :: !LabelList , maybeExpression :: Maybe Expression }
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)

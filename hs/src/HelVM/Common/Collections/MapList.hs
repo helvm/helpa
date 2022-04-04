@@ -52,7 +52,7 @@ type IndexedList a = [(Key , a)]
 type MapString = MapList Char
 
 newtype MapList a = MapList {unMapList :: IntMap a}
-  deriving stock (Eq , Ord, Read)
+  deriving stock (Eq , Ord)
   deriving newtype (Semigroup , Monoid)
 
 -- | Standard instances

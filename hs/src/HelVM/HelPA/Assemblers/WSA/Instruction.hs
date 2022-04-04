@@ -58,6 +58,6 @@ data Instruction =
   | EndOption
   | ElseIfOption !Identifier
   | EOL
-  deriving stock (Eq , Show , Ord)
+  deriving stock (Eq , Read , Show)
 
 type InstructionList = [Instruction]

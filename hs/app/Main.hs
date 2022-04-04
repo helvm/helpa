@@ -1,6 +1,9 @@
 {-# LANGUAGE NamedFieldPuns #-}
 module Main where
 
+import           AppOptions
+import           Lang
+
 import qualified HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions as ASQ
 import qualified HelVM.HelPA.Assemblers.ASQ.Assembler           as ASQ
 
@@ -13,14 +16,13 @@ import           HelVM.HelPA.Assemblers.ASQ.API.Version
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
 import           HelVM.HelPA.Assembler.API.SourcePath
+import           HelVM.HelPA.Assembler.API.SwitchEnum
+
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import           HelVM.HelPA.Assembler.API.SwitchEnum
 
 import           HelVM.Common.Control.Control
 import           HelVM.Common.Control.Safe
-
-import           AppOptions
 
 import           Options.Applicative
 
@@ -32,8 +34,8 @@ main = run =<< execParser opts where
      <> progDesc "" )
 
 run :: AppOptions -> IO ()
-run AppOptions {lang , version, nextAddressForQuestionMark , eolSeparator , addOutLabel , tokenType , debug , startOfInstruction , endOfLine , dir , file} =
-  putTextLn =<< controlTToIO (eval lang' asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
+run (AppOptions lang version nextAddressForQuestionMark eolSeparator addOutLabel tokenType debug startOfInstruction endOfLine printLogs dir file) =
+  putTextLn =<< controlTToIO printLogs (eval lang' asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
     asqOptions   = ASQ.AssemblyOptions {version=version', questionMark=questionMark, separator=separator , addOutLabel=addOutLabel}
     wsaOptions   = WSA.AssemblyOptions {tokenType=tokenType', debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
     sourcePath   = SourcePath {dirPath = dir , filePath = file}

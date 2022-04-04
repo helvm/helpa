@@ -16,9 +16,9 @@ import           Test.Hspec                           (Spec, describe, it)
 
 spec :: Spec
 spec = do
-  let linkLibFile  fileName = linkLib SourcePath {dirPath = libDir , filePath = fileName <.> ext}
-  let linkAppFile  fileName = linkApp SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> ext}
-  let linkAppFile1 fileName = linkApp SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> ext}
+  let linkLibFile  fileName = linkLib SourcePath {dirPath = libDir , filePath = fileName <.> lang}
+  let linkAppFile  fileName = linkApp SourcePath {dirPath = libDir , filePath = appDir </> fileName <.> lang}
+  let linkAppFile1 fileName = linkApp SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> lang}
 
   describe "linkLibFile" $
     forM_ [ "io"

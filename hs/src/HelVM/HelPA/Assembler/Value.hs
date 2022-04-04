@@ -5,7 +5,7 @@ import           HelVM.Common.Collections.SList
 data Value a
   = Literal !a
   | Variable !Identifier
-  deriving stock (Eq , Show , Ord)
+  deriving stock (Eq , Read , Show)
 
 type NaturalValue = Value Natural
 

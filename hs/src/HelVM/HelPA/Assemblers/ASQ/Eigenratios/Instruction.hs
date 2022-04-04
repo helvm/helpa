@@ -15,10 +15,10 @@ import           HelVM.HelPA.Assembler.Value
 type InstructionList = [Instruction]
 
 data Instruction = Instruction (Maybe Label) (Maybe Command)
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)
 
 type LabelList = [Label]
 type Label = Identifier
 
 data Command = Data IntegerValue | Code IntegerValue IntegerValue (Maybe IntegerValue)
-  deriving stock (Eq, Show, Ord)
+  deriving stock (Eq , Read , Show)

@@ -3,6 +3,8 @@
 
 module AppOptions where
 
+import           Lang
+
 import           HelVM.HelPA.Assemblers.ASQ.API.Version
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
@@ -58,6 +60,11 @@ optionParser = AppOptions
                    <> help    "EndOfLine (only for WS)"
                    <> showDefault
                    )
+  <*> switch       (  long    "print-logs"
+                   <> short   'L'
+                   <> help    "Pring logs to strerr"
+                   <> showDefault
+                   )
   <*> argument str (  metavar "FILE"
                    <> help   "File to assemble"
                    <> showDefault
@@ -71,26 +78,22 @@ optionParser = AppOptions
 data AppOptions = AppOptions
   { lang                       :: !String --Lang
   , version                    :: !String --Version
-  , eolSeparator               :: !Bool
-  , nextAddressForQuestionMark :: !Bool
-  , addOutLabel                :: !Bool
+  , eolSeparator               :: !EolSeparator
+  , nextAddressForQuestionMark :: !NextAddressForQuestionMark
+  , addOutLabel                :: !AddOutLabel
   , tokenType                  :: !String --TokenType
-  , debug                      :: !Bool
-  , startOfInstruction         :: !Bool
-  , endOfLine                  :: !Bool
+  , debug                      :: !Debug
+  , startOfInstruction         :: !StartOfInstruction
+  , endOfLine                  :: !StartOfInstruction
+  , printLogs                  :: !PrintLogs
   , file                       :: !String
   , dir                        :: !String
   }
 
-----
-
-data Lang = HAPAPL | ASQ | EAS | WSA
-  deriving stock (Eq , Read , Show)
-
-langs :: [Lang]
-langs = [HAPAPL , ASQ, EAS , WSA]
-
-computeLang :: String -> Lang
-computeLang raw = valid $ readMaybe raw where
-  valid (Just a) = a
-  valid Nothing  = error $ "'" <> toText raw <> "lang ' is not valid lang. Valid langs are : " <> show langs
+type EolSeparator               = Bool
+type NextAddressForQuestionMark = Bool
+type AddOutLabel                = Bool
+type Debug                      = Bool
+type StartOfInstruction         = Bool
+type EndOfLine                  = Bool
+type PrintLogs                  = Bool
