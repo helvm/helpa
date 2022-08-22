@@ -1,8 +1,6 @@
-.PHONY: all bench build check clean configure fast golden haddock hlint main output repl report run stan stylish test update
+.PHONY: all bench build check clean configure exec fast golden haddock hlint install main output repl report run sdist stan stylish test tix update
 
-all: update fast bench
-
-fast: main report
+all: update fast install sdist bench
 
 bench:
 	rm -f helpa-benchmark.tix
@@ -24,6 +22,12 @@ configure:
 	rm -f cabal.project.local*
 	cabal configure --enable-benchmarks --enable-coverage --enable-tests -f ghcoptions
 
+exec:
+	make tix
+	cabal new-exec --jobs helpa
+
+fast: main report
+
 golden:
 	if test -d .output/golden; then rm -r .output/golden; fi
 
@@ -32,6 +36,9 @@ haddock:
 
 hlint:
 	./hlint.sh
+
+install:
+	cabal install all --overwrite-policy=always
 
 main:
 	make stylish configure check build test
@@ -46,8 +53,11 @@ report:
 	make haddock stan hlint
 
 run:
-	rm -f helpa.tix
+	make tix
 	cabal new-run --jobs helpa
+
+sdist:
+	cabal sdist
 
 stan:
 	./stan.sh
@@ -57,6 +67,9 @@ stylish:
 
 test:
 	cabal new-test --jobs --test-show-details=streaming -f ghcoptions
+
+tix:
+	rm -f helpa.tix
 
 update:
 	cabal update
