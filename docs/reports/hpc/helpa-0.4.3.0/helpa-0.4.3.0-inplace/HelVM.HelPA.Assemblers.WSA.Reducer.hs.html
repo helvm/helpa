@@ -1,0 +1,73 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module HelVM.HelPA.Assemblers.WSA.Reducer where
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>import           HelVM.HelPA.Assemblers.WSA.Instruction
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           HelVM.HelPA.Assembler.Value
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>import qualified Data.ListLike                          as LL
+<span class="lineno">    8 </span>
+<span class="lineno">    9 </span>reduce :: Bool -&gt;  InstructionList -&gt; InstructionList
+<span class="lineno">   10 </span><span class="decl"><span class="istickedoff">reduce True  il = reduceInstruction =&lt;&lt; addEndOfLine =&lt;&lt; il</span>
+<span class="lineno">   11 </span><span class="spaces"></span><span class="istickedoff">reduce False il = reduceInstruction =&lt;&lt; il</span></span>
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>addEndOfLine :: Instruction -&gt; InstructionList
+<span class="lineno">   14 </span><span class="decl"><span class="istickedoff">addEndOfLine i = [i , EOL]</span></span>
+<span class="lineno">   15 </span>
+<span class="lineno">   16 </span>reduceInstruction :: Instruction -&gt; InstructionList
+<span class="lineno">   17 </span><span class="decl"><span class="istickedoff">reduceInstruction (PushS (Literal s)) = reducePushS s</span>
+<span class="lineno">   18 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   19 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Test v)         = [Dup , Push (Literal v), Sub Nothing]</span>
+<span class="lineno">   20 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Load  (Just v)) = [Push v , Load Nothing]</span>
+<span class="lineno">   21 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Store (Just v)) = <span class="nottickedoff">[Push v , Swap , Store Nothing]</span></span>
+<span class="lineno">   22 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   23 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Add (Just v)) = [Push v , Add Nothing]</span>
+<span class="lineno">   24 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Sub (Just v)) = <span class="nottickedoff">[Push v , Sub Nothing]</span></span>
+<span class="lineno">   25 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Mul (Just v)) = <span class="nottickedoff">[Push v , Mul Nothing]</span></span>
+<span class="lineno">   26 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Div (Just v)) = <span class="nottickedoff">[Push v , Div Nothing]</span></span>
+<span class="lineno">   27 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (Mod (Just v)) = <span class="nottickedoff">[Push v , Mod Nothing]</span></span>
+<span class="lineno">   28 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   29 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (BranchNZ l) = [BranchZ l1 , Branch l , Mark l1] where</span>
+<span class="lineno">   30 </span><span class="spaces">  </span><span class="istickedoff">l1 = calculateLocalLabel l 1</span>
+<span class="lineno">   31 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   32 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (BranchNM l) = <span class="nottickedoff">[BranchM l1 , Branch l , Mark l1]</span> where</span>
+<span class="lineno">   33 </span><span class="spaces">  </span><span class="istickedoff"><span class="nottickedoff">l1 = calculateLocalLabel l 1</span></span>
+<span class="lineno">   34 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   35 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (BranchP l) = <span class="nottickedoff">[Dup , BranchM l1 , Dup , BranchZ l1 , Pop , Branch l , Mark l1 , Pop]</span> where</span>
+<span class="lineno">   36 </span><span class="spaces">  </span><span class="istickedoff"><span class="nottickedoff">l1 = calculateLocalLabel l 1</span></span>
+<span class="lineno">   37 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   38 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction (BranchNP l) = [Dup , BranchM l1 , Dup , BranchZ l1 , Branch l2 , Mark l1 , Pop , Branch l , Mark l2 , Pop] where</span>
+<span class="lineno">   39 </span><span class="spaces">  </span><span class="istickedoff">l1 = calculateLocalLabel l 1</span>
+<span class="lineno">   40 </span><span class="spaces">  </span><span class="istickedoff">l2 = calculateLocalLabel l 2</span>
+<span class="lineno">   41 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   42 </span><span class="spaces"></span><span class="istickedoff">reduceInstruction i = [i]</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>reducePushS :: LL.ListLike t Char =&gt; t -&gt; InstructionList
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">reducePushS s = reducePushS' $ LL.uncons s where</span>
+<span class="lineno">   46 </span><span class="spaces">  </span><span class="istickedoff">reducePushS'  Nothing        = [pushLiteral 0]</span>
+<span class="lineno">   47 </span><span class="spaces">  </span><span class="istickedoff">reducePushS' (Just (x , xs)) = reducePushS xs &lt;&gt; [pushLiteral $ fromIntegral $ ord x]</span></span>
+<span class="lineno">   48 </span>
+<span class="lineno">   49 </span>calculateLocalLabel :: Identifier -&gt; Integer -&gt; Identifier
+<span class="lineno">   50 </span><span class="decl"><span class="istickedoff">calculateLocalLabel label suffix = label &lt;&gt; &quot;:&quot; &lt;&gt; show suffix</span></span>
+
+</pre>
+</body>
+</html>

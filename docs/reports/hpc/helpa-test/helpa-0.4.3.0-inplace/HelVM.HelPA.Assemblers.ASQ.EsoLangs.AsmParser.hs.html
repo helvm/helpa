@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParser (
+<span class="lineno">    2 </span>  parseAssemblyText,
+<span class="lineno">    3 </span>) where
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>import           HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
+<span class="lineno">    8 </span>
+<span class="lineno">    9 </span>import           HelVM.HelPA.Assembler.Lexer
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>import           HelVM.Common.Control.Safe
+<span class="lineno">   12 </span>
+<span class="lineno">   13 </span>import           Data.Attoparsec.Text
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>parseAssemblyText :: MonadSafe m =&gt; Text -&gt; m InstructionList
+<span class="lineno">   16 </span><span class="decl"><span class="istickedoff">parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser &lt;* endOfInput)</span></span>
+<span class="lineno">   17 </span>
+<span class="lineno">   18 </span>instructionListParser :: Parser InstructionList
+<span class="lineno">   19 </span><span class="decl"><span class="istickedoff">instructionListParser = skipManyComment *&gt; skipHorizontalSpace *&gt; many (instructionParser &lt;* skipHorizontalSpace &lt;* skipManyComment)</span></span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>instructionParser :: Parser Instruction
+<span class="lineno">   22 </span><span class="decl"><span class="istickedoff">instructionParser = instructionDataParser &lt;|&gt; instructionCodeParser</span></span>
+<span class="lineno">   23 </span>
+<span class="lineno">   24 </span>instructionDataParser :: Parser Instruction
+<span class="lineno">   25 </span><span class="decl"><span class="istickedoff">instructionDataParser = makeDataInstruction &lt;$&gt; (char '.' *&gt; skipHorizontalSpace *&gt; itemListParser)</span></span>
+<span class="lineno">   26 </span>
+<span class="lineno">   27 </span>instructionCodeParser :: Parser Instruction
+<span class="lineno">   28 </span><span class="decl"><span class="istickedoff">instructionCodeParser = makeCodeInstruction &lt;$&gt; itemListParser</span></span>
+<span class="lineno">   29 </span>
+<span class="lineno">   30 </span>itemListParser :: Parser ItemList
+<span class="lineno">   31 </span><span class="decl"><span class="istickedoff">itemListParser = many itemParser &lt;* endLineParser</span></span>
+<span class="lineno">   32 </span>
+<span class="lineno">   33 </span>itemParser :: Parser Item
+<span class="lineno">   34 </span><span class="decl"><span class="istickedoff">itemParser =</span>
+<span class="lineno">   35 </span><span class="spaces">      </span><span class="istickedoff">(ItemLabel             &lt;$&gt; labelParser)</span>
+<span class="lineno">   36 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (ItemExpression        &lt;$&gt; expressionParser)</span>
+<span class="lineno">   37 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (ItemString . unEscape &lt;$&gt; stringParser &lt;* skipHorizontalSpace)</span></span>
+<span class="lineno">   38 </span>
+<span class="lineno">   39 </span>expressionParser :: Parser Expression
+<span class="lineno">   40 </span><span class="decl"><span class="istickedoff">expressionParser = (termWithPMExpressionParser &lt;|&gt; termWithoutPMExpressionParser) &lt;* skipHorizontalSpace</span></span>
+<span class="lineno">   41 </span>
+<span class="lineno">   42 </span>termWithoutPMExpressionParser :: Parser Expression
+<span class="lineno">   43 </span><span class="decl"><span class="istickedoff">termWithoutPMExpressionParser = makeExpressionWithoutPM &lt;$&gt; termParser</span></span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span>termWithPMExpressionParser :: Parser Expression
+<span class="lineno">   46 </span><span class="decl"><span class="istickedoff">termWithPMExpressionParser = liftA2 (flip makeExpressionWithPM) termParser pmExpressionParser</span></span>
+<span class="lineno">   47 </span>
+<span class="lineno">   48 </span>pmExpressionParser :: Parser PMExpression
+<span class="lineno">   49 </span><span class="decl"><span class="istickedoff">pmExpressionParser = liftA2 PMExpression pmParser expressionParser</span></span>
+<span class="lineno">   50 </span>
+<span class="lineno">   51 </span>pmParser :: Parser PM
+<span class="lineno">   52 </span><span class="decl"><span class="istickedoff">pmParser = (Plus &lt;$ char '+') &lt;|&gt; (<span class="nottickedoff">Minus</span> &lt;$ char '-')</span></span>
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>termParser :: Parser Term
+<span class="lineno">   55 </span><span class="decl"><span class="istickedoff">termParser =</span>
+<span class="lineno">   56 </span><span class="spaces">      </span><span class="istickedoff">(TermSymbol       &lt;$&gt; integerValueParser2)</span>
+<span class="lineno">   57 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (TermQuestionMark &lt;$  char '?')</span>
+<span class="lineno">   58 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (TermMinus        &lt;$&gt; (char '-' *&gt; termParser))</span>
+<span class="lineno">   59 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (TermExpression   &lt;$&gt; (char '(' *&gt; expressionParser &lt;* char ')'))</span></span>
+
+</pre>
+</body>
+</html>

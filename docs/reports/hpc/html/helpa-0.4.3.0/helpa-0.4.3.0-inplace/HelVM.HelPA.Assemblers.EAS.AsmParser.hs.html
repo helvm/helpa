@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module HelVM.HelPA.Assemblers.EAS.AsmParser (
+<span class="lineno">    2 </span>  parseAssemblyText,
+<span class="lineno">    3 </span>) where
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           HelVM.HelPA.Assemblers.EAS.Instruction
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>import           HelVM.HelPA.Assembler.Lexer
+<span class="lineno">    8 </span>import           HelVM.HelPA.Assembler.Value
+<span class="lineno">    9 </span>
+<span class="lineno">   10 </span>import           HelVM.Common.Control.Safe
+<span class="lineno">   11 </span>
+<span class="lineno">   12 </span>import           Data.Attoparsec.Text                   hiding (D, I)
+<span class="lineno">   13 </span>import           Data.Char
+<span class="lineno">   14 </span>
+<span class="lineno">   15 </span>parseAssemblyText :: MonadSafe m =&gt; Text -&gt; m InstructionList
+<span class="lineno">   16 </span><span class="decl"><span class="istickedoff">parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser &lt;* endOfInput)</span></span>
+<span class="lineno">   17 </span>
+<span class="lineno">   18 </span>instructionListParser :: Parser InstructionList
+<span class="lineno">   19 </span><span class="decl"><span class="istickedoff">instructionListParser = skipManyComment *&gt; skipHorizontalSpace *&gt; many (instructionParser &lt;* skipHorizontalSpace)</span></span>
+<span class="lineno">   20 </span>
+<span class="lineno">   21 </span>instructionParser :: Parser Instruction
+<span class="lineno">   22 </span><span class="decl"><span class="istickedoff">instructionParser =</span>
+<span class="lineno">   23 </span><span class="spaces">  </span><span class="istickedoff">try zeroOperandInstructionParser</span>
+<span class="lineno">   24 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; naturalNumberParser</span>
+<span class="lineno">   25 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; unescapedStringParser</span>
+<span class="lineno">   26 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; labelDefinitionParser</span>
+<span class="lineno">   27 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; includeFileParser</span>
+<span class="lineno">   28 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; lineBreakParser</span>
+<span class="lineno">   29 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; commentParser</span></span>
+<span class="lineno">   30 </span>
+<span class="lineno">   31 </span>----
+<span class="lineno">   32 </span>
+<span class="lineno">   33 </span>zeroOperandInstructionParser :: Parser Instruction
+<span class="lineno">   34 </span><span class="decl"><span class="istickedoff">zeroOperandInstructionParser =</span>
+<span class="lineno">   35 </span><span class="spaces">      </span><span class="istickedoff">zeroOperandInstruction E [&quot;E&quot;, &quot;dividE&quot;]</span>
+<span class="lineno">   36 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction T [&quot;T&quot;, &quot;Transfer&quot;]</span>
+<span class="lineno">   37 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction A [&quot;A&quot;, &quot;Address&quot;]</span>
+<span class="lineno">   38 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction O [&quot;O&quot;, &quot;Output&quot;]</span>
+<span class="lineno">   39 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction I [&quot;I&quot;, &quot;Input&quot;]</span>
+<span class="lineno">   40 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction S [&quot;S&quot;, &quot;Subtract&quot;]</span>
+<span class="lineno">   41 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; zeroOperandInstruction H [&quot;H&quot;, &quot;Halibut&quot;]</span>
+<span class="lineno">   42 </span><span class="spaces">    </span><span class="istickedoff">where zeroOperandInstruction i ts = i &lt;$ (asciiCIChoices ts *&gt; endWordParser)</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>naturalNumberParser :: Parser Instruction
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">naturalNumberParser = N &lt;$&gt; (</span>
+<span class="lineno">   46 </span><span class="spaces">      </span><span class="istickedoff">naturalValueParser</span>
+<span class="lineno">   47 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (asciiCI &quot;N&quot; *&gt; skipHorizontalSpace *&gt; naturalValueParser)</span>
+<span class="lineno">   48 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; (asciiCI &quot;Number&quot; *&gt; endWordParser *&gt; skipHorizontalSpace *&gt; naturalValueParser)</span>
+<span class="lineno">   49 </span><span class="spaces">  </span><span class="istickedoff">)</span></span>
+<span class="lineno">   50 </span>
+<span class="lineno">   51 </span>unescapedStringParser :: Parser Instruction
+<span class="lineno">   52 </span><span class="decl"><span class="istickedoff">unescapedStringParser = U . fromString &lt;$&gt; stringParser</span></span>
+<span class="lineno">   53 </span>
+<span class="lineno">   54 </span>labelDefinitionParser :: Parser Instruction
+<span class="lineno">   55 </span><span class="decl"><span class="istickedoff">labelDefinitionParser = L &lt;$&gt; (char '&gt;' *&gt; identifierParser &lt;* char ':')</span></span>
+<span class="lineno">   56 </span>
+<span class="lineno">   57 </span>includeFileParser :: Parser Instruction
+<span class="lineno">   58 </span><span class="decl"><span class="istickedoff">includeFileParser = D &lt;$&gt; (char '*' *&gt; fileNameParser &lt;* char '\n')</span></span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>lineBreakParser :: Parser Instruction
+<span class="lineno">   61 </span><span class="decl"><span class="istickedoff">lineBreakParser = R &lt;$ (skipMany1EndLine *&gt; skipManyComment)</span></span>
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>commentParser :: Parser Instruction
+<span class="lineno">   64 </span><span class="decl"><span class="istickedoff">commentParser = skipComment *&gt; lineBreakParser</span></span>
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>skipManyComment :: Parser [()]
+<span class="lineno">   67 </span><span class="decl"><span class="istickedoff">skipManyComment = many (skipComment &lt;* skipMany1EndLine)</span></span>
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>skipComment :: Parser ()
+<span class="lineno">   70 </span><span class="decl"><span class="istickedoff">skipComment = char commentChar *&gt; skipAllToEndOfLine</span></span>
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>skipMany1EndLine :: Parser String
+<span class="lineno">   73 </span><span class="decl"><span class="istickedoff">skipMany1EndLine = many1 (char '\n')</span></span>
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>----
+<span class="lineno">   76 </span>
+<span class="lineno">   77 </span>endWordParser :: Parser Text
+<span class="lineno">   78 </span><span class="decl"><span class="istickedoff">endWordParser = takeTill isEndWord</span></span>
+<span class="lineno">   79 </span>
+<span class="lineno">   80 </span>isEndWord :: Char -&gt; Bool
+<span class="lineno">   81 </span><span class="decl"><span class="istickedoff">isEndWord c = isSpace c || (c == commentChar)</span></span>
+<span class="lineno">   82 </span>
+<span class="lineno">   83 </span>commentChar :: Char
+<span class="lineno">   84 </span><span class="decl"><span class="istickedoff">commentChar = '#'</span></span>
+<span class="lineno">   85 </span>
+<span class="lineno">   86 </span>----
+<span class="lineno">   87 </span>
+<span class="lineno">   88 </span>naturalValueParser :: Parser NaturalValue
+<span class="lineno">   89 </span><span class="decl"><span class="istickedoff">naturalValueParser = labelNaturalParser &lt;|&gt; naturalRightParser</span></span>
+<span class="lineno">   90 </span>
+<span class="lineno">   91 </span>labelNaturalParser :: Parser NaturalValue
+<span class="lineno">   92 </span><span class="decl"><span class="istickedoff">labelNaturalParser = Variable . toIdentifier &lt;$&gt; (char '&lt;' *&gt; many1 letter)</span></span>
+<span class="lineno">   93 </span>
+<span class="lineno">   94 </span>naturalRightParser :: Parser NaturalValue
+<span class="lineno">   95 </span><span class="decl"><span class="istickedoff">naturalRightParser = Literal &lt;$&gt; naturalParser</span></span>
+
+</pre>
+</body>
+</html>

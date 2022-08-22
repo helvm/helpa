@@ -1,0 +1,137 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module HelVM.HelPA.Assembler.Lexer where
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>import           HelVM.HelPA.Assembler.Value
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           HelVM.Common.ReadText
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>import           Data.Attoparsec.Combinator
+<span class="lineno">    8 </span>import           Data.Attoparsec.Text
+<span class="lineno">    9 </span>import           Data.Char
+<span class="lineno">   10 </span>
+<span class="lineno">   11 </span>labelParser :: Parser Identifier
+<span class="lineno">   12 </span><span class="decl"><span class="istickedoff">labelParser = identifierParser &lt;* char ':' &lt;* skipHorizontalSpace</span></span>
+<span class="lineno">   13 </span>
+<span class="lineno">   14 </span>integerValueParser2 :: Parser IntegerValue
+<span class="lineno">   15 </span><span class="decl"><span class="istickedoff">integerValueParser2 = Literal &lt;$&gt; integerParser2 &lt;|&gt; Variable &lt;$&gt; identifierParser</span></span>
+<span class="lineno">   16 </span>
+<span class="lineno">   17 </span>signedIntegerValueParser :: Parser IntegerValue
+<span class="lineno">   18 </span><span class="decl"><span class="istickedoff">signedIntegerValueParser = Literal &lt;$&gt; signedIntegerParser &lt;|&gt; Variable &lt;$&gt; identifierParser</span></span>
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>naturalParser :: Parser Natural
+<span class="lineno">   21 </span><span class="decl"><span class="istickedoff">naturalParser = naturalLiteralParser &lt;|&gt; ordCharLiteralParser</span></span>
+<span class="lineno">   22 </span>
+<span class="lineno">   23 </span>signedIntegerParser :: Parser Integer
+<span class="lineno">   24 </span><span class="decl"><span class="istickedoff">signedIntegerParser = signedIntegerLiteralParser &lt;|&gt; ordCharLiteralParser</span></span>
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>integerParser :: Parser Integer
+<span class="lineno">   27 </span><span class="decl"><span class="istickedoff">integerParser = integerLiteralParser &lt;|&gt; ordCharLiteralParser</span></span>
+<span class="lineno">   28 </span>
+<span class="lineno">   29 </span>integerParser2 :: Parser Integer
+<span class="lineno">   30 </span><span class="decl"><span class="istickedoff">integerParser2 = integerLiteralParser &lt;|&gt; ordCharLiteralParser2</span></span>
+<span class="lineno">   31 </span>
+<span class="lineno">   32 </span>naturalLiteralParser :: Parser Natural
+<span class="lineno">   33 </span><span class="decl"><span class="istickedoff">naturalLiteralParser = readUnsafe &lt;$&gt; many1 digit</span></span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span>signedIntegerLiteralParser :: Parser Integer
+<span class="lineno">   36 </span><span class="decl"><span class="istickedoff">signedIntegerLiteralParser = signed integerLiteralParser</span></span>
+<span class="lineno">   37 </span>
+<span class="lineno">   38 </span>integerLiteralParser :: Parser Integer
+<span class="lineno">   39 </span><span class="decl"><span class="istickedoff">integerLiteralParser = readUnsafe &lt;$&gt; many1 digit</span></span>
+<span class="lineno">   40 </span>
+<span class="lineno">   41 </span>ordCharLiteralParser :: Integral a =&gt; Parser a
+<span class="lineno">   42 </span><span class="decl"><span class="istickedoff">ordCharLiteralParser = fromIntegral . ord &lt;$&gt; (char '\'' *&gt; anyChar)</span></span>
+<span class="lineno">   43 </span>
+<span class="lineno">   44 </span>ordCharLiteralParser2 :: Integral a =&gt; Parser a
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">ordCharLiteralParser2 = fromIntegral . ord &lt;$&gt; (escapedCharLiteralParser2 &lt;|&gt; charLiteralParser2)</span></span>
+<span class="lineno">   46 </span>
+<span class="lineno">   47 </span>escapedCharLiteralParser2 :: Parser Char
+<span class="lineno">   48 </span><span class="decl"><span class="istickedoff">escapedCharLiteralParser2 =</span>
+<span class="lineno">   49 </span><span class="spaces">      </span><span class="istickedoff">escape <span class="nottickedoff">'\''</span> <span class="nottickedoff">'\''</span></span>
+<span class="lineno">   50 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\\'</span> <span class="nottickedoff">'\\'</span></span>
+<span class="lineno">   51 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\0'</span> <span class="nottickedoff">'0'</span></span>
+<span class="lineno">   52 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\a'</span> <span class="nottickedoff">'a'</span></span>
+<span class="lineno">   53 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\b'</span> <span class="nottickedoff">'b'</span></span>
+<span class="lineno">   54 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\f'</span> <span class="nottickedoff">'f'</span></span>
+<span class="lineno">   55 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\n'</span> <span class="nottickedoff">'n'</span></span>
+<span class="lineno">   56 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\r'</span> <span class="nottickedoff">'r'</span></span>
+<span class="lineno">   57 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\t'</span> <span class="nottickedoff">'t'</span></span>
+<span class="lineno">   58 </span><span class="spaces">  </span><span class="istickedoff">&lt;|&gt; escape <span class="nottickedoff">'\v'</span> <span class="nottickedoff">'v'</span></span></span>
+<span class="lineno">   59 </span>
+<span class="lineno">   60 </span>escape :: Char -&gt; Char -&gt; Parser Char
+<span class="lineno">   61 </span><span class="decl"><span class="istickedoff">escape a b = <span class="nottickedoff">a</span> &lt;$ char '\'' *&gt; char '\\' *&gt; <span class="nottickedoff">char b</span> &lt;* <span class="nottickedoff">char '\''</span> &lt;* <span class="nottickedoff">skipHorizontalSpace</span></span></span>
+<span class="lineno">   62 </span>
+<span class="lineno">   63 </span>charLiteralParser2 :: Parser Char
+<span class="lineno">   64 </span><span class="decl"><span class="istickedoff">charLiteralParser2 = char '\'' *&gt; anyChar &lt;* char '\'' &lt;* skipHorizontalSpace</span></span>
+<span class="lineno">   65 </span>
+<span class="lineno">   66 </span>stringParser :: Parser String
+<span class="lineno">   67 </span><span class="decl"><span class="istickedoff">stringParser = char '&quot;' *&gt; many (notChar '&quot;') &lt;* char '&quot;'</span></span>
+<span class="lineno">   68 </span>
+<span class="lineno">   69 </span>skipHorizontalSpace :: Parser ()
+<span class="lineno">   70 </span><span class="decl"><span class="istickedoff">skipHorizontalSpace = skipWhile isHorizontalSpace</span></span>
+<span class="lineno">   71 </span>
+<span class="lineno">   72 </span>skip1HorizontalSpace :: Parser ()
+<span class="lineno">   73 </span><span class="decl"><span class="istickedoff">skip1HorizontalSpace = satisfy isHorizontalSpace *&gt; skipWhile isHorizontalSpace</span></span>
+<span class="lineno">   74 </span>
+<span class="lineno">   75 </span>identifierParser :: Parser Identifier
+<span class="lineno">   76 </span><span class="decl"><span class="istickedoff">identifierParser = toIdentifier &lt;$&gt; liftA2 (:) letter_ (many alphaNum_)</span></span>
+<span class="lineno">   77 </span>
+<span class="lineno">   78 </span>fileNameParser :: Parser Identifier
+<span class="lineno">   79 </span><span class="decl"><span class="istickedoff">fileNameParser = toIdentifier &lt;$&gt; liftA2 (:) letter (many alphaNumDot_)</span></span>
+<span class="lineno">   80 </span>
+<span class="lineno">   81 </span>letter_ :: Parser Char
+<span class="lineno">   82 </span><span class="decl"><span class="istickedoff">letter_ = satisfy isAlpha_ &lt;?&gt; <span class="nottickedoff">&quot;letter_&quot;</span></span></span>
+<span class="lineno">   83 </span>
+<span class="lineno">   84 </span>alphaNum_ :: Parser Char
+<span class="lineno">   85 </span><span class="decl"><span class="istickedoff">alphaNum_ = satisfy isAlphaNum_</span></span>
+<span class="lineno">   86 </span>
+<span class="lineno">   87 </span>alphaNumDot_ :: Parser Char
+<span class="lineno">   88 </span><span class="decl"><span class="istickedoff">alphaNumDot_ = satisfy isAlphaNumDot_</span></span>
+<span class="lineno">   89 </span>
+<span class="lineno">   90 </span>skipAllToEndOfLine :: Parser ()
+<span class="lineno">   91 </span><span class="decl"><span class="istickedoff">skipAllToEndOfLine = skipWhile isNotEndOfLine</span></span>
+<span class="lineno">   92 </span>
+<span class="lineno">   93 </span>----
+<span class="lineno">   94 </span>
+<span class="lineno">   95 </span>asciiCIChoices :: [Text] -&gt; Parser Text
+<span class="lineno">   96 </span><span class="decl"><span class="istickedoff">asciiCIChoices = choice . map asciiCI</span></span>
+<span class="lineno">   97 </span>
+<span class="lineno">   98 </span>isNotEndOfLine :: Char -&gt; Bool
+<span class="lineno">   99 </span><span class="decl"><span class="istickedoff">isNotEndOfLine = not . isEndOfLine</span></span>
+<span class="lineno">  100 </span>
+<span class="lineno">  101 </span>isAlpha_ :: Char -&gt; Bool
+<span class="lineno">  102 </span><span class="decl"><span class="istickedoff">isAlpha_ c = isAlpha c || '_' == c</span></span>
+<span class="lineno">  103 </span>
+<span class="lineno">  104 </span>isAlphaNum_ :: Char -&gt; Bool
+<span class="lineno">  105 </span><span class="decl"><span class="istickedoff">isAlphaNum_ c = isAlphaNum c || '_' == c</span></span>
+<span class="lineno">  106 </span>
+<span class="lineno">  107 </span>isAlphaNumDot_ :: Char -&gt; Bool
+<span class="lineno">  108 </span><span class="decl"><span class="istickedoff">isAlphaNumDot_ c = isAlphaNum_ c || '.' == c</span></span>
+<span class="lineno">  109 </span>
+<span class="lineno">  110 </span>isPlusMinus :: Char -&gt; Bool
+<span class="lineno">  111 </span><span class="decl"><span class="nottickedoff">isPlusMinus c = '+' == c || '-' == c</span></span>
+<span class="lineno">  112 </span>
+<span class="lineno">  113 </span>unEscape :: String -&gt; String
+<span class="lineno">  114 </span><span class="decl"><span class="istickedoff">unEscape s = readUnsafe $ &quot;\&quot;&quot; &lt;&gt; s &lt;&gt; &quot;\&quot;&quot;</span></span>
+
+</pre>
+</body>
+</html>

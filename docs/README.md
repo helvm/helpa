@@ -69,8 +69,10 @@ Currently, 🏭 🌾 **HELPA** assembler can assemble esoteric languages:
 * [CODE OF CONDUCT](CODE_OF_CONDUCT.md)
 
 ## Reports
-* [hlint](reports/hlint.html)
-* [stan](reports/stan.html)
+* [hadock](reports/doc/index.html) - A documentation
+* [hlint](reports/hlint.html) - Source code suggestions report
+* [hpc](reports/hpc/helpa-test/hpc_index.html) - Haskell program coverage report
+* [stan](reports/stan.html) - Haskell STatic ANalyser report
 
 ## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
 
