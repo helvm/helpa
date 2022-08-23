@@ -1,0 +1,12 @@
+ignore-project: False
+flags: +ghcoptions
+tests: True
+benchmarks: True
+
+package *
+  coverage: True
+  library-coverage: True
+
+package helvm-common
+  coverage: False
+  library-coverage: False
