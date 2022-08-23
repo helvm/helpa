@@ -100,9 +100,9 @@ common common-options
       -fprint-potential-instances
       -Werror
 
-library
+library helvm-common
   import:              common-options
-  hs-source-dirs:      hs/src
+  hs-source-dirs:      hs/common
   exposed-modules:
     HelVM.Common.ListLikeUtil
     HelVM.Common.NamedValue
@@ -129,6 +129,23 @@ library
     HelVM.Common.Digit.Digits
     HelVM.Common.Digit.ToDigit
 
+  build-depends:
+      containers           <  0.7
+    , data-default
+    , dlist
+    , ilist
+    , ListLike
+    , mono-traversable
+    , mtl
+    , pretty-simple
+    , slist
+    , type-operators
+  ghc-options:
+
+library
+  import:              common-options
+  hs-source-dirs:      hs/src
+  exposed-modules:
     HelVM.HelPA.Assembler.AsmParserUtil
     HelVM.HelPA.Assembler.Lexer
     HelVM.HelPA.Assembler.Util
@@ -183,17 +200,11 @@ library
     HelVM.HelPA.Assemblers.WSA.Reducer
     HelVM.HelPA.Assemblers.WSA.Token
   build-depends:
-      attoparsec           <  0.14.4
+      helvm-common
+    , attoparsec           <  0.14.4
     , containers           <  0.7
-    , data-default
-    , dlist
     , filepath
-    , ilist
     , ListLike
-    , mono-traversable
-    , mtl
-    , pretty-simple
-    , slist
     , split
     , type-operators
   ghc-options:
@@ -206,7 +217,8 @@ executable helpa
     AppOptions
     Lang
   build-depends:
-      helpa
+      helvm-common
+    , helpa
     , optparse-applicative >= 0.14.3.0
   ghc-options:
     -threaded
@@ -259,6 +271,7 @@ test-suite helpa-test
     , hspec-golden
     , hspec-slow
 
+    , helvm-common
     , helpa
 
     , dlist
