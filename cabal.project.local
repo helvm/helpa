@@ -2,7 +2,6 @@ ignore-project: False
 flags: +ghcoptions
 tests: True
 benchmarks: True
-
 package *
   coverage: True
   library-coverage: True
