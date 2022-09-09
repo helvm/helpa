@@ -1,0 +1,52 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module HelVM.HelPA.Assemblers.ASQ.Eigenratios.Reducer where
+<span class="lineno">    2 </span>
+<span class="lineno">    3 </span>import           HelVM.HelPA.Assemblers.ASQ.Eigenratios.Instruction
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span>import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
+<span class="lineno">    6 </span>
+<span class="lineno">    7 </span>import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction    as ASQ
+<span class="lineno">    8 </span>import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducer        as ASQ
+<span class="lineno">    9 </span>
+<span class="lineno">   10 </span>import           HelVM.HelPA.Assembler.Util
+<span class="lineno">   11 </span>
+<span class="lineno">   12 </span>import           HelVM.HelIO.Control.Safe
+<span class="lineno">   13 </span>
+<span class="lineno">   14 </span>reduce :: MonadSafe m =&gt; Bool -&gt; QuestionMark -&gt; InstructionList -&gt; m SymbolList
+<span class="lineno">   15 </span><span class="decl"><span class="istickedoff">reduce addOutLabel qm il = ASQ.reduce addOutLabel qm $ reduceIL il</span></span>
+<span class="lineno">   16 </span>
+<span class="lineno">   17 </span>reduceIL :: InstructionList -&gt; ASQ.InstructionList
+<span class="lineno">   18 </span><span class="decl"><span class="istickedoff">reduceIL il = reduceInstruction =&lt;&lt; il</span></span>
+<span class="lineno">   19 </span>
+<span class="lineno">   20 </span>reduceInstruction :: Instruction -&gt; ASQ.InstructionList
+<span class="lineno">   21 </span><span class="decl"><span class="istickedoff">reduceInstruction (Instruction l c) = catMaybes [reduceLabel &lt;$&gt; l , reduceCommand &lt;$&gt; c]</span></span>
+<span class="lineno">   22 </span>
+<span class="lineno">   23 </span>reduceLabel :: Label -&gt; ASQ.Instruction
+<span class="lineno">   24 </span><span class="decl"><span class="istickedoff">reduceLabel l = ASQ.makeDataInstruction [ASQ.ItemLabel l]</span></span>
+<span class="lineno">   25 </span>
+<span class="lineno">   26 </span>reduceCommand :: Command -&gt; ASQ.Instruction
+<span class="lineno">   27 </span><span class="decl"><span class="istickedoff">reduceCommand (Data v              ) = ASQ.makeDataInstructionFromIntegerValue v</span>
+<span class="lineno">   28 </span><span class="spaces"></span><span class="istickedoff">reduceCommand (Code v1 v2  Nothing ) = ASQ.makeCodeInstructionFromIntegerValueList [v1 , v2]</span>
+<span class="lineno">   29 </span><span class="spaces"></span><span class="istickedoff">reduceCommand (Code v1 v2 (Just v3)) = ASQ.makeCodeInstructionFromIntegerValueList [v1 , v2 , v3]</span></span>
+
+</pre>
+</body>
+</html>
