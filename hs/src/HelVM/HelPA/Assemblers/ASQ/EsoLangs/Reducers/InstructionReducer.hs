@@ -6,7 +6,7 @@ import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
 
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 reduceIL :: MonadSafe m => QuestionMark -> InstructionList -> m ItemList
 reduceIL qm il = join <$> traverse (reduceInstruction qm) il

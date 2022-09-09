@@ -4,11 +4,11 @@ import           HelVM.HelPA.Assemblers.WSA.Assembler
 import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
 import           HelVM.HelPA.Assemblers.WSA.FileUtil
 
-import           HelVM.Common.NamedValue
+import           HelVM.HelIO.NamedValue
 import           HelVM.HelPA.Assembler.API.SourcePath
 
-import           HelVM.Common.ZipA
 import           HelVM.GoldenExpectations
+import           HelVM.HelIO.ZipA
 
 import           System.FilePath.Posix
 

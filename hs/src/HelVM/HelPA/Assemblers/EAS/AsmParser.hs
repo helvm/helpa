@@ -7,7 +7,7 @@ import           HelVM.HelPA.Assemblers.EAS.Instruction
 import           HelVM.HelPA.Assembler.Lexer
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text                   hiding (D, I)
 import           Data.Char

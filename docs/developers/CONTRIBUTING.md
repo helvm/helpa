@@ -4,8 +4,8 @@
 
 Licensed under either of
 
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT
+* Apache License, Version 2.0, ([LICENSE-APACHE](../license/LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+* MIT license ([LICENSE-MIT](../license/LICENSE-MIT) or http://opensource.org/licenses/MIT
 
 ### Contribution
 
@@ -22,4 +22,4 @@ We use `HLint`
 curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s .
 ```
 
-## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+## 🦄 🌈 ❤️ 💛 💚 💙 🤍 🖤

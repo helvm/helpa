@@ -5,7 +5,7 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 import           HelVM.HelPA.Assembler.Util
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 reduceExpressions :: MonadSafe m => ExpressionList -> m SymbolList
 reduceExpressions = traverse reduceForTE

@@ -9,7 +9,7 @@ import           HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
 import           HelVM.HelPA.Assembler.Lexer
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           Control.Type.Operator
 

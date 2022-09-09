@@ -10,9 +10,9 @@ import           HelVM.HelPA.Assemblers.EAS.Reducer
 
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Containers.MTIndexSafe
-import           HelVM.Common.Control.Safe
-import           HelVM.Common.Digit.Digits
+import           HelVM.HelIO.Containers.MTIndexSafe
+import           HelVM.HelIO.Control.Safe
+import           HelVM.HelIO.Digit.Digits
 
 reduceAndGenerateCode :: MonadSafe m => InstructionList -> m Text
 reduceAndGenerateCode il = generateCode =<< reduce il

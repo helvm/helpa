@@ -5,7 +5,7 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
 import           HelVM.HelPA.Assemblers.ASQ.FileUtil
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations

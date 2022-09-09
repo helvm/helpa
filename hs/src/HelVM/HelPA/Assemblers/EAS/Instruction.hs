@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.EAS.Instruction where
 
-import           HelVM.Common.Collections.SList
+import           HelVM.HelIO.Collections.SList
 
 import           HelVM.HelPA.Assembler.Value
 

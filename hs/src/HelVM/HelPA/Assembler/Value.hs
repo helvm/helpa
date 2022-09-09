@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assembler.Value where
 
-import           HelVM.Common.Collections.SList
+import           HelVM.HelIO.Collections.SList
 
 data Value a
   = Literal !a

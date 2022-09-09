@@ -4,7 +4,7 @@ import           HelVM.HelPA.Assemblers.WSA.AssemblyOptions
 
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
-import           HelVM.Common.NamedValue
+import           HelVM.HelIO.NamedValue
 
 manyOptionsWithName :: [NamedValue AssemblyOptions]
 manyOptionsWithName =

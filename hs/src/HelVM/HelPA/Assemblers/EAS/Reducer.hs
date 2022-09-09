@@ -7,8 +7,8 @@ import           HelVM.HelPA.Assemblers.EAS.Instruction
 import           HelVM.HelPA.Assembler.Util
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Containers.Util
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Containers.Util
+import           HelVM.HelIO.Control.Safe
 
 import           Data.List.Split
 

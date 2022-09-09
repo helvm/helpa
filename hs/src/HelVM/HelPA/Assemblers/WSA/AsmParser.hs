@@ -7,7 +7,7 @@ import           HelVM.HelPA.Assemblers.WSA.Instruction
 import           HelVM.HelPA.Assembler.Lexer
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           Control.Type.Operator
 import           Data.Attoparsec.Text

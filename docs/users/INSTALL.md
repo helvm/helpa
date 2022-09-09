@@ -31,6 +31,6 @@ dist-newstyle/build/x86_64-linux/ghc-8.10.5/helpa-0.3.5.0/build/helpa/helpa asse
 
 ## Other
 
-For more see [CONTRIBUTING](CONTRIBUTING.md).
+For more see [CONTRIBUTING](../developers/CONTRIBUTING.md).
 
-## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+## 🦄 🌈 ❤️ 💛 💚 💙 🤍 🖤

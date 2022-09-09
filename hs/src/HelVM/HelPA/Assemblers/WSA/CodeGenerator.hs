@@ -13,8 +13,8 @@ import           HelVM.HelPA.Assemblers.WSA.Token
 import           HelVM.HelPA.Assembler.Value
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
-import           HelVM.Common.Control.Safe
-import           HelVM.Common.Digit.Digitable
+import           HelVM.HelIO.Control.Safe
+import           HelVM.HelIO.Digit.Digitable
 
 reduceAndGenerateCode :: MonadSafe m => AssemblyOptions -> InstructionList -> m Text
 reduceAndGenerateCode options il = generateCode (tokenType options) (startOfInstruction options) (debug options) $ reduce (endOfLine options) il

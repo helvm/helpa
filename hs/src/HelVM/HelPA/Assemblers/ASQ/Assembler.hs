@@ -10,7 +10,7 @@ import           HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
 import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import qualified HelVM.HelPA.Assemblers.ASQ.Eigenratios.Assembler as Eigenratios
 import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler    as EsoLangs

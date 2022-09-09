@@ -6,11 +6,11 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.HelPA.Assemblers.WSA.TestData
 import           HelVM.HelPA.Assemblers.WSA.Token
 
-import           HelVM.Common.NamedValue
+import           HelVM.HelIO.NamedValue
 
-import           HelVM.Common.ZipA
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
+import           HelVM.HelIO.ZipA
 
 import           System.FilePath.Posix
 

@@ -21,8 +21,8 @@ import           HelVM.HelPA.Assembler.API.SwitchEnum
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
 
-import           HelVM.Common.Control.Control
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Control
+import           HelVM.HelIO.Control.Safe
 
 import           Options.Applicative
 

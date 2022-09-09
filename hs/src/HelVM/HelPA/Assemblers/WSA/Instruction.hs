@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.WSA.Instruction where
 
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.Collections.SList
+import           HelVM.HelIO.Collections.SList
 
 pushLiteral :: Integer -> Instruction
 pushLiteral = Push . Literal

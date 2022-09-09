@@ -8,7 +8,7 @@ import           HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
 
 import           HelVM.HelPA.Assembler.Lexer
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text
 

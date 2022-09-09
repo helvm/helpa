@@ -12,6 +12,8 @@ Currently, 🧑‍🏭 **HELPA** can assemble:
 [comment]: <> (* 💚 Piet Assembler Language)
 [comment]: <> (* 🖤 WMachine Assembler Language)
 
-For more see [CHANGELOG](CHANGELOG.md).
+For more see:
+* [CHANGELOG](../developers/CHANGELOG.md)
+* [Blog](https://writeonly.github.io/projects/helpa) - in Polish
 
-## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+## 🦄 🌈 ❤️ 💛 💚 💙 🤍 🖤

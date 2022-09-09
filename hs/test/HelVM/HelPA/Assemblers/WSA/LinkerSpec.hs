@@ -4,7 +4,7 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.HelPA.Assemblers.WSA.Linker
 import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import           HelVM.Common.Util
+import           HelVM.HelIO.Util
 import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.Expectations

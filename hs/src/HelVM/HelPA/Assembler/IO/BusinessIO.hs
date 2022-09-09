@@ -4,9 +4,9 @@ module HelVM.HelPA.Assembler.IO.BusinessIO (
   wReadFile,
 ) where
 
-import           HelVM.Common.Control.Control
-import           HelVM.Common.Control.Logger
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Control
+import           HelVM.HelIO.Control.Logger
+import           HelVM.HelIO.Control.Safe
 
 type BIO m = (MonadControl m , BusinessIO m)
 

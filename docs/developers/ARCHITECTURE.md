@@ -42,4 +42,4 @@ Tools and libraries:
   * [x] [pretty-simple](https://github.com/cdepillabout/pretty-simple) for data types with a 'Show' instance
   * [x] [attoparsec](https://github.com/bgamari/attoparsec) for parsing assembly languages
 
-## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+## 🦄 🌈 ❤️ 💛 💚 💙 🤍 🖤

@@ -2,10 +2,10 @@ module HelVM.HelPA.Assemblers.WSA.Token where
 
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
-import           HelVM.Common.Containers.Util
-import           HelVM.Common.Control.Safe
-import           HelVM.Common.Digit.Digitable
-import           HelVM.Common.Digit.ToDigit
+import           HelVM.HelIO.Containers.Util
+import           HelVM.HelIO.Control.Safe
+import           HelVM.HelIO.Digit.Digitable
+import           HelVM.HelIO.Digit.ToDigit
 
 import           Text.Read
 

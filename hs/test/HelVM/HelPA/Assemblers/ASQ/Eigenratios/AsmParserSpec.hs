@@ -4,7 +4,7 @@ import           HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParser
 
 import           HelVM.HelPA.Assemblers.ASQ.FileUtil
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           HelVM.GoldenExpectations
 

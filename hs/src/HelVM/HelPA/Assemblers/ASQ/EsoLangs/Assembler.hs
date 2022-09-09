@@ -13,7 +13,7 @@ import           HelVM.HelPA.Assemblers.ASQ.Util.CodeGenerator
 import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 assembleFile :: BIO m => AssemblyOptions -> SourcePath -> m Text
 assembleFile options sourcePath = assembleText options =<< wReadFile (filePath sourcePath)

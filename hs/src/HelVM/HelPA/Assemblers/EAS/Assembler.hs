@@ -10,7 +10,7 @@ import           HelVM.HelPA.Assemblers.EAS.Linker
 import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 assembleFile :: BIO m => SourcePath -> m Text
 assembleFile sourcePath = reduceAndGenerateCode =<< linkApp sourcePath

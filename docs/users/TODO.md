@@ -1,4 +1,4 @@
-# ✔️ TODO
+# ✔️TODO
 
 **Future Features**
 
@@ -31,9 +31,8 @@ Features to implemented in for concrete languages:
 * [ ] 🍆 🍑 🍒 Fruity Fridays - Forth-Like with Functions for Fruitarians
 * [ ] 💩 🎤 🧑‍🎤 Shitty Language - Shit-Like Language, very fast stack assembler. This Language is real Shit!
 
+You can propose languages and features by [GitHub](https://github.com/helvm/helpa/issues).
 
-You can propose  languages and features by [GitHub](https://github.com/helvm/helap/issues).
+For more see [ROADMAP](../developers/ROADMAP.md).
 
-For more see [ROADMAP](ROADMAP.md).
-
-## 🌈 ❤️ 💛 💚 💙 🤍 🖤 🦄
+## 🦄 🌈 ❤️ 💛 💚 💙 🤍 🖤

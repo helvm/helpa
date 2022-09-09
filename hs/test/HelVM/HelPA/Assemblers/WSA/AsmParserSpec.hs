@@ -5,7 +5,7 @@ import           HelVM.HelPA.Assemblers.WSA.FileUtil
 import           HelVM.HelPA.Assemblers.WSA.Instruction
 import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import           HelVM.Common.Control.Safe
+import           HelVM.HelIO.Control.Safe
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations

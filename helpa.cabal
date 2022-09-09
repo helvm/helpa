@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.3.0
+version:               0.4.3.1
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -9,7 +9,7 @@ homepage:              http://helvm.org/helpa/
 bug-reports:           https://github.com/helvm/helpa/issues
 
 license:               Apache-2.0
-license-file:          docs/LICENSE-APACHE
+license-file:          docs/license/LICENSE-APACHE
 author:                Kamil Adam
 maintainer:            kamil.adam.zabinski@gmail.com
 copyright:             2020-2022 WriteOnly Developers
@@ -17,7 +17,7 @@ copyright:             2020-2022 WriteOnly Developers
 category:              Language
 build-type:            Simple
 extra-source-files:
-  docs/CHANGELOG.md
+  docs/developers/CHANGELOG.md
   docs/README.md
 
 tested-with:           GHC == 9.2.1
@@ -104,31 +104,6 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.Common.ListLikeUtil
-    HelVM.Common.NamedValue
-    HelVM.Common.ReadText
-    HelVM.Common.SequencesUtil
-    HelVM.Common.Util
-    HelVM.Common.ZipA
-
-    HelVM.Common.Collections.MapList
-    HelVM.Common.Collections.SList
-
-    HelVM.Common.Containers.LLIndexSafe
-    HelVM.Common.Containers.LLInsertDef
-    HelVM.Common.Containers.MTIndexSafe
-    HelVM.Common.Containers.MTInsertDef
-    HelVM.Common.Containers.Util
-
-    HelVM.Common.Control.Control
-    HelVM.Common.Control.Message
-    HelVM.Common.Control.Logger
-    HelVM.Common.Control.Safe
-
-    HelVM.Common.Digit.Digitable
-    HelVM.Common.Digit.Digits
-    HelVM.Common.Digit.ToDigit
-
     HelVM.HelPA.Assembler.AsmParserUtil
     HelVM.HelPA.Assembler.Lexer
     HelVM.HelPA.Assembler.Util
@@ -183,17 +158,11 @@ library
     HelVM.HelPA.Assemblers.WSA.Reducer
     HelVM.HelPA.Assemblers.WSA.Token
   build-depends:
-      attoparsec           <  0.14.4
+      helio
+    , attoparsec           <  0.14.4
     , containers           <  0.7
-    , data-default
-    , dlist
     , filepath
-    , ilist
     , ListLike
-    , mono-traversable
-    , mtl
-    , pretty-simple
-    , slist
     , split
     , type-operators
   ghc-options:
@@ -206,7 +175,8 @@ executable helpa
     AppOptions
     Lang
   build-depends:
-      helpa
+      helio
+    , helpa
     , optparse-applicative >= 0.14.3.0
   ghc-options:
     -threaded
@@ -224,8 +194,6 @@ test-suite helpa-test
     HelVM.Expectations
     HelVM.GoldenExpectations
     HelVM.MonadErrorSpec
-
-    HelVM.Common.Control.LoggerSpec
 
     HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
     HelVM.HelPA.Assemblers.ASQ.FileUtil
@@ -259,9 +227,9 @@ test-suite helpa-test
     , hspec-golden
     , hspec-slow
 
+    , helio
     , helpa
 
-    , dlist
     , filepath
     , mtl
     , type-operators

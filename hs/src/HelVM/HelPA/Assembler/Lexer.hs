@@ -2,7 +2,7 @@ module HelVM.HelPA.Assembler.Lexer where
 
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.Common.ReadText
+import           HelVM.HelIO.ReadText
 
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
