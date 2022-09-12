@@ -1,15 +1,17 @@
 module HelVM.HelPA.Assemblers.ASQ.API.Version where
 
+import           HelVM.HelIO.Extra
+import           HelVM.HelIO.SwitchEnum
+
 parseVersion :: String -> Version
-parseVersion raw = valid $ readMaybe raw where
-  valid (Just value) = value
-  valid Nothing      = error $ "'" <> toText raw <> "' is not valid Version. Valid version are : " <> show versions
+parseVersion raw = fromJustWithText message $ readMaybe raw where
+  message = "'" <> toText raw <> "' is not valid Version. Valid version are : " <> show versions
 
 defaultVersion :: Version
-defaultVersion = Eigenratios
+defaultVersion = defaultEnum
 
 versions :: [Version]
-versions = [Eigenratios , EsoLangs]
+versions = bothEnums
 
 data Version = Eigenratios | EsoLangs
   deriving stock (Bounded , Enum , Eq , Read , Show)

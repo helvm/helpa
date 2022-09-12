@@ -5,8 +5,8 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler
 import           HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
 import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
 
-import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
-import           HelVM.HelPA.Assemblers.ASQ.FileUtil
+import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsExtra
+import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelPA.Assembler.API.SourcePath
 
@@ -15,7 +15,7 @@ import           HelVM.GoldenExpectations
 
 import           System.FilePath.Posix
 
-import           Test.Hspec                                     (Spec, describe, it)
+import           Test.Hspec                                      (Spec, describe, it)
 
 spec :: Spec
 spec = do

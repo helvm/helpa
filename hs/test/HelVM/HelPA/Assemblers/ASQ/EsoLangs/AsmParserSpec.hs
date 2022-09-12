@@ -3,7 +3,7 @@ module HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParserSpec (spec) where
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParser
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
-import           HelVM.HelPA.Assemblers.ASQ.FileUtil
+import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelIO.Control.Safe
 

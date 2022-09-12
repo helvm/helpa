@@ -1,7 +1,7 @@
 module HelVM.HelPA.Assemblers.EAS.AsmParserSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.EAS.AsmParser
-import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.FileExtra
 import           HelVM.HelPA.Assemblers.EAS.Instruction
 import           HelVM.HelPA.Assemblers.EAS.TestData
 

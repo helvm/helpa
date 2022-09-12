@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction where
 
-import           HelVM.HelPA.Assembler.Util
+import           HelVM.HelPA.Assembler.Extra
 import           HelVM.HelPA.Assembler.Value
 
 -- Original grammar

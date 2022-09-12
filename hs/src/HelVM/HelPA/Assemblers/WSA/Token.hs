@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.WSA.Token where
 
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
-import           HelVM.HelIO.Containers.Util
+import           HelVM.HelIO.Containers.Extra
 import           HelVM.HelIO.Control.Safe
 import           HelVM.HelIO.Digit.Digitable
 import           HelVM.HelIO.Digit.ToDigit

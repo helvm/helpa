@@ -1,8 +1,8 @@
 module HelVM.HelPA.Assemblers.WSA.AssemblerSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.WSA.Assembler
-import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
-import           HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsExtra
+import           HelVM.HelPA.Assemblers.WSA.FileExtra
 
 import           HelVM.HelIO.NamedValue
 import           HelVM.HelPA.Assembler.API.SourcePath
@@ -12,7 +12,7 @@ import           HelVM.HelIO.ZipA
 
 import           System.FilePath.Posix
 
-import           Test.Hspec                                     (Spec, describe, it)
+import           Test.Hspec                                      (Spec, describe, it)
 
 spec :: Spec
 spec = do

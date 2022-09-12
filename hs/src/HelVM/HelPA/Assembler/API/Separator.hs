@@ -1,11 +1,11 @@
 module HelVM.HelPA.Assembler.API.Separator where
 
-import           HelVM.HelPA.Assembler.API.SwitchEnum
+import           HelVM.HelIO.Extra
+import           HelVM.HelIO.SwitchEnum
 
 parseSeparator :: String -> Separator
-parseSeparator raw = valid $ readMaybe raw where
-  valid (Just value) = value
-  valid Nothing      = error $ "'" <> toText raw <> "' is not valid Separator. Valid separators are : " <> show separators
+parseSeparator raw = fromJustWithText message $ readMaybe raw where
+  message = "'" <> toText raw <> "' is not valid Separator. Valid separators are : " <> show separators
 
 defaultSeparator :: Separator
 defaultSeparator = defaultEnum

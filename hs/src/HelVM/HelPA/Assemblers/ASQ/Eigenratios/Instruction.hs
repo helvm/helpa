@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.ASQ.Eigenratios.Instruction where
 
---import           HelVM.HelPA.Assembler.Util
+--import           HelVM.HelPA.Assembler.Extra
 import           HelVM.HelPA.Assembler.Value
 
 -- Current grammar

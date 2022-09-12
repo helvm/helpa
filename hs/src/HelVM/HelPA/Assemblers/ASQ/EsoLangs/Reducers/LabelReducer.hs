@@ -5,10 +5,10 @@ module HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.LabelReducer (
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Line
 
-import           HelVM.HelPA.Assembler.Util
+import           HelVM.HelPA.Assembler.Extra
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.HelIO.Containers.Util
+import           HelVM.HelIO.Containers.Extra
 
 import           HelVM.HelIO.Control.Safe
 

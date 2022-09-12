@@ -2,8 +2,8 @@ module HelVM.HelPA.Assemblers.ASQ.Eigenratios.AssemblerSpec where
 
 import           HelVM.HelPA.Assemblers.ASQ.Eigenratios.Assembler
 
-import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
-import           HelVM.HelPA.Assemblers.ASQ.FileUtil
+import           HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsExtra
+import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelPA.Assembler.API.SourcePath
 

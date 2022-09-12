@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil where
+module HelVM.HelPA.Assemblers.WSA.AssemblyOptionsExtra where
 
 import           HelVM.HelPA.Assemblers.WSA.AssemblyOptions
 

@@ -1,8 +1,8 @@
 module HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec (spec) where
 
-import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
+import           HelVM.HelPA.Assemblers.WSA.AssemblyOptionsExtra
 import           HelVM.HelPA.Assemblers.WSA.CodeGenerator
-import           HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.FileExtra
 import           HelVM.HelPA.Assemblers.WSA.TestData
 import           HelVM.HelPA.Assemblers.WSA.Token
 
@@ -14,7 +14,7 @@ import           HelVM.HelIO.ZipA
 
 import           System.FilePath.Posix
 
-import           Test.Hspec                                     (Spec, describe, it)
+import           Test.Hspec                                      (Spec, describe, it)
 
 spec :: Spec
 spec = do

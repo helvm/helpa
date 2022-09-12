@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.EAS.FileUtil (
+module HelVM.HelPA.Assemblers.EAS.FileExtra (
   buildAbsolutePathToEtaFile,
   buildAbsolutePathToEasFile,
   buildEasFileName,

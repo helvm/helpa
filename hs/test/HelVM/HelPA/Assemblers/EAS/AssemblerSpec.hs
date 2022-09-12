@@ -1,7 +1,7 @@
 module HelVM.HelPA.Assemblers.EAS.AssemblerSpec where
 
 import           HelVM.HelPA.Assemblers.EAS.Assembler
-import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.FileExtra
 
 import           HelVM.GoldenExpectations
 

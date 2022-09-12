@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil where
+module HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsExtra where
 
 import           HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
 import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark

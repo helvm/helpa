@@ -10,7 +10,7 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.QuestionMarkReduce
 
 import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 
-import           HelVM.HelPA.Assembler.Util
+import           HelVM.HelPA.Assembler.Extra
 
 import           HelVM.HelIO.Control.Safe
 

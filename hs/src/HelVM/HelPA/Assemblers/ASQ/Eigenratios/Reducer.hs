@@ -7,7 +7,7 @@ import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
 import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction    as ASQ
 import qualified HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducer        as ASQ
 
-import           HelVM.HelPA.Assembler.Util
+import           HelVM.HelPA.Assembler.Extra
 
 import           HelVM.HelIO.Control.Safe
 

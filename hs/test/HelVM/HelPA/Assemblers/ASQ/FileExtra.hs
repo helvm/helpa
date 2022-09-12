@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.ASQ.FileUtil (
+module HelVM.HelPA.Assemblers.ASQ.FileExtra (
   buildAbsolutePathToSqFile,
   buildAbsolutePathToIlFile,
   buildAbsolutePathToAsqFile,

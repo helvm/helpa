@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.ASQ.Util.CodeGenerator where
 
 import           HelVM.HelPA.Assembler.API.Separator
 
-import           HelVM.HelPA.Assembler.Util
+import           HelVM.HelPA.Assembler.Extra
 
 import qualified Data.Text                           as T
 

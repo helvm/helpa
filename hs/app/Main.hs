@@ -15,8 +15,8 @@ import qualified HelVM.HelPA.Assemblers.WSA.AssemblyOptions     as WSA
 import           HelVM.HelPA.Assemblers.ASQ.API.Version
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
 
+import           HelVM.HelIO.SwitchEnum
 import           HelVM.HelPA.Assembler.API.SourcePath
-import           HelVM.HelPA.Assembler.API.SwitchEnum
 
 import           HelVM.HelPA.Assembler.IO.BusinessIO
 

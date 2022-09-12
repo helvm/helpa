@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.WSA.FileUtil (
+module HelVM.HelPA.Assemblers.WSA.FileExtra (
   buildAbsolutePathToWsFile,
   buildAbsolutePathToIlFile,
   libDir,

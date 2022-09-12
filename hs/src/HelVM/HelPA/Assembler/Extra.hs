@@ -1,5 +1,5 @@
 --{-# LANGUAGE TupleSections #-}
-module HelVM.HelPA.Assembler.Util where
+module HelVM.HelPA.Assembler.Extra where
 
 import           HelVM.HelPA.Assembler.Value
 

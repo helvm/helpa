@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParserSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParser
 
-import           HelVM.HelPA.Assemblers.ASQ.FileUtil
+import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelIO.Control.Safe
 

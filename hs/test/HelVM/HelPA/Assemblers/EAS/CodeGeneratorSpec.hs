@@ -1,7 +1,7 @@
 module HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.EAS.CodeGenerator
-import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.FileExtra
 import           HelVM.HelPA.Assemblers.EAS.TestData
 
 import           HelVM.Expectations

@@ -1,10 +1,10 @@
 module HelVM.HelPA.Assemblers.WSA.LinkerSpec (spec) where
 
-import           HelVM.HelPA.Assemblers.WSA.FileUtil
+import           HelVM.HelPA.Assemblers.WSA.FileExtra
 import           HelVM.HelPA.Assemblers.WSA.Linker
 import           HelVM.HelPA.Assemblers.WSA.TestData
 
-import           HelVM.HelIO.Util
+import           HelVM.HelIO.Extra
 import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.Expectations

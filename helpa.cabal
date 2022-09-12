@@ -104,20 +104,18 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.HelPA.Assembler.AsmParserUtil
+    HelVM.HelPA.Assembler.AsmParserExtra
     HelVM.HelPA.Assembler.Lexer
-    HelVM.HelPA.Assembler.Util
+    HelVM.HelPA.Assembler.Extra
     HelVM.HelPA.Assembler.Value
 
     HelVM.HelPA.Assembler.API.Separator
     HelVM.HelPA.Assembler.API.SourcePath
-    HelVM.HelPA.Assembler.API.SwitchEnum
 
     HelVM.HelPA.Assembler.IO.BusinessIO
 
     HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
     HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-    HelVM.HelPA.Assemblers.ASQ.API.Separator
     HelVM.HelPA.Assemblers.ASQ.API.Version
 
     HelVM.HelPA.Assemblers.ASQ.Assembler
@@ -193,10 +191,9 @@ test-suite helpa-test
 
     HelVM.Expectations
     HelVM.GoldenExpectations
-    HelVM.MonadErrorSpec
 
-    HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsUtil
-    HelVM.HelPA.Assemblers.ASQ.FileUtil
+    HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsExtra
+    HelVM.HelPA.Assemblers.ASQ.FileExtra
 
     HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParserSpec
     HelVM.HelPA.Assemblers.ASQ.Eigenratios.AssemblerSpec
@@ -207,16 +204,16 @@ test-suite helpa-test
     HelVM.HelPA.Assemblers.EAS.AsmParserSpec
     HelVM.HelPA.Assemblers.EAS.AssemblerSpec
     HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
-    HelVM.HelPA.Assemblers.EAS.FileUtil
+    HelVM.HelPA.Assemblers.EAS.FileExtra
     HelVM.HelPA.Assemblers.EAS.LinkerSpec
     HelVM.HelPA.Assemblers.EAS.TestData
     HelVM.HelPA.Assemblers.EAS.ReducerSpec
 
     HelVM.HelPA.Assemblers.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.WSA.AssemblerSpec
-    HelVM.HelPA.Assemblers.WSA.AssemblyOptionsUtil
+    HelVM.HelPA.Assemblers.WSA.AssemblyOptionsExtra
     HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
-    HelVM.HelPA.Assemblers.WSA.FileUtil
+    HelVM.HelPA.Assemblers.WSA.FileExtra
     HelVM.HelPA.Assemblers.WSA.LinkerSpec
     HelVM.HelPA.Assemblers.WSA.ReducerSpec
     HelVM.HelPA.Assemblers.WSA.TestData
@@ -231,7 +228,6 @@ test-suite helpa-test
     , helpa
 
     , filepath
-    , mtl
     , type-operators
 
   build-tool-depends:  hspec-discover:hspec-discover == 2.*

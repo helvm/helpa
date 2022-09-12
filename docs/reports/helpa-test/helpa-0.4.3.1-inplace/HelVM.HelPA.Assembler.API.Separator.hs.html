@@ -19,12 +19,12 @@ span.spaces    { background: white }
 <pre>
 <span class="lineno">    1 </span>module HelVM.HelPA.Assembler.API.Separator where
 <span class="lineno">    2 </span>
-<span class="lineno">    3 </span>import           HelVM.HelPA.Assembler.API.SwitchEnum
-<span class="lineno">    4 </span>
-<span class="lineno">    5 </span>parseSeparator :: String -&gt; Separator
-<span class="lineno">    6 </span><span class="decl"><span class="nottickedoff">parseSeparator raw = valid $ readMaybe raw where</span>
-<span class="lineno">    7 </span><span class="spaces">  </span><span class="nottickedoff">valid (Just value) = value</span>
-<span class="lineno">    8 </span><span class="spaces">  </span><span class="nottickedoff">valid Nothing      = error $ &quot;'&quot; &lt;&gt; toText raw &lt;&gt; &quot;' is not valid Separator. Valid separators are : &quot; &lt;&gt; show separators</span></span>
+<span class="lineno">    3 </span>import           HelVM.HelIO.Extra
+<span class="lineno">    4 </span>import           HelVM.HelIO.SwitchEnum
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>parseSeparator :: String -&gt; Separator
+<span class="lineno">    7 </span><span class="decl"><span class="nottickedoff">parseSeparator raw = fromJustWithText message $ readMaybe raw where</span>
+<span class="lineno">    8 </span><span class="spaces">  </span><span class="nottickedoff">message = &quot;'&quot; &lt;&gt; toText raw &lt;&gt; &quot;' is not valid Separator. Valid separators are : &quot; &lt;&gt; show separators</span></span>
 <span class="lineno">    9 </span>
 <span class="lineno">   10 </span>defaultSeparator :: Separator
 <span class="lineno">   11 </span><span class="decl"><span class="istickedoff">defaultSeparator = defaultEnum</span></span>

@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.EAS.LinkerSpec where
 
 import           HelVM.HelPA.Assemblers.EAS.Linker
 
-import           HelVM.HelPA.Assemblers.EAS.FileUtil
+import           HelVM.HelPA.Assemblers.EAS.FileExtra
 import           HelVM.HelPA.Assemblers.EAS.TestData
 
 import           HelVM.Expectations
