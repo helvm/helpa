@@ -7,6 +7,8 @@ import           HelVM.HelPA.Assemblers.WSA.TestData
 
 import           HelVM.HelIO.Control.Safe
 
+import           HelVM.HelIO.Extra
+
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
 
@@ -18,7 +20,7 @@ import           Test.Hspec                             (Spec, describe, it)
 
 spec :: Spec
 spec = do
-  let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
+  let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
   let parseAssemblyLib  fileName = parseAssemblyFile (libDir </> fileName <.> lang)
   let parseAssemblyApp  fileName = parseAssemblyFile (appDir </> fileName <.> lang)
   let parseAssemblyEAS  fileName = parseAssemblyFile (wsaDir </> "from-eas" </> fileName <.> lang)

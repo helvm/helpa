@@ -5,32 +5,38 @@ module AppOptions where
 
 import           Lang
 
+import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
 import           HelVM.HelPA.Assemblers.ASQ.API.Version
+
 import           HelVM.HelPA.Assemblers.WSA.API.TokenType
+
+import           HelVM.HelPA.Assembler.API.Separator
 
 import           Options.Applicative
 
 optionParser :: Parser AppOptions
 optionParser = AppOptions
-  <$> strOption    (  long    "lang"
+  <$> option auto  (  long    "lang"
                    <> short   'l'
                    <> metavar "[LANG]"
                    <> help   ("Language to exceptTAssembleFile " <> show langs)
-                   <> value (show HAPAPL)
+                   <> value    HAPAPL
                    <> showDefault
                    )
-  <*> strOption    (  long    "version"
+  <*> option auto  (  long    "version"
                    <> short   'V'
                    <> help    "Version of Assembler (only for SQ)"
-                   <> value (show defaultVersion)
+                   <> value    defaultVersion
                    <> showDefault
                    )
-  <*> switch       (  long    "eolSeparator"
+  <*> flag Space EOL
+                   (  long    "eolSeparator"
                    <> short   'S'
                    <> help    "EOL separator (only for SQ)"
                    <> showDefault
                    )
-  <*> switch       (  long    "nextAddressForQuestionMark"
+  <*> flag CurrentAddress NextAddress
+                   (  long    "nextAddressForQuestionMark"
                    <> short   'Q'
                    <> help    "Type of Question Mark (only for SQ)"
                    <> showDefault
@@ -39,10 +45,10 @@ optionParser = AppOptions
                    <> help    "Add OUT label (only for SQ)"
                    <> showDefault
                    )
-  <*> strOption    (  long    "tokenType"
+  <*> option auto  (  long    "tokenType"
                    <> short   'T'
                    <> help    "Type of Tokens (only for WS)"
-                   <> value (show defaultTokenType)
+                   <> value    defaultTokenType
                    <> showDefault
                    )
   <*> switch       (  long    "debug"
@@ -76,12 +82,12 @@ optionParser = AppOptions
                    )
 
 data AppOptions = AppOptions
-  { lang                       :: !String --Lang
-  , version                    :: !String --Version
-  , eolSeparator               :: !EolSeparator
-  , nextAddressForQuestionMark :: !NextAddressForQuestionMark
+  { lang                       :: !Lang
+  , version                    :: !Version
+  , eolSeparator               :: !Separator
+  , nextAddressForQuestionMark :: !QuestionMark
   , addOutLabel                :: !AddOutLabel
-  , tokenType                  :: !String --TokenType
+  , tokenType                  :: !TokenType
   , debug                      :: !Debug
   , startOfInstruction         :: !StartOfInstruction
   , endOfLine                  :: !StartOfInstruction
@@ -90,8 +96,6 @@ data AppOptions = AppOptions
   , dir                        :: !String
   }
 
-type EolSeparator               = Bool
-type NextAddressForQuestionMark = Bool
 type AddOutLabel                = Bool
 type Debug                      = Bool
 type StartOfInstruction         = Bool

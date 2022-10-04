@@ -1,4 +1,3 @@
-{-# LANGUAGE NamedFieldPuns #-}
 module Main where
 
 import           AppOptions
@@ -12,10 +11,6 @@ import qualified HelVM.HelPA.Assemblers.EAS.Assembler           as EAS
 import qualified HelVM.HelPA.Assemblers.WSA.Assembler           as WSA
 import qualified HelVM.HelPA.Assemblers.WSA.AssemblyOptions     as WSA
 
-import           HelVM.HelPA.Assemblers.ASQ.API.Version
-import           HelVM.HelPA.Assemblers.WSA.API.TokenType
-
-import           HelVM.HelIO.SwitchEnum
 import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.HelPA.Assembler.IO.BusinessIO
@@ -34,16 +29,11 @@ main = run =<< execParser opts where
      <> progDesc "" )
 
 run :: AppOptions -> IO ()
-run (AppOptions lang version nextAddressForQuestionMark eolSeparator addOutLabel tokenType debug startOfInstruction endOfLine printLogs dir file) =
-  putTextLn =<< controlTToIO printLogs (eval lang' asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
-    asqOptions   = ASQ.AssemblyOptions {version=version', questionMark=questionMark, separator=separator , addOutLabel=addOutLabel}
-    wsaOptions   = WSA.AssemblyOptions {tokenType=tokenType', debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
+run (AppOptions lang version separator questionMark addOutLabel tokenType debug startOfInstruction endOfLine printLogs dir file) =
+  putTextLn =<< controlTToIO printLogs (eval lang asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
+    asqOptions   = ASQ.AssemblyOptions {version=version, questionMark=questionMark, separator=separator , addOutLabel=addOutLabel}
+    wsaOptions   = WSA.AssemblyOptions {tokenType=tokenType, debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
     sourcePath   = SourcePath {dirPath = dir , filePath = file}
-    version'     = parseVersion version
-    questionMark = enumFromBool nextAddressForQuestionMark
-    separator    = enumFromBool eolSeparator
-    tokenType'   = parseTokenType tokenType
-    lang'        = computeLang lang
 
 eval :: BIO m => Lang -> ASQ.AssemblyOptions -> WSA.AssemblyOptions -> SourcePath -> m Text
 eval ASQ    asqOptions _          = ASQ.assembleFile asqOptions

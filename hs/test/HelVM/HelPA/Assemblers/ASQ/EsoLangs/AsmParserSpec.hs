@@ -6,6 +6,7 @@ import           HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
 import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelIO.Control.Safe
+import           HelVM.HelIO.Extra
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
@@ -18,7 +19,7 @@ spec :: Spec
 spec = do
 
   describe "parseAssemblyFile" $ do
-    let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
+    let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ "esolangs" </> "currentAddress" </> "helloWorld"
           , "esolangs" </> "nextAddress"    </> "echo"
           , "esolangs" </> "nextAddress"    </> "hi"

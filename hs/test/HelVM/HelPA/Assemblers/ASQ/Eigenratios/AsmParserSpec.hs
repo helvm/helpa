@@ -5,6 +5,7 @@ import           HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParser
 import           HelVM.HelPA.Assemblers.ASQ.FileExtra
 
 import           HelVM.HelIO.Control.Safe
+import           HelVM.HelIO.Extra
 
 import           HelVM.GoldenExpectations
 
@@ -15,7 +16,7 @@ import           Test.Hspec                                       (Spec, describ
 spec :: Spec
 spec =
   describe "parseAssemblyFile" $ do
-    let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
+    let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ "eigenratios" </> "si1"
           , "eigenratios" </> "si2"
           ] $ \fileName -> do

@@ -5,6 +5,8 @@ import           HelVM.HelPA.Assemblers.EAS.FileExtra
 import           HelVM.HelPA.Assemblers.EAS.Instruction
 import           HelVM.HelPA.Assemblers.EAS.TestData
 
+import           HelVM.HelIO.Extra
+
 import           HelVM.Expectations
 
 import           HelVM.HelPA.Assembler.Value
@@ -14,7 +16,7 @@ import           Test.Hspec                             (Spec, describe, it)
 spec :: Spec
 spec = do
   describe "parseAssemblyFile" $ do
-    let parseAssemblyFile fileName = parseAssemblyText <$> readFileText fileName
+    let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ ("true"     , trueIL)
           , ("hello"    , helloIL)
           , ("pip"      , pipIL)
