@@ -36,10 +36,10 @@ run (AppOptions lang version separator questionMark addOutLabel tokenType debug 
     sourcePath   = SourcePath {dirPath = dir , filePath = file}
 
 eval :: BIO m => Lang -> ASQ.AssemblyOptions -> WSA.AssemblyOptions -> SourcePath -> m Text
-eval ASQ    asqOptions _          = ASQ.assembleFile asqOptions
-eval EAS    _          _          = EAS.assembleFile
-eval WSA    _          wsaOptions = WSA.assembleFile wsaOptions
-eval HAPAPL _          _          = hapapl
+eval ASQ      asqOptions _          = ASQ.assembleFile asqOptions
+eval EAS      _          _          = EAS.assembleFile
+eval (WSA  _) _          wsaOptions = WSA.assembleFile wsaOptions
+eval HAPAPL   _          _          = hapapl
 
 hapapl :: BIO m => SourcePath -> m Text
 hapapl _ = liftError "HAPAPL is not supported now"

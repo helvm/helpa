@@ -19,20 +19,14 @@ span.spaces    { background: white }
 <pre>
 <span class="lineno">    1 </span>module HelVM.HelPA.Assemblers.WSA.API.TokenType where
 <span class="lineno">    2 </span>
-<span class="lineno">    3 </span>import           HelVM.HelIO.Extra
-<span class="lineno">    4 </span>
-<span class="lineno">    5 </span>parseTokenType :: String -&gt; TokenType
-<span class="lineno">    6 </span><span class="decl"><span class="nottickedoff">parseTokenType raw = fromJustWithText message $ readMaybe raw where</span>
-<span class="lineno">    7 </span><span class="spaces">  </span><span class="nottickedoff">message = &quot;'&quot; &lt;&gt; toText raw &lt;&gt; &quot;' is not valid TokenType. Valid tokenTypes are : &quot; &lt;&gt; show tokenTypes</span></span>
+<span class="lineno">    3 </span>defaultTokenType :: TokenType
+<span class="lineno">    4 </span><span class="decl"><span class="nottickedoff">defaultTokenType = VisibleTokenType</span></span>
+<span class="lineno">    5 </span>
+<span class="lineno">    6 </span>tokenTypes :: [TokenType]
+<span class="lineno">    7 </span><span class="decl"><span class="nottickedoff">tokenTypes = [VisibleTokenType , WhiteTokenType , BothTokenType]</span></span>
 <span class="lineno">    8 </span>
-<span class="lineno">    9 </span>defaultTokenType :: TokenType
-<span class="lineno">   10 </span><span class="decl"><span class="nottickedoff">defaultTokenType = VisibleTokenType</span></span>
-<span class="lineno">   11 </span>
-<span class="lineno">   12 </span>tokenTypes :: [TokenType]
-<span class="lineno">   13 </span><span class="decl"><span class="nottickedoff">tokenTypes = [VisibleTokenType , WhiteTokenType , BothTokenType]</span></span>
-<span class="lineno">   14 </span>
-<span class="lineno">   15 </span>data TokenType = VisibleTokenType | WhiteTokenType | BothTokenType
-<span class="lineno">   16 </span>  deriving stock (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Bounded</span></span></span></span> , <span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Enum</span></span></span></span></span></span></span></span></span></span></span></span> , <span class="decl"><span class="nottickedoff">Eq</span></span> , <span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Read</span></span></span></span></span></span> , <span class="decl"><span class="nottickedoff">Show</span></span>)
+<span class="lineno">    9 </span>data TokenType = VisibleTokenType | WhiteTokenType | BothTokenType
+<span class="lineno">   10 </span>  deriving stock (<span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Bounded</span></span></span></span> , <span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Enum</span></span></span></span></span></span></span></span></span></span></span></span> , <span class="decl"><span class="nottickedoff">Eq</span></span> , <span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff"><span class="decl"><span class="nottickedoff">Read</span></span></span></span></span></span> , <span class="decl"><span class="nottickedoff">Show</span></span>)
 
 </pre>
 </body>

@@ -19,7 +19,7 @@ optionParser = AppOptions
   <$> option auto  (  long    "lang"
                    <> short   'l'
                    <> metavar "[LANG]"
-                   <> help   ("Language to exceptTAssembleFile " <> show langs)
+--                   <> help   ("Language to exceptTAssembleFile " <> show langs)
                    <> value    HAPAPL
                    <> showDefault
                    )
