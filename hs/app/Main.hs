@@ -22,24 +22,25 @@ import           HelVM.HelIO.Control.Safe
 import           Options.Applicative
 
 main :: IO ()
-main = run =<< execParser opts where
+main = run =<< customExecParser p opts where
+  p = prefs disambiguate
   opts = info (optionParser <**> helper)
       ( fullDesc
      <> header "HelPA: Heavenly Esoteric Little Portable Assembler to Esoteric Languages implemented in Haskell"
-     <> progDesc "" )
+     <> progDesc "Asseble esoteric programs" )
 
 run :: AppOptions -> IO ()
 run (AppOptions lang version separator questionMark addOutLabel tokenType debug startOfInstruction endOfLine printLogs dir file) =
-  putTextLn =<< controlTToIO printLogs (eval lang asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
+  putTextLn =<< controlTToIO printLogs (assemble lang asqOptions wsaOptions sourcePath) where  --FIXME Bug in relude doc for putTextLn
     asqOptions   = ASQ.AssemblyOptions {version=version, questionMark=questionMark, separator=separator , addOutLabel=addOutLabel}
     wsaOptions   = WSA.AssemblyOptions {tokenType=tokenType, debug=debug , startOfInstruction=startOfInstruction , endOfLine=endOfLine}
     sourcePath   = SourcePath {dirPath = dir , filePath = file}
 
-eval :: BIO m => Lang -> ASQ.AssemblyOptions -> WSA.AssemblyOptions -> SourcePath -> m Text
-eval ASQ      asqOptions _          = ASQ.assembleFile asqOptions
-eval EAS      _          _          = EAS.assembleFile
-eval (WSA  _) _          wsaOptions = WSA.assembleFile wsaOptions
-eval HAPAPL   _          _          = hapapl
+assemble :: BIO m => Lang -> ASQ.AssemblyOptions -> WSA.AssemblyOptions -> SourcePath -> m Text
+assemble ASQ      asqOptions _          = ASQ.assembleFile asqOptions
+assemble EAS      _          _          = EAS.assembleFile
+assemble (WSA  _) _          wsaOptions = WSA.assembleFile wsaOptions
+assemble HAPAPL   _          _          = hapapl
 
 hapapl :: BIO m => SourcePath -> m Text
 hapapl _ = liftError "HAPAPL is not supported now"

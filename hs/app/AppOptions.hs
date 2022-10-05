@@ -24,9 +24,11 @@ optionParser = AppOptions
                    <> showDefault
                    )
 --  <$> subparser
---    ( command "ASQ" (info addCommand ( progDesc "Add a file to the repository" ))
---    ( command "EAS" (info addCommand ( progDesc "Add a file to the repository" ))
---   <> command "WSA" (info commitCommand ( progDesc "Record changes to the repository" ))
+--    ( 
+--         command "HAPAPL" (info addCommand ( progDesc "Add a file to the repository" ))
+--      <> command "ASQ" (info addCommand ( progDesc "Add a file to the repository" ))
+--      <> command "EAS" (info addCommand ( progDesc "Add a file to the repository" ))
+--      <> command "WSA" (info commitCommand ( progDesc "Record changes to the repository" ))
 --    )
   <*> option auto  (  long    "version"
                    <> short   'V'
