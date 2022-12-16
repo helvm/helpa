@@ -1,5 +1,9 @@
 # 📅 Revision history for HelPA
 
+## 0.4.4.1 -- 2022-12-06
+
+*  Add `divmod` test for EAS
+
 ## 0.4.4.0 -- 2022-10-04
 
 *  Use `optparse-applicative` for CLI better
