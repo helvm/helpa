@@ -279,7 +279,7 @@ readNumIL =
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
   ,N (Literal 0),N (Literal 1),T,N (Variable "READNUMspace"),T,R
   ,N (Literal 0),N (Literal 1),H,R
-  ,L "READNUMloop",N (Literal 48),N (Literal 32),S,R
+  ,L "READNUMloop",N (Literal 48),S,R
   ,N (Literal 1),H,R
   ,N (Literal 10),A,N (Literal 1),N (Variable "MULTIPLY"),T,R
   ,N (Literal 0),N (Literal 1),H,R
@@ -304,7 +304,7 @@ readNumILReduced =
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
   ,N (Literal 0),N (Literal 1),T,N (Literal 1),T,R
   ,N (Literal 0),N (Literal 1),H,R
-  ,L "READNUMloop",N (Literal 48),N (Literal 32),S,R
+  ,L "READNUMloop",N (Literal 48),S,R
   ,N (Literal 1),H,R
   ,N (Literal 10),A,N (Literal 1),N (Literal 19),T,R
   ,N (Literal 0),N (Literal 1),H,R
@@ -348,7 +348,7 @@ factIL =
   ,N (Literal 1),N (Variable "FACTdone"),T,R
   ,N (Literal 0),H,R
   ,N (Literal 1),S,R
-  ,A,N (Literal 1),N (Variable "FACT"),T,R
+  ,A,N (Literal 1),N (Variable "FACT"),T,N (Literal 1),H,R
   ,A,N (Literal 1),N (Variable "MULTIPLY"),T,R
   ,L "FACTdone",N (Literal 1),N (Literal 2),H,T,R
   ]
@@ -368,7 +368,7 @@ factILReduced =
   ,N (Literal 1),N (Literal 13),T,R
   ,N (Literal 0),H,R
   ,N (Literal 1),S,R
-  ,A,N (Literal 1),N (Literal 5),T,R
+  ,A,N (Literal 1),N (Literal 5),T,N (Literal 1),H,R
   ,A,N (Literal 1),N (Literal 44),T,R
   ,L "FACTdone",N (Literal 1),N (Literal 2),H,T,R
   ,L "READNUM",L "READNUMspace",I,R
@@ -376,7 +376,7 @@ factILReduced =
   ,A,N (Literal 0),N (Literal 1),S,S,T,R
   ,N (Literal 0),N (Literal 1),T,N (Literal 14),T,R
   ,N (Literal 0),N (Literal 1),H,R
-  ,L "READNUMloop",N (Literal 48),N (Literal 32),S,R
+  ,L "READNUMloop",N (Literal 48),S,R
   ,N (Literal 1),H,R
   ,N (Literal 10),A,N (Literal 1),N (Literal 44),T,R
   ,N (Literal 0),N (Literal 1),H,R

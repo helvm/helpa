@@ -1,5 +1,5 @@
 # fact.eas -- factorial, via recursion
-# SCCSID("@(#)/export/home/staff/mike/src/language/eta/easpit/SCCS/s.fact.eas	1.1")
+# SCCSID("%Z%%P%	%I%")
 
 # Caller
 A N1 N<READNUM T	# obtain argument
@@ -17,8 +17,8 @@ N1 S A N0 N1 S S T	# skip if non-zero (ie. top wasn't 1)	# ... addr arg arg-1 he
 N1 N<FACTdone T		# argument _was_ 1: we're finished	# ... addr arg
 N0 H			# dup					# ... addr arg arg
 N1 S			# stack is now: ... addr n n-1		# ... addr arg arg-1
-A N1 N<FACT T		# recursive call (tail recursion!)	# ... addr arg fact(arg-1)
-A N1 N<MULTIPLY T	# multiply Nby fact(n-1)		# ... addr arg*fact(arg-1)
+A N1 N<FACT T N1 H	# recursive call (tail recursion!)	# ... addr fact(arg-1) arg
+A N1 N<MULTIPLY T	# multiply Nby fact(n-1)		# ... addr fact(arg-1)*arg
 # result is on the stack: fall through to the epilogue
 
 # Finished: function epilogue

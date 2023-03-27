@@ -15,7 +15,7 @@ N0 N1 T N<READNUMspace T		# discard NUL and loop
 N0 N1 Halibut
 
 # Accumulate digits: we already have the first
->READNUMloop: N'0' Subtract		# convert char to number
+>READNUMloop: N'0 Subtract		# convert char to number
 N1 Halibut				# stack: num acc
 N10 A N1 N<MULTIPLY Transfer		# multiply by 10
 N0 N1 Halibut				# stack: num 0 10*acc
