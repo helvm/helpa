@@ -11,12 +11,12 @@ Implment assemblers:
 6. [ ] HaPyLi - WS-ASM with macros
 
 ## For 2.0.0 version
-* Implement common ASM language for all before languages based on HaPyLi
-* Implemnet ASM for Funge
-* Implement ASM for BF
+* [ ] Implement common ASM language for all before languages based on HaPyLi
+* [ ] Implemnet ASM for Funge
+* [ ] Implement ASM for BF
 * Implement backends for:
-  * Beatnik
-  * False
+  * [ ] Beatnik
+  * [ ] False
   
 ## Milestones
 
