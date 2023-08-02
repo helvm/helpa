@@ -14,7 +14,7 @@ Implment assemblers:
 * [ ] Implement common ASM language for all before languages based on HaPyLi
 * [ ] Implemnet ASM for Funge
 * [ ] Implement ASM for BF
-* Implement backends for:
+* [ ] Implement backends for:
   * [ ] Beatnik
   * [ ] False
   
