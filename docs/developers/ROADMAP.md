@@ -12,9 +12,12 @@ Implment assemblers:
 
 ## For 2.0.0 version
 * Implement common ASM language for all before languages based on HaPyLi
-* Implement ASM for BF
 * Implemnet ASM for Funge
-
+* Implement ASM for BF
+* Implement backends for:
+  * Beatnik
+  * False
+  
 ## Milestones
 
 0. Fix all [BUGS](BUGS.md)
