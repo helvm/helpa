@@ -8,6 +8,7 @@ Implment assemblers:
 3. [ ] Piet-ASM - simply ASM with simply macros
 4. [ ] Subleq-ASM - simpy ASM with macros
 5. [ ] Malbolge-AMS - hard ASM
+6. [ ] HaPyLi - WS-ASM with macros
 
 ## For 2.0.0 version
 * Implement common ASM language for all before languages based on HaPyLi
