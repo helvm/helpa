@@ -181,6 +181,7 @@ library
   build-depends:
       helio
     , attoparsec
+    , megaparsec
     , composition-extra
     , containers
     , filepath
