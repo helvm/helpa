@@ -1,0 +1,63 @@
+; Tests for io routines
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence. Please see 0BSD_LICENCE.md for details.
+
+
+.include    "arch.inc.asq"
+.include    "standard.asq"
+.include    "io.asq"
+.include    "test.asq"
+
+
+            sble  z z main
+
+
+;========================================
+;           Data Storage
+;========================================
+
+
+;========================================
+;           Macro Definitions
+;========================================
+
+.macro      test_printInt16
+            test::start testName end
+            io::newline
+            io::printStrNL expect0
+            io::printInt16 #0
+            io::newline
+            io::printStrNL expect1
+            io::printInt16 #1
+            io::newline
+            io::printStrNL expect10
+            io::printInt16 #10
+            io::newline
+            io::printStrNL expect123
+            io::printInt16 #123
+            io::newline
+            io::printStrNL expectm123
+            io::printInt16 #-123
+            io::newline
+            io::printStrNL expect10201
+            io::printInt16 #10201
+            io::newline
+            jump  end
+expect0:    .asciiz "Should print 0"
+expect1:    .asciiz "Should print 1"
+expect10:   .asciiz "Should print 10"
+expect123:  .asciiz "Should print 123"
+expectm123: .asciiz "Should print -123"
+expect10201: .asciiz "Should print 10201"
+testName:   .asciiz "printInt16"
+end:
+.endm
+
+
+;========================================
+;           Main
+;========================================
+
+main:       test_printInt16
+            sble  z z HALT

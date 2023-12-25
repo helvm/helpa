@@ -1,0 +1,70 @@
+; Fizz buzz program
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence. Please see 0BSD_LICENCE.md for details.
+
+
+.include    "arch.inc.asq"
+.include    "standard.asq"
+.include    "io.asq"
+
+
+;========================================
+;           Start
+;========================================
+            sble  z z main
+
+
+;========================================
+;           Data Storage
+;========================================
+count:      .word 100                ; The number to count up to
+n:          .word 1                  ; The number being counted
+nC:         .word 0
+
+.ifdef arch::VIC20
+  fizzbuzzS:  .asciiz "FIZZBUZZ"
+  fizzS:      .asciiz "FIZZ"
+  buzzS:      .asciiz "BUZZ"
+.else
+  fizzbuzzS:  .asciiz "FizzBuzz"
+  fizzS:      .asciiz "Fizz"
+  buzzS:      .asciiz "Buzz"
+.endif
+
+spaceCh:    .ascii " "
+
+
+;========================================
+;           Main
+;========================================
+main:       inc count
+loop:       sble  #1 count done      ; if count <= 0
+
+            copy  n nC
+            mod   #15 nC
+            sble  z nC fizzbuzz
+
+            copy  n nC
+            mod   #3 nC
+            sble  z nC fizz
+
+            copy  n nC
+            mod   #5 nC
+            sble  z nC buzz
+
+            io::printInt16 n
+            jump  nextN
+
+fizzbuzz:   io::printStr fizzbuzzS
+            jump  nextN
+fizz:       io::printStr fizzS
+            jump  nextN
+buzz:       io::printStr buzzS
+            jump  nextN
+
+nextN:      inc   n
+            sble  spaceCh OUT
+            jump  loop
+
+done:       sble  z z HALT

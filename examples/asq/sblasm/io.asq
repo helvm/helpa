@@ -1,0 +1,119 @@
+; Input/Output macros
+;
+; Namespace:  io::
+; Requires:   standard.asq,arch.inc.asq
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence. Please see 0BSD_LICENCE.md for details.
+
+
+            ; Skip to end to ensure data storage not executed
+            sble  z z io::End
+
+
+;========================================
+;           Constant Definitions
+;========================================
+; TODO: Rename to STDIN/OUT?
+.equ        IN -1
+.equ        OUT -1
+
+
+
+;========================================
+;           Macro Definitions
+;========================================
+
+; The newline characters
+.macro      io::nl
+            arch::nl
+.endm
+
+
+; The newline characters, zero terminated
+.macro      io::nlz
+            io::nl
+            .word 0
+.endm
+
+
+; Print zero terminated string str
+.macro      io::printStr str
+            sble  loop loop
+            sble  checkEnd+1 checkEnd+1
+            sble  nAddr loop
+            sble  nAddr checkEnd+1
+loop:       sble  str OUT            ; Output char pointed to by str
+            inc   loop               ; Increment char output ptr to next char
+            inc   checkEnd+1         ; Increment end of string ptr to next char
+checkEnd:   sble  #0 str done        ; Finish if char at ptr is zero
+            jump  loop
+nAddr:      .word 0-(str)
+done:
+.endm
+
+
+; Print a newline
+.macro      io::newline
+            io::printStr io::nlzs
+.endm
+
+
+; Print zero terminated string str followed by newline
+.macro      io::printStrNL str
+            io::printStr str
+            io::newline
+.endm
+
+
+; Print a 16-bit number
+; TODO: Remove leading 0s
+; TODO: Query architecture to make independant of it and so don't need 16
+.macro      io::printInt16 n
+            copy  placeVal placeValC
+            copy  n nextN
+            ; If negative print sign
+            jge   n loop
+            sble  io::MinusCh OUT
+            neg   nextN
+loop:       ; Calculate and output the digit
+            copy  nextN nC
+
+            sble  placeValC nC
+            jge   nC doDiv              ; If nC >= placeValC
+
+skipDiv:    sble  zeroCh OUT
+            jump  nextPlace
+
+doDiv:      copy  nextN nC
+            divMod placeValC nC nextN
+            copy  nC digit
+            add   zeroCh digit
+            sble  digit OUT
+
+nextPlace:  ; Move to next place value
+            div   #10 placeValC
+            sble  z placeValC done
+            jump  loop
+nC:         .word 0
+nextN:      .word 0
+placeVal:   .word 10000
+placeValC:  .word 0
+zeroCh:     .ascii "0"
+digit:      .word 0
+done:
+.endm
+
+
+
+;========================================
+;           Data Storage
+;========================================
+io::MinusCh: .ascii "-"
+
+; The newline characters as a zero terminated string
+io::nlzs:   io::nlz
+
+
+
+io::End:

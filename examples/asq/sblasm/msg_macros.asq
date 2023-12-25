@@ -1,0 +1,89 @@
+;  Outputs messages using macros
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence. Please see 0BSD_LICENCE.md for details.
+
+.equ        OUT -1
+.equ        HALT -1
+
+;========================================
+;           Macro Definitions
+;========================================
+.macro      jump  addr
+            sble  z z addr
+.endm
+
+.macro      inc   addr
+            sble  #-1 addr
+.endm
+
+
+.macro      outputString str
+            sble  loop loop
+            sble  checkEnd+1 checkEnd+1
+            sble  nAddr loop
+            sble  nAddr checkEnd+1
+loop:       sble  str OUT            ; Outputs char pointed to by stringAddr
+            inc   loop               ; Increments char output ptr to next char
+            inc   checkEnd+1         ; Increments end of string ptr to next char
+checkEnd:   sble  z str done         ; Finishes if char at ptr is zero
+            jump  loop               ; Jumps to loop
+nAddr:      .word 0-(str)
+done:
+.endm
+
+
+; Call a function
+; Store return address at first addr+2 and begins execution at next address
+; This is so that you can just jump to first instruction to return
+; TODO: Think about how this could be used with arguments
+.macro      call  addr
+            sble  ret addr+2
+jump:       sble  z z addr+3
+ret:        .word 0-($+1)
+.endm
+
+
+; Return instruction
+; This creates an instruction which will be modified with
+; the return address and used to jump to return address
+; supplied by 'call' macro.
+.macro      retInst
+            sble  $+2 $+1 0
+.endm
+
+
+;========================================
+;           Start
+;========================================
+            sble  z z main
+
+;========================================
+;           Function Definitions
+;========================================
+helloWorld: retInst
+            outputString  hello
+            jump  helloWorld         ; Return
+
+
+byeWorld:   retInst
+            outputString  bye
+            jump  byeWorld           ; Return
+
+
+;========================================
+;           Data Storage
+;========================================
+hello:      .asciiz "HELLO, WORLD!\n"
+bye:        .asciiz "BYE, WORLD!\n"
+z:          .word 0
+
+
+
+;========================================
+;           Main
+;========================================
+main:       call  helloWorld
+            call  byeWorld
+            call  helloWorld
+            sble  z z HALT
