@@ -14,10 +14,11 @@ import           Test.Hspec                                    (Spec, describe, 
 
 spec :: Spec
 spec = do
+  let parseAssemblyApp = "parseAssemblyApp"
   let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
   let parseAssemblyLang fileName = parseAssemblyFile (langDir </> fileName <.> lang)
 
-  describe "parseAssemblyApp" $ do
+  describe parseAssemblyApp $ do
       forM_ [ "Bubblesort"
             , "FindTheNumber"
             , "Groop"
@@ -27,4 +28,4 @@ spec = do
             , "Stones"
             ] $ \ fileName ->
         it fileName $
-          safeIOToPTextIO (parseAssemblyLang fileName) `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> fileName)
+          safeIOToPTextIO (parseAssemblyLang fileName) `goldenShouldIO` buildAbsolutePathToIlFile (parseAssemblyApp </> fileName)

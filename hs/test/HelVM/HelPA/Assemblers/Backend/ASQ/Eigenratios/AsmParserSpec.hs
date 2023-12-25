@@ -15,10 +15,10 @@ import           Test.Hspec                                               (Spec,
 
 spec :: Spec
 spec =
-  describe "parseAssemblyFile" $ do
+  describe "parseAssemblyApp" $ do
     let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ "eigenratios" </> "si1"
           , "eigenratios" </> "si2"
           ] $ \fileName -> do
       let parseAssembly = parseAssemblyFile $ buildAbsolutePathToAsqFile fileName
-      it fileName $ safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyFile" </> fileName)
+      it fileName $ safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> fileName)

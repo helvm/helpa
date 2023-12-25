@@ -15,7 +15,7 @@ import           Test.Hspec                                     (Spec, describe,
 
 spec :: Spec
 spec = do
-  describe "parseAssemblyFile" $ do
+  describe "parseAssemblyApp" $ do
     let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ ("true"     , trueIL)
           , ("hello"    , helloIL)

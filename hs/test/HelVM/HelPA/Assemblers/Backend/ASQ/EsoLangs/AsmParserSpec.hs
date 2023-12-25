@@ -18,7 +18,7 @@ import           Test.Hspec                                              (Spec, 
 spec :: Spec
 spec = do
 
-  describe "parseAssemblyFile" $ do
+  describe "parseAssemblyApp" $ do
     let parseAssemblyFile fileName = parseAssemblyText <$> readFileTextUtf8 fileName
     forM_ [ "esolangs" </> "currentAddress" </> "helloWorld"
           , "esolangs" </> "nextAddress"    </> "echo"
@@ -28,7 +28,7 @@ spec = do
           , "esolangs" </> "nextAddress"    </> "si"
           ] $ \fileName -> do
       let parseAssembly = parseAssemblyFile $ buildAbsolutePathToAsqFile fileName
-      it fileName $ safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyFile" </> fileName)
+      it fileName $ safeIOToPTextIO parseAssembly `goldenShouldIO` buildAbsolutePathToIlFile ("parseAssemblyApp" </> fileName)
 
   describe "parseAssemblyText" $
     forM_ [ ("\n"                         , [Instruction Code []])

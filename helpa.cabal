@@ -167,6 +167,10 @@ library
     HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
     HelVM.HelPA.Assemblers.Frontend.EIR.Reducer
 
+    HelVM.HelPA.Assemblers.Frontend.SblAsm.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.SblAsm.Assembler
+    HelVM.HelPA.Assemblers.Frontend.SblAsm.Instruction
+
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
     HelVM.HelPA.Assemblers.Frontend.WSA.CodeGenerator
@@ -239,6 +243,11 @@ test-suite helpa-test
 
     HelVM.HelPA.Assemblers.Frontend.FBF.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.FBF.FileExtra
+
+    HelVM.HelPA.Assemblers.Frontend.SblAsm.AsmParserSpec
+    HelVM.HelPA.Assemblers.Frontend.SblAsm.FileExtra
+
+    HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
 
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.AssemblerSpec
