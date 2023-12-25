@@ -1,6 +1,6 @@
-module HelVM.HelPA.Assemblers.SblAsm.AsmParser where
+module HelVM.HelPA.Assemblers.ASQ.SblAsm.AsmParser where
 
-import           HelVM.HelPA.Assemblers.SblAsm.Instruction
+import           HelVM.HelPA.Assemblers.ASQ.SblAsm.Instruction
 
 import           HelVM.HelPA.Assembler.Lexer
 

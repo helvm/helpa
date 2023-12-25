@@ -136,6 +136,10 @@ library
     HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.LabelReducer
     HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.QuestionMarkReducer
 
+    HelVM.HelPA.Assemblers.ASQ.SblAsm.AsmParser
+    HelVM.HelPA.Assemblers.ASQ.SblAsm.Assembler
+    HelVM.HelPA.Assemblers.ASQ.SblAsm.Instruction
+
     HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
     HelVM.HelPA.Assemblers.ASQ.Util.CodeGenerator
 
@@ -145,10 +149,6 @@ library
     HelVM.HelPA.Assemblers.EAS.Instruction
     HelVM.HelPA.Assemblers.EAS.Linker
     HelVM.HelPA.Assemblers.EAS.Reducer
-
-    HelVM.HelPA.Assemblers.SblAsm.AsmParser
-    HelVM.HelPA.Assemblers.SblAsm.Assembler
-    HelVM.HelPA.Assemblers.SblAsm.Instruction
 
     HelVM.HelPA.Assemblers.WSA.API.TokenType
     HelVM.HelPA.Assemblers.WSA.AsmParser

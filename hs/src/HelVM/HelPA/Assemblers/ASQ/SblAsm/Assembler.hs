@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.SblAsm.Assembler where
+module HelVM.HelPA.Assemblers.ASQ.SblAsm.Assembler where
 
 import           HelVM.HelPA.Assembler.API.SourcePath
 import           HelVM.HelPA.Assembler.IO.BusinessIO

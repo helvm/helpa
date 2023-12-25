@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.SblAsm.Instruction where
+module HelVM.HelPA.Assemblers.ASQ.SblAsm.Instruction where
 
 import           HelVM.HelPA.Assembler.Value
 
@@ -12,14 +12,15 @@ import           HelVM.HelPA.Assembler.Value
 
 
 -- Types
---type InstructionList = [Instruction]
+type InstructionList = [Instruction]
 
---data Instruction = Instruction (Maybe Label) (Maybe Command)
---  deriving stock (Eq , Read , Show)
+data Instruction = Instruction (Maybe Label) (Maybe Command)
+  deriving stock (Eq , Read , Show)
 
 data Command =
     Directive Directive
-  | Command Identifier [ValueInteger]
+  | Code Identifier [IntegerValue]
+  deriving stock (Eq , Read , Show)
 
 data Directive =
     Include String
@@ -27,10 +28,11 @@ data Directive =
   | Equ Identifier Integer
   | Ascii String
   | Asciiz String
-  | Macro Identifier [Param]
+  | Macro Identifier [Identifier]
   | Endm
   | Ifdef
   | Else
   | Endif
+  deriving stock (Eq , Read , Show)
 
-type Param = Identifier
+type Label = Identifier
