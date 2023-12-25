@@ -16,7 +16,7 @@ import           Data.Attoparsec.Text
 --labelParser2 = labelParser
 
 
-directiveParser :: Parser Instruction
+directiveParser :: Parser Command
 directiveParser = Directive <$> (wordParser <|> equParser)
 
 
