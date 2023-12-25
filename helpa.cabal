@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.5.1
+version:               0.4.5.2
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -145,6 +145,10 @@ library
     HelVM.HelPA.Assemblers.EAS.Instruction
     HelVM.HelPA.Assemblers.EAS.Linker
     HelVM.HelPA.Assemblers.EAS.Reducer
+
+    HelVM.HelPA.Assemblers.SblAsm.AsmParser
+    HelVM.HelPA.Assemblers.SblAsm.Assembler
+    HelVM.HelPA.Assemblers.SblAsm.Instruction
 
     HelVM.HelPA.Assemblers.WSA.API.TokenType
     HelVM.HelPA.Assemblers.WSA.AsmParser

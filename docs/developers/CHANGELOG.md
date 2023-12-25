@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.2 -- 2023-12-25
+* Add sblasm parser
+
 ## 0.4.5.1 -- 2023-12-25
 * Add sblasm examples
 
