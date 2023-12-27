@@ -151,17 +151,21 @@ library
     HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions
     HelVM.HelPA.Assemblers.Backend.WSA.CodeGenerator
     HelVM.HelPA.Assemblers.Backend.WSA.DSL
+    HelVM.HelPA.Assemblers.Backend.WSA.ExtendInstruction
     HelVM.HelPA.Assemblers.Backend.WSA.Instruction
     HelVM.HelPA.Assemblers.Backend.WSA.Token
 
     HelVM.HelPA.Assemblers.Common.DSL
 
+    HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
+
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
+    HelVM.HelPA.Assemblers.Frontend.WSA.CodeGenerator
     HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
     HelVM.HelPA.Assemblers.Frontend.WSA.Linker
     HelVM.HelPA.Assemblers.Frontend.WSA.Reducer
-    HelVM.HelPA.Assemblers.Frontend.WSA.CodeGenerator
+
   build-depends:
       helio
     , attoparsec           <  0.14.4

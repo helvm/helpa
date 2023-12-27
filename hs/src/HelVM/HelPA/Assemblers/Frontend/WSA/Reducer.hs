@@ -7,6 +7,8 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelPA.Assemblers.Backend.WSA.DSL
 
+import           HelVM.HelPA.Assemblers.Common.DSL
+
 import           Prelude                                         hiding (return, swap)
 
 reduce :: Bool ->  InstructionList -> B.InstructionList
@@ -22,7 +24,7 @@ addEndOfLine i = [i , EOL]
 reduceInstructionList :: InstructionList -> B.InstructionList
 reduceInstructionList = execDSL . traverse reduceInstruction
 
-reduceInstruction :: MonadDSL m => Instruction -> m ()
+reduceInstruction :: MonadASM m => Instruction -> m ()
 reduceInstruction (Push v)            = push v
 reduceInstruction (PushS (Literal s)) = reducePushS s
 reduceInstruction Pop                 = pop
@@ -41,10 +43,10 @@ reduceInstruction (Call l)            = dsl $ B.Call l
 reduceInstruction (Branch l)          = branch l
 reduceInstruction (BranchZ l)         = branchZ l
 reduceInstruction (BranchM l)         = branchM l
-reduceInstruction (BranchNZ l)        = reduceBranchNZ l
-reduceInstruction (BranchNM l)        = reduceBranchNM l
-reduceInstruction (BranchP l)         = reduceBranchP l
-reduceInstruction (BranchNP l)        = reduceBranchNP l
+reduceInstruction (BranchNZ l)        = branchNZ l
+reduceInstruction (BranchNM l)        = branchNM l
+reduceInstruction (BranchP l)         = branchP l
+reduceInstruction (BranchNP l)        = branchNP l
 reduceInstruction Return              = return
 reduceInstruction End                 = end
 reduceInstruction OutputChar          = dsl B.OutputChar

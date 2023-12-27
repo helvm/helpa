@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.6 -- 2024-04-15
+* Add ELVM/DSL for WSA
+
 ## 0.4.5.5 -- 2024-02-02
 * Fix "This binding for ‘golden’ shadows the existing binding"
 
