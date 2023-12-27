@@ -146,6 +146,8 @@ library
     HelVM.HelPA.Assemblers.Backend.EAS.Linker
     HelVM.HelPA.Assemblers.Backend.EAS.Reducer
 
+    HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
+
     HelVM.HelPA.Assemblers.Backend.WSA.API.TokenType
 
     HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions
@@ -166,6 +168,7 @@ library
       helio
     , attoparsec           <  0.14.4
     , containers           <  0.7
+    , dlist
     , filepath
     , ListLike
     , mtl
