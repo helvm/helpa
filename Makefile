@@ -23,7 +23,7 @@ clean:
 
 configure:
 	rm -f cabal.project.local*
-	cabal configure --enable-benchmarks --enable-coverage --enable-tests -f ghcoptions
+	cabal configure --enable-benchmarks --enable-coverage --enable-tests --disable-library-coverage -f ghcoptions
 
 exec:
 	make tix
@@ -72,7 +72,7 @@ stan:
 
 stylish:
 	#curl -sL https://raw.github.com/haskell/stylish-haskell/master/scripts/latest.sh | sh -s "-r -v -i hs"
-	stylish-haskell -r -v -i hs
+	#stylish-haskell -r -v -i hs
 
 test:
 	cabal new-test --jobs --test-show-details=streaming -f ghcoptions

@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.2 -- 2024-01-15
+* Fix generating labels for WSA
+
 ## 0.4.5.1 -- 2023-12-25
 * Add sblasm examples
 

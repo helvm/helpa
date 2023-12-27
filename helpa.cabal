@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.5.1
+version:               0.4.5.2
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -20,7 +20,7 @@ extra-source-files:
   docs/developers/CHANGELOG.md
   docs/README.md
 
-tested-with:           GHC == 9.6.1
+tested-with:           GHC == 9.8.1
 
 source-repository head
   type:                git
@@ -151,6 +151,7 @@ library
     HelVM.HelPA.Assemblers.WSA.Assembler
     HelVM.HelPA.Assemblers.WSA.AssemblyOptions
     HelVM.HelPA.Assemblers.WSA.CodeGenerator
+    HelVM.HelPA.Assemblers.WSA.DSL
     HelVM.HelPA.Assemblers.WSA.Instruction
     HelVM.HelPA.Assemblers.WSA.Linker
     HelVM.HelPA.Assemblers.WSA.Reducer
@@ -161,6 +162,7 @@ library
     , containers           <  0.7
     , filepath
     , ListLike
+    , mtl
     , split
     , type-operators
   ghc-options:
