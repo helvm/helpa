@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.5.2
+version:               0.4.5.3
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -114,48 +114,52 @@ library
 
     HelVM.HelPA.Assembler.IO.BusinessIO
 
-    HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions
-    HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-    HelVM.HelPA.Assemblers.ASQ.API.Version
+    HelVM.HelPA.Assemblers.Backend.ASQ.API.AssemblyOptions
+    HelVM.HelPA.Assemblers.Backend.ASQ.API.QuestionMark
+    HelVM.HelPA.Assemblers.Backend.ASQ.API.Version
 
-    HelVM.HelPA.Assemblers.ASQ.Assembler
+    HelVM.HelPA.Assemblers.Backend.ASQ.Assembler
 
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParser
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Assembler
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Instruction
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.Reducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.AsmParser
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.Assembler
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.Instruction
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.Reducer
 
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParser
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Assembler
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Instruction
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Line
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducer
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.ExpressionReducer
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.InstructionReducer
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.ItemReducer
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.LabelReducer
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.Reducers.QuestionMarkReducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.AsmParser
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Assembler
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Instruction
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Line
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducers.ExpressionReducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducers.InstructionReducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducers.ItemReducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducers.LabelReducer
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Reducers.QuestionMarkReducer
 
-    HelVM.HelPA.Assemblers.ASQ.Util.AsmParser
-    HelVM.HelPA.Assemblers.ASQ.Util.CodeGenerator
+    HelVM.HelPA.Assemblers.Backend.ASQ.Util.AsmParser
+    HelVM.HelPA.Assemblers.Backend.ASQ.Util.CodeGenerator
 
-    HelVM.HelPA.Assemblers.EAS.AsmParser
-    HelVM.HelPA.Assemblers.EAS.Assembler
-    HelVM.HelPA.Assemblers.EAS.CodeGenerator
-    HelVM.HelPA.Assemblers.EAS.Instruction
-    HelVM.HelPA.Assemblers.EAS.Linker
-    HelVM.HelPA.Assemblers.EAS.Reducer
+    HelVM.HelPA.Assemblers.Backend.EAS.AsmParser
+    HelVM.HelPA.Assemblers.Backend.EAS.Assembler
+    HelVM.HelPA.Assemblers.Backend.EAS.CodeGenerator
+    HelVM.HelPA.Assemblers.Backend.EAS.Instruction
+    HelVM.HelPA.Assemblers.Backend.EAS.Linker
+    HelVM.HelPA.Assemblers.Backend.EAS.Reducer
 
-    HelVM.HelPA.Assemblers.WSA.API.TokenType
-    HelVM.HelPA.Assemblers.WSA.AsmParser
-    HelVM.HelPA.Assemblers.WSA.Assembler
-    HelVM.HelPA.Assemblers.WSA.AssemblyOptions
-    HelVM.HelPA.Assemblers.WSA.CodeGenerator
-    HelVM.HelPA.Assemblers.WSA.DSL
-    HelVM.HelPA.Assemblers.WSA.Instruction
-    HelVM.HelPA.Assemblers.WSA.Linker
-    HelVM.HelPA.Assemblers.WSA.Reducer
-    HelVM.HelPA.Assemblers.WSA.Token
+    HelVM.HelPA.Assemblers.Backend.WSA.API.TokenType
+
+    HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions
+    HelVM.HelPA.Assemblers.Backend.WSA.CodeGenerator
+    HelVM.HelPA.Assemblers.Backend.WSA.DSL
+    HelVM.HelPA.Assemblers.Backend.WSA.Instruction
+    HelVM.HelPA.Assemblers.Backend.WSA.Token
+
+    HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
+    HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
+    HelVM.HelPA.Assemblers.Frontend.WSA.Linker
+    HelVM.HelPA.Assemblers.Frontend.WSA.Reducer
+    HelVM.HelPA.Assemblers.Frontend.WSA.CodeGenerator
   build-depends:
       helio
     , attoparsec           <  0.14.4
@@ -194,31 +198,32 @@ test-suite helpa-test
     HelVM.Expectations
     HelVM.GoldenExpectations
 
-    HelVM.HelPA.Assemblers.ASQ.AssemblyOptionsExtra
-    HelVM.HelPA.Assemblers.ASQ.FileExtra
+    HelVM.HelPA.Assemblers.Backend.ASQ.AssemblyOptionsExtra
+    HelVM.HelPA.Assemblers.Backend.ASQ.FileExtra
 
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AsmParserSpec
-    HelVM.HelPA.Assemblers.ASQ.Eigenratios.AssemblerSpec
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.AsmParserSpec
+    HelVM.HelPA.Assemblers.Backend.ASQ.Eigenratios.AssemblerSpec
 
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AsmParserSpec
-    HelVM.HelPA.Assemblers.ASQ.EsoLangs.AssemblerSpec
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.AsmParserSpec
+    HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.AssemblerSpec
 
-    HelVM.HelPA.Assemblers.EAS.AsmParserSpec
-    HelVM.HelPA.Assemblers.EAS.AssemblerSpec
-    HelVM.HelPA.Assemblers.EAS.CodeGeneratorSpec
-    HelVM.HelPA.Assemblers.EAS.FileExtra
-    HelVM.HelPA.Assemblers.EAS.LinkerSpec
-    HelVM.HelPA.Assemblers.EAS.TestData
-    HelVM.HelPA.Assemblers.EAS.ReducerSpec
+    HelVM.HelPA.Assemblers.Backend.EAS.AsmParserSpec
+    HelVM.HelPA.Assemblers.Backend.EAS.AssemblerSpec
+    HelVM.HelPA.Assemblers.Backend.EAS.CodeGeneratorSpec
+    HelVM.HelPA.Assemblers.Backend.EAS.FileExtra
+    HelVM.HelPA.Assemblers.Backend.EAS.LinkerSpec
+    HelVM.HelPA.Assemblers.Backend.EAS.TestData
+    HelVM.HelPA.Assemblers.Backend.EAS.ReducerSpec
 
-    HelVM.HelPA.Assemblers.WSA.AsmParserSpec
-    HelVM.HelPA.Assemblers.WSA.AssemblerSpec
-    HelVM.HelPA.Assemblers.WSA.AssemblyOptionsExtra
-    HelVM.HelPA.Assemblers.WSA.CodeGeneratorSpec
-    HelVM.HelPA.Assemblers.WSA.FileExtra
-    HelVM.HelPA.Assemblers.WSA.LinkerSpec
-    HelVM.HelPA.Assemblers.WSA.ReducerSpec
-    HelVM.HelPA.Assemblers.WSA.TestData
+    HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
+    HelVM.HelPA.Assemblers.Frontend.WSA.AssemblerSpec
+    HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptionsExtra
+    HelVM.HelPA.Assemblers.Frontend.WSA.CodeGeneratorSpec
+    HelVM.HelPA.Assemblers.Frontend.WSA.FileExtra
+    HelVM.HelPA.Assemblers.Frontend.WSA.LinkerSpec
+    HelVM.HelPA.Assemblers.Frontend.WSA.ReducerSpec
+    HelVM.HelPA.Assemblers.Frontend.WSA.TestData
+    HelVM.HelPA.Assemblers.Frontend.WSA.TestDataReduced
   build-depends:
       hspec
     , hspec-core

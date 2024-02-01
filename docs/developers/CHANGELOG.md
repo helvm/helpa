@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.3 -- 2024-02-01
+* Split assemblers to backend and frontend
+
 ## 0.4.5.2 -- 2024-01-15
 * Fix generating labels for WSA
 

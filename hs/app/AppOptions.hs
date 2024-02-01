@@ -5,10 +5,10 @@ module AppOptions where
 
 import           Lang
 
-import           HelVM.HelPA.Assemblers.ASQ.API.QuestionMark
-import           HelVM.HelPA.Assemblers.ASQ.API.Version
+import           HelVM.HelPA.Assemblers.Backend.ASQ.API.QuestionMark
+import           HelVM.HelPA.Assemblers.Backend.ASQ.API.Version
 
-import           HelVM.HelPA.Assemblers.WSA.API.TokenType
+import           HelVM.HelPA.Assemblers.Backend.WSA.API.TokenType
 
 import           HelVM.HelPA.Assembler.API.Separator
 

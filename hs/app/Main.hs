@@ -3,13 +3,13 @@ module Main where
 import           AppOptions
 import           Lang
 
-import qualified HelVM.HelPA.Assemblers.ASQ.API.AssemblyOptions as ASQ
-import qualified HelVM.HelPA.Assemblers.ASQ.Assembler           as ASQ
+import qualified HelVM.HelPA.Assemblers.Backend.ASQ.API.AssemblyOptions as ASQ
+import qualified HelVM.HelPA.Assemblers.Backend.ASQ.Assembler           as ASQ
 
-import qualified HelVM.HelPA.Assemblers.EAS.Assembler           as EAS
+import qualified HelVM.HelPA.Assemblers.Backend.EAS.Assembler           as EAS
 
-import qualified HelVM.HelPA.Assemblers.WSA.Assembler           as WSA
-import qualified HelVM.HelPA.Assemblers.WSA.AssemblyOptions     as WSA
+import qualified HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions     as WSA
+import qualified HelVM.HelPA.Assemblers.Frontend.WSA.Assembler          as WSA
 
 import           HelVM.HelPA.Assembler.API.SourcePath
 
