@@ -17,7 +17,7 @@ linkApp :: BIO m => SourcePath -> m InstructionList
 linkApp sourcePath = (includeLibs (dirPath sourcePath) =<<) $ parseAssemblyText =<< wReadFile (filePath sourcePath)
 
 includeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
-includeLibs dir il = concat <$> mapM (includeLib dir) il
+includeLibs dir il = concat <$> traverse (includeLib dir) il
 
 includeLib :: BIO m => FilePath -> Instruction -> m InstructionList
 includeLib dir (D libName) = linkLib SourcePath { dirPath = dir , filePath = unwrapIdentifier libName }

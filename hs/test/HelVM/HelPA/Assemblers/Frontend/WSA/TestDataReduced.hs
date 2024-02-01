@@ -25,9 +25,9 @@ memoryILReduced :: InstructionList
 memoryILReduced =
   [Mark "memcopy"
   ,Mark "mem_copy"
-  ,Mark "mem_move",Push (Literal 3),Swap,Store,Push (Literal 2),Swap,Store,Push (Literal 1),Swap,Store,Push (Literal 3),Load,Dup,BranchM "memcopy_end:13:1",Dup,BranchZ "memcopy_end:13:1",Branch "memcopy_end:13:2"
-  ,Mark "memcopy_end:13:1",Pop,Branch "memcopy_end"
-  ,Mark "memcopy_end:13:2",Pop,Push (Literal 1),Load,Push (Literal 2),Load,Sub,BranchZ "memcopy_end",Push (Literal 1),Load,Push (Literal 2),Load,Sub,BranchM "memcopy_loop_dest_greater_source_begin",Branch "memcopy_loop_source_greater_dest"
+  ,Mark "mem_move",Push (Literal 3),Swap,Store,Push (Literal 2),Swap,Store,Push (Literal 1),Swap,Store,Push (Literal 3),Load,Dup,BranchM "memcopy_end:1",Dup,BranchZ "memcopy_end:1",Branch "memcopy_end:2"
+  ,Mark "memcopy_end:1",Pop,Branch "memcopy_end"
+  ,Mark "memcopy_end:2",Pop,Push (Literal 1),Load,Push (Literal 2),Load,Sub,BranchZ "memcopy_end",Push (Literal 1),Load,Push (Literal 2),Load,Sub,BranchM "memcopy_loop_dest_greater_source_begin",Branch "memcopy_loop_source_greater_dest"
   ,Mark "memcopy_loop_source_greater_dest",Push (Literal 2),Load,Push (Literal 1),Load,Load,Store,Push (Literal 2),Push (Literal 2),Load,Push (Literal 1),Add,Store,Push (Literal 1),Push (Literal 1),Load,Push (Literal 1),Add,Store,Push (Literal 3),Push (Literal 3),Load,Push (Literal 1),Sub,Store,Push (Literal 3),Load,BranchZ "memcopy_end",Branch "memcopy_loop_source_greater_dest"
   ,Mark "memcopy_loop_dest_greater_source_begin",Push (Literal 2),Push (Literal 2),Load,Push (Literal 3),Load,Add,Push (Literal 1),Sub,Store,Push (Literal 1),Push (Literal 1),Load,Push (Literal 3),Load,Add,Push (Literal 1),Sub,Store
   ,Mark "memcopy_loop_dest_greater_source",Push (Literal 2),Load,Push (Literal 1),Load,Load,Store,Push (Literal 2),Push (Literal 2),Load,Push (Literal 1),Sub,Store,Push (Literal 1),Push (Literal 1),Load,Push (Literal 1),Sub,Store,Push (Literal 3),Push (Literal 3),Load,Push (Literal 1),Sub,Store,Push (Literal 3),Load,BranchZ "memcopy_end",Branch "memcopy_loop_dest_greater_source"

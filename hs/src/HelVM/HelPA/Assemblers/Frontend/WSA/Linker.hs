@@ -17,7 +17,7 @@ linkApp :: BIO m => SourcePath -> m InstructionList
 linkApp path = (includeLibs (dirPath path) =<<) $ parseAssemblyText =<< wReadFile (filePath path)
 
 includeLibs :: BIO m => FilePath -> InstructionList -> m InstructionList
-includeLibs dir il = sortBlocks <$> mapM (includeLib dir) il
+includeLibs dir il = sortBlocks <$> traverse (includeLib dir) il
 
 sortBlocks :: [Block InstructionList] -> InstructionList
 sortBlocks list = unwrap =<< (filter isNormal list <> filter isIncluded list) --FIXME groupBy ?

@@ -20,12 +20,9 @@ addEndOfLine :: Instruction -> InstructionList
 addEndOfLine i = [i , EOL]
 
 reduceInstructionList :: InstructionList -> B.InstructionList
-reduceInstructionList il = uncurry reduceInstructionWithExec =<< zipIndex il
+reduceInstructionList = execDSL . traverse reduceInstruction
 
-reduceInstructionWithExec :: Natural -> Instruction -> B.InstructionList
-reduceInstructionWithExec n = execDSL n . reduceInstruction
-
-reduceInstruction :: DSL m => Instruction -> m ()
+reduceInstruction :: MonadDSL m => Instruction -> m ()
 reduceInstruction (Push v)            = push v
 reduceInstruction (PushS (Literal s)) = reducePushS s
 reduceInstruction Pop                 = pop

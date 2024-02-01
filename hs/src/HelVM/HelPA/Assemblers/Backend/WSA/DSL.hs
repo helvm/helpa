@@ -14,8 +14,8 @@ import qualified Data.ListLike                                  as LL
 
 import           Prelude                                        hiding (div, mod, swap)
 
-execDSL :: Natural -> ReaderT Natural (Writer Instructions) () -> InstructionList
-execDSL n w = execWriter (runReaderT w n)
+execDSL :: RWS Natural Instructions Natural a -> InstructionList
+execDSL w = snd $ evalRWS w 1 1
 
 reducePushS :: MonadWriter InstructionList m => SString -> m ()
 reducePushS = tell . pushLiteralS
@@ -26,140 +26,137 @@ pushLiteralS s = pushLiteral 0 : toList (LL.reverse $ pushLiteralC <$> s)
 pushLiteralC :: Char -> Instruction
 pushLiteralC = pushLiteral . fromIntegral . ord
 
-push :: DSL1V m
+push :: MonadDSL1V m
 push = dsl . Push
 
-pop :: DSL0 m
+pop :: MonadDSL0 m
 pop = dsl Pop
 
-dup :: DSL0 m
+dup :: MonadDSL0 m
 dup = dsl Dup
 
-swap :: DSL0 m
+swap :: MonadDSL0 m
 swap = dsl Swap
 
-reduceTest :: DSL1V m
+reduceTest :: MonadDSL1V m
 reduceTest v = do
   dup
   reduceSub v
 
-reduceAddOpt :: DSL1VO m
+reduceAddOpt :: MonadDSL1VO m
 reduceAddOpt Nothing  = add
 reduceAddOpt (Just v) = reduceAdd v
 
-reduceAdd :: DSL1V m
+reduceAdd :: MonadDSL1V m
 reduceAdd v = do
   push v
   add
 
-add :: DSL0 m
+add :: MonadDSL0 m
 add = dsl Add
 
-reduceSubOpt :: DSL1VO m
+reduceSubOpt :: MonadDSL1VO m
 reduceSubOpt Nothing  = sub
 reduceSubOpt (Just v) = reduceSub v
 
-reduceSub :: DSL1V m
+reduceSub :: MonadDSL1V m
 reduceSub v = do
   push v
   sub
 
-sub :: DSL0 m
+sub :: MonadDSL0 m
 sub = dsl Sub
 
-reduceMulOpt :: DSL1VO m
+reduceMulOpt :: MonadDSL1VO m
 reduceMulOpt Nothing  = mul
 reduceMulOpt (Just v) = reduceMul v
 
-reduceMul :: DSL1V m
+reduceMul :: MonadDSL1V m
 reduceMul v = do
   push v
   mul
 
-mul :: DSL0 m
+mul :: MonadDSL0 m
 mul = dsl Mul
 
-reduceDivOpt :: DSL1VO m
+reduceDivOpt :: MonadDSL1VO m
 reduceDivOpt Nothing  = div
 reduceDivOpt (Just v) = reduceDiv v
 
-reduceDiv :: DSL1V m
+reduceDiv :: MonadDSL1V m
 reduceDiv v = do
   push v
   div
 
-div :: DSL0 m
+div :: MonadDSL0 m
 div = dsl Div
 
-reduceModOpt :: DSL1VO m
+reduceModOpt :: MonadDSL1VO m
 reduceModOpt Nothing  = mod
 reduceModOpt (Just v) = reduceMod v
 
-reduceMod :: DSL1V m
+reduceMod :: MonadDSL1V m
 reduceMod v = do
   push v
   mod
 
-mod :: DSL0 m
+mod :: MonadDSL0 m
 mod = dsl Mod
 
-reduceLoadOpt :: DSL1VO m
+reduceLoadOpt :: MonadDSL1VO m
 reduceLoadOpt Nothing  = load
 reduceLoadOpt (Just v) = reduceLoad v
 
-reduceLoad :: DSL1V m
+reduceLoad :: MonadDSL1V m
 reduceLoad v = do
   push v
   load
 
-load :: DSL0 m
+load :: MonadDSL0 m
 load = dsl Load
 
-reduceStoreOpt :: DSL1VO m
+reduceStoreOpt :: MonadDSL1VO m
 reduceStoreOpt Nothing  = store
 reduceStoreOpt (Just v) = reduceStore v
 
-reduceStore :: DSL1V m
+reduceStore :: MonadDSL1V m
 reduceStore v = do
   push v
   swap
   store
 
-store :: DSL0 m
+store :: MonadDSL0 m
 store = dsl Store
 
-mark :: DSL1I m
+mark :: MonadDSL1I m
 mark = dsl . Mark
 
-branch :: DSL1I m
+branch :: MonadDSL1I m
 branch = dsl . Branch
 
-branchZ :: DSL1I m
+branchZ :: MonadDSL1I m
 branchZ = dsl . BranchZ
 
-branchM :: DSL1I m
+branchM :: MonadDSL1I m
 branchM = dsl . BranchM
 
-reduceBranchNZ :: DSL1I m
+reduceBranchNZ :: MonadDSL1I m
 reduceBranchNZ l = do
-  n <- ask
-  let l1 = calculateLocalLabel l n 1
+  l1 <- calculateLocalLabelM l
   branchZ l1
   branch l
   mark l1
 
-reduceBranchNM :: DSL1I m
+reduceBranchNM :: MonadDSL1I m
 reduceBranchNM l = do
-  n <- ask
-  let l1 = calculateLocalLabel l n 1
+  l1 <- calculateLocalLabelM l
   branchM l1
   branch l
   mark l1
 
-reduceBranchP :: DSL1I m
+reduceBranchP :: MonadDSL1I m
 reduceBranchP l = do
-  n <- ask
-  let l1 = calculateLocalLabel l n 1
+  l1 <- calculateLocalLabelM l
   dup
   branchM l1
   dup
@@ -169,11 +166,10 @@ reduceBranchP l = do
   mark l1
   pop
 
-reduceBranchNP :: DSL1I m
+reduceBranchNP :: MonadDSL1I m
 reduceBranchNP l = do
-  n <- ask
-  let l1 = calculateLocalLabel l n 1
-  let l2 = calculateLocalLabel l n 2
+  l1 <- calculateLocalLabelM l
+  l2 <- calculateLocalLabelM l
   dup
   branchM l1
   dup
@@ -185,28 +181,34 @@ reduceBranchNP l = do
   mark l2
   pop
 
-return :: DSL0 m
+return :: MonadDSL0 m
 return = dsl Return
 
-end :: DSL0 m
+end :: MonadDSL0 m
 end = dsl End
 
-calculateLocalLabel :: Identifier -> Natural -> Natural -> Identifier
-calculateLocalLabel label suffix suffix2 = label <> ":" <> show suffix <> ":" <> show suffix2
+calculateLocalLabelM :: MonadDSL m => Identifier -> m Identifier
+calculateLocalLabelM label = do
+  suffix <- get
+  modify (+ 1)
+  pure $ calculateLocalLabel label suffix
 
-dsl :: DSL m => Instruction -> m ()
+calculateLocalLabel :: Identifier -> Natural -> Identifier
+calculateLocalLabel label suffix = label <> ":" <> show suffix
+
+dsl :: MonadDSL m => Instruction -> m ()
 dsl = tell . LL.singleton
 
-type DSL1VO m = DSL m => Maybe IntegerValue -> m ()
+type MonadDSL1VO m = MonadDSL m => Maybe IntegerValue -> m ()
 
-type DSL1V m = DSL m => IntegerValue -> m ()
+type MonadDSL1V m = MonadDSL m => IntegerValue -> m ()
 
-type DSL1IO m = DSL m => Maybe Identifier ->  m ()
+type MonadDSL1IO m = MonadDSL m => Maybe Identifier ->  m ()
 
-type DSL1I m = DSL m => Identifier ->  m ()
+type MonadDSL1I m = MonadDSL m => Identifier ->  m ()
 
-type DSL0 m = DSL m => m ()
+type MonadDSL0 m = MonadDSL m => m ()
 
-type DSL m = (MonadWriter Instructions m , MonadReader Natural m)
+type MonadDSL m = MonadRWS Natural Instructions Natural m
 
 type Instructions = [Instruction]

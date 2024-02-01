@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.4 -- 2024-02-02
+* Use RWS
+
 ## 0.4.5.3 -- 2024-02-01
 * Split assemblers to backend and frontend
 
