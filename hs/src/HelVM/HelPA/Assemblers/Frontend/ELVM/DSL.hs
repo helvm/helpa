@@ -1,13 +1,6 @@
 module HelVM.HelPA.Assemblers.Frontend.ELVM.DSL where
 
-import           Control.Monad.RWS.Lazy
-import           Data.DList
-
-type Config = ()
-
-type Environment = ()
-
-type Result a = RWS Config (DList a) Environment ()
+import           HelVM.HelPA.Assemblers.Common.DSL
 
 newtype Register = R Natural
 
@@ -21,65 +14,65 @@ unImmediate (I i) = i
 
 type ImmediateORRegister = Either Immediate Register
 
-mov :: (DSL a) => ImmediateORRegister -> Register -> Result a
+mov :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 mov (Left i)  = movi i
 mov (Right r) = movr r
 
-add :: (DSL a) => ImmediateORRegister -> Register -> Result a
+add :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 add (Left i)  = addi i
 add (Right r) = addr r
 
-sub :: (DSL a) => ImmediateORRegister -> Register -> Result a
+sub :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 sub (Left i)  = subi i
 sub (Right r) = subr r
 
-load :: (DSL a) => ImmediateORRegister -> Register -> Result a
+load :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 load (Left i)  = loadi i
 load (Right r) = loadr r
 
-store :: (DSL a) => Register -> ImmediateORRegister -> Result a
+store :: (MonadDSL a) => Register -> ImmediateORRegister -> DSL a
 store s (Left i)  = storei s i
 store s (Right r) = storer s r
 
-putc :: (DSL a) => ImmediateORRegister -> Result a
+putc :: (MonadDSL a) => ImmediateORRegister -> DSL a
 putc (Left i)  = putci i
 putc (Right r) = putcr r
 
-class DSL a where
-  movi :: Immediate -> Register -> Result a
-  movr :: Register -> Register -> Result a
+class MonadDSL a where
+  movi :: Immediate -> Register -> DSL a
+  movr :: Register -> Register -> DSL a
 
-  addi :: Immediate -> Register -> Result a
-  addr :: Register -> Register -> Result a
+  addi :: Immediate -> Register -> DSL a
+  addr :: Register -> Register -> DSL a
 
-  subi :: Immediate -> Register -> Result a
-  subr :: Register -> Register -> Result a
+  subi :: Immediate -> Register -> DSL a
+  subr :: Register -> Register -> DSL a
 
-  loadi :: Immediate -> Register -> Result a
-  loadr :: Register -> Register -> Result a
+  loadi :: Immediate -> Register -> DSL a
+  loadr :: Register -> Register -> DSL a
 
-  storei :: Register -> Immediate -> Result a
-  storer :: Register -> Register -> Result a
+  storei :: Register -> Immediate -> DSL a
+  storer :: Register -> Register -> DSL a
 
-  putci :: Immediate -> Result a
-  putcr :: Register -> Result a
+  putci :: Immediate -> DSL a
+  putcr :: Register -> DSL a
 
-  getc :: Register -> Result a
+  getc :: Register -> DSL a
 
-  jeq :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
-  jne :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
-  jlt :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
-  jgt :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
-  jle :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
-  jge :: ImmediateORRegister -> ImmediateORRegister -> Register -> Result a
+  jeq :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jne :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jlt :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jgt :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jle :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jge :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
 
-  jmp :: ImmediateORRegister -> Register -> Result a
+  jmp :: ImmediateORRegister -> Register -> DSL a
 
-  eq :: ImmediateORRegister -> Register -> Result a
-  ne :: ImmediateORRegister -> Register -> Result a
-  lt :: ImmediateORRegister -> Register -> Result a
-  gt :: ImmediateORRegister -> Register -> Result a
-  le :: ImmediateORRegister -> Register -> Result a
-  ge :: ImmediateORRegister -> Register -> Result a
+  eq :: ImmediateORRegister -> Register -> DSL a
+  ne :: ImmediateORRegister -> Register -> DSL a
+  lt :: ImmediateORRegister -> Register -> DSL a
+  gt :: ImmediateORRegister -> Register -> DSL a
+  le :: ImmediateORRegister -> Register -> DSL a
+  ge :: ImmediateORRegister -> Register -> DSL a
 
-  dump :: Result a
+  dump :: DSL a
