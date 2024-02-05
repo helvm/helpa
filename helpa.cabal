@@ -146,10 +146,6 @@ library
     HelVM.HelPA.Assemblers.Backend.EAS.Linker
     HelVM.HelPA.Assemblers.Backend.EAS.Reducer
 
-    HelVM.HelPA.Assemblers.Common.DSL
-
-    HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
-
     HelVM.HelPA.Assemblers.Backend.WSA.API.TokenType
 
     HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions
@@ -159,6 +155,8 @@ library
     HelVM.HelPA.Assemblers.Backend.WSA.Token
 
     HelVM.HelPA.Assemblers.Common.DSL
+
+    HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
 
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
