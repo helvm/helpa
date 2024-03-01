@@ -2,11 +2,16 @@ module HelVM.HelPA.Assemblers.Frontend.ELVM.DSL where
 
 import           HelVM.HelPA.Assemblers.Common.DSL
 
-newtype Register = R Natural
+--import qualified HelVM.HelPA.Assemblers.Backend.WSA.Instruction as WSA
+
+newtype Register = R Text
+
+register :: Register
+register = R ""
 
 newtype Immediate = I Integer
 
-unRegister :: Register -> Natural
+unRegister :: Register -> Text
 unRegister (R n) = n
 
 unImmediate :: Immediate -> Integer
@@ -38,6 +43,10 @@ putc :: (MonadDSL a) => ImmediateORRegister -> DSL a
 putc (Left i)  = putci i
 putc (Right r) = putcr r
 
+jmp :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+jmp (Left i)  = jmpi i
+jmp (Right r) = jmpr r
+
 class MonadDSL a where
   movi :: Immediate -> Register -> DSL a
   movr :: Register -> Register -> DSL a
@@ -66,13 +75,40 @@ class MonadDSL a where
   jle :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
   jge :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
 
-  jmp :: ImmediateORRegister -> Register -> DSL a
+  jmpi :: Immediate -> Register -> DSL a
+  jmpr :: Register -> Register -> DSL a
 
-  eq :: ImmediateORRegister -> Register -> DSL a
-  ne :: ImmediateORRegister -> Register -> DSL a
-  lt :: ImmediateORRegister -> Register -> DSL a
-  gt :: ImmediateORRegister -> Register -> DSL a
-  le :: ImmediateORRegister -> Register -> DSL a
-  ge :: ImmediateORRegister -> Register -> DSL a
+  eqi :: Immediate -> Register -> DSL a
+  eqr :: Register -> Register -> DSL a
+
+  nei :: Immediate -> Register -> DSL a
+  ner :: Register -> Register -> DSL a
+
+  lti :: Immediate -> Register -> DSL a
+  ltr :: Register -> Register -> DSL a
+
+  gti :: Immediate -> Register -> DSL a
+  gtr :: Register -> Register -> DSL a
+
+  lei :: Immediate -> Register -> DSL a
+  ler :: Register -> Register -> DSL a
+
+  gei :: Immediate -> Register -> DSL a
+  ger :: Register -> Register -> DSL a
 
   dump :: DSL a
+
+  addi i r = do
+    movi i register
+    addr register r
+
+  subi i r = do
+    movi i register
+    subr register r
+
+
+
+--instance DSL WSA.Instruction where
+--  movi s d = do
+--    push $ Value $ unImmediate s
+--
