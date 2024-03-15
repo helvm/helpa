@@ -9,6 +9,9 @@ newtype Register = R Text
 acc :: Register
 acc = R ""
 
+acc1 :: Register
+acc1 = R "1"
+
 newtype Immediate = I Integer
 
 unRegister :: Register -> Text
@@ -196,8 +199,11 @@ class MonadDSL a where
   putci i = do
     movi i acc
     putcr acc
-    
-  --jqeii i1 i2 =   
+
+  jeqii i1 i2 r = do
+    movi i1 acc
+    movi i2 acc1
+    jeqrr acc acc1 r
 
   jmpi i r = do
     movi i acc
