@@ -6,8 +6,8 @@ import           HelVM.HelPA.Assemblers.Common.DSL
 
 newtype Register = R Text
 
-register :: Register
-register = R ""
+acc :: Register
+acc = R ""
 
 newtype Immediate = I Integer
 
@@ -47,6 +47,30 @@ jmp :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 jmp (Left i)  = jmpi i
 jmp (Right r) = jmpr r
 
+eq :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+eq (Left i)  = eqi i
+eq (Right r) = eqr r
+
+ne :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+ne (Left i)  = nei i
+ne (Right r) = ner r
+
+lt :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+lt (Left i)  = lti i
+lt (Right r) = ltr r
+
+gt :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+gt (Left i)  = gti i
+gt (Right r) = gtr r
+
+le :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+le (Left i)  = lei i
+le (Right r) = ler r
+
+ge :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
+ge (Left i)  = gei i
+ge (Right r) = ger r
+
 class MonadDSL a where
   movi :: Immediate -> Register -> DSL a
   movr :: Register -> Register -> DSL a
@@ -75,6 +99,11 @@ class MonadDSL a where
   jle :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
   jge :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
 
+--  jeqii :: Immediate -> Immediate -> Register -> DSL a
+--  jeqir :: Immediate -> Register -> Register -> DSL a
+--  jeqri :: Register -> Immediate -> Register -> DSL a
+--  jeqrr :: Register -> Register -> Register -> DSL a
+
   jmpi :: Immediate -> Register -> DSL a
   jmpr :: Register -> Register -> DSL a
 
@@ -99,13 +128,48 @@ class MonadDSL a where
   dump :: DSL a
 
   addi i r = do
-    movi i register
-    addr register r
+    movi i acc
+    addr acc r
 
   subi i r = do
-    movi i register
-    subr register r
+    movi i acc
+    subr acc r
 
+  loadi i r = do
+    movi i acc
+    loadr acc r
+
+  putci i = do
+    movi i acc
+    putcr acc
+
+  jmpi i r = do
+    movi i acc
+    jmpr acc r
+
+  eqi i r = do
+    movi i acc
+    eqr acc r
+
+  nei i r = do
+    movi i acc
+    ner acc r
+
+  lti i r = do
+    movi i acc
+    ltr acc r
+
+  gti i r = do
+    movi i acc
+    gtr acc r
+
+  lei i r = do
+    movi i acc
+    ler acc r
+
+  gei i r = do
+    movi i acc
+    ger acc r
 
 
 --instance DSL WSA.Instruction where
