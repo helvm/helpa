@@ -43,6 +43,42 @@ putc :: (MonadDSL a) => ImmediateORRegister -> DSL a
 putc (Left i)  = putci i
 putc (Right r) = putcr r
 
+jeq :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jeq (Left i1) (Left i2)   = jeqii i1 i2
+jeq (Left i1) (Right r2)  = jeqir i1 r2
+jeq (Right r1) (Left i2)  = jeqri r1 i2
+jeq (Right r1) (Right r2) = jeqrr r1 r2
+
+jne :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jne (Left i1) (Left i2)   = jneii i1 i2
+jne (Left i1) (Right r2)  = jneir i1 r2
+jne (Right r1) (Left i2)  = jneri r1 i2
+jne (Right r1) (Right r2) = jnerr r1 r2
+
+jlt :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jlt (Left i1) (Left i2)   = jltii i1 i2
+jlt (Left i1) (Right r2)  = jltir i1 r2
+jlt (Right r1) (Left i2)  = jltri r1 i2
+jlt (Right r1) (Right r2) = jltrr r1 r2
+
+jgt :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jgt (Left i1) (Left i2)   = jgtii i1 i2
+jgt (Left i1) (Right r2)  = jgtir i1 r2
+jgt (Right r1) (Left i2)  = jgtri r1 i2
+jgt (Right r1) (Right r2) = jgtrr r1 r2
+
+jle :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jle (Left i1) (Left i2)   = jleii i1 i2
+jle (Left i1) (Right r2)  = jleir i1 r2
+jle (Right r1) (Left i2)  = jleri r1 i2
+jle (Right r1) (Right r2) = jlerr r1 r2
+
+jge :: (MonadDSL a) => ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+jge (Left i1) (Left i2)   = jgeii i1 i2
+jge (Left i1) (Right r2)  = jgeir i1 r2
+jge (Right r1) (Left i2)  = jgeri r1 i2
+jge (Right r1) (Right r2) = jgerr r1 r2
+
 jmp :: (MonadDSL a) => ImmediateORRegister -> Register -> DSL a
 jmp (Left i)  = jmpi i
 jmp (Right r) = jmpr r
@@ -92,17 +128,35 @@ class MonadDSL a where
 
   getc :: Register -> DSL a
 
-  jeq :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
-  jne :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
-  jlt :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
-  jgt :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
-  jle :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
-  jge :: ImmediateORRegister -> ImmediateORRegister -> Register -> DSL a
+  jeqii :: Immediate -> Immediate -> Register -> DSL a
+  jeqir :: Immediate -> Register -> Register -> DSL a
+  jeqri :: Register -> Immediate -> Register -> DSL a
+  jeqrr :: Register -> Register -> Register -> DSL a
 
---  jeqii :: Immediate -> Immediate -> Register -> DSL a
---  jeqir :: Immediate -> Register -> Register -> DSL a
---  jeqri :: Register -> Immediate -> Register -> DSL a
---  jeqrr :: Register -> Register -> Register -> DSL a
+  jneii :: Immediate -> Immediate -> Register -> DSL a
+  jneir :: Immediate -> Register -> Register -> DSL a
+  jneri :: Register -> Immediate -> Register -> DSL a
+  jnerr :: Register -> Register -> Register -> DSL a
+
+  jltii :: Immediate -> Immediate -> Register -> DSL a
+  jltir :: Immediate -> Register -> Register -> DSL a
+  jltri :: Register -> Immediate -> Register -> DSL a
+  jltrr :: Register -> Register -> Register -> DSL a
+
+  jgtii :: Immediate -> Immediate -> Register -> DSL a
+  jgtir :: Immediate -> Register -> Register -> DSL a
+  jgtri :: Register -> Immediate -> Register -> DSL a
+  jgtrr :: Register -> Register -> Register -> DSL a
+
+  jleii :: Immediate -> Immediate -> Register -> DSL a
+  jleir :: Immediate -> Register -> Register -> DSL a
+  jleri :: Register -> Immediate -> Register -> DSL a
+  jlerr :: Register -> Register -> Register -> DSL a
+
+  jgeii :: Immediate -> Immediate -> Register -> DSL a
+  jgeir :: Immediate -> Register -> Register -> DSL a
+  jgeri :: Register -> Immediate -> Register -> DSL a
+  jgerr :: Register -> Register -> Register -> DSL a
 
   jmpi :: Immediate -> Register -> DSL a
   jmpr :: Register -> Register -> DSL a
@@ -142,6 +196,8 @@ class MonadDSL a where
   putci i = do
     movi i acc
     putcr acc
+    
+  --jqeii i1 i2 =   
 
   jmpi i r = do
     movi i acc
