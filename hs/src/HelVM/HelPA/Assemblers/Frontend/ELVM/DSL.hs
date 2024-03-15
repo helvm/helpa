@@ -200,10 +200,18 @@ class MonadDSL a where
     movi i acc
     putcr acc
 
-  jeqii i1 i2 r = do
+  jeqii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jeqrr acc acc1 r2
+
+  jeqir i0 r1 r2 = do
+    movi i0 acc
+    jeqrr acc r1 r2
+
+  jeqri r0 i1 r2 = do
     movi i1 acc
-    movi i2 acc1
-    jeqrr acc acc1 r
+    jeqrr r0 acc r2
 
   jmpi i r = do
     movi i acc
