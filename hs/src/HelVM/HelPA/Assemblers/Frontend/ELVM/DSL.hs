@@ -213,6 +213,71 @@ class MonadDSL a where
     movi i1 acc
     jeqrr r0 acc r2
 
+  jneii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jnerr acc acc1 r2
+
+  jneir i0 r1 r2 = do
+    movi i0 acc
+    jnerr acc r1 r2
+
+  jneri r0 i1 r2 = do
+    movi i1 acc
+    jnerr r0 acc r2
+
+  jltii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jltrr acc acc1 r2
+
+  jltir i0 r1 r2 = do
+    movi i0 acc
+    jltrr acc r1 r2
+
+  jltri r0 i1 r2 = do
+    movi i1 acc
+    jltrr r0 acc r2
+
+  jgtii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jgtrr acc acc1 r2
+
+  jgtir i0 r1 r2 = do
+    movi i0 acc
+    jgtrr acc r1 r2
+
+  jgtri r0 i1 r2 = do
+    movi i1 acc
+    jgtrr r0 acc r2
+
+  jleii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jlerr acc acc1 r2
+
+  jleir i0 r1 r2 = do
+    movi i0 acc
+    jlerr acc r1 r2
+
+  jleri r0 i1 r2 = do
+    movi i1 acc
+    jlerr r0 acc r2
+
+  jgeii i0 i1 r2 = do
+    movi i0 acc
+    movi i1 acc1
+    jgerr acc acc1 r2
+
+  jgeir i0 r1 r2 = do
+    movi i0 acc
+    jgerr acc r1 r2
+
+  jgeri r0 i1 r2 = do
+    movi i1 acc
+    jgerr r0 acc r2
+
   jmpi i r = do
     movi i acc
     jmpr acc r
