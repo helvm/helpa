@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.5.5 -- 2024-02-02
+* Fix "This binding for ‘golden’ shadows the existing binding"
+
 ## 0.4.5.4 -- 2024-02-02
 * Use RWS
 
