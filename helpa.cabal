@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.5.5
+version:               0.4.6.0
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -12,7 +12,7 @@ license:               Apache-2.0
 license-file:          docs/license/LICENSE-APACHE
 author:                Kamil Adam
 maintainer:            kamil.adam.zabinski@gmail.com
-copyright:             2020-2023 WriteOnly Developers
+copyright:             2020-2024 WriteOnly Developers
 
 category:              Language
 build-type:            Simple
@@ -105,7 +105,6 @@ library
   hs-source-dirs:      hs/src
   exposed-modules:
     HelVM.HelPA.Assembler.AsmParserExtra
-    HelVM.HelPA.Assembler.Lexer
     HelVM.HelPA.Assembler.Extra
     HelVM.HelPA.Assembler.Value
 
@@ -157,7 +156,9 @@ library
 
     HelVM.HelPA.Assemblers.Common.DSL
 
-    HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
+    HelVM.HelPA.Assemblers.Frontend.EIR.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.EIR.DSL
+    HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
 
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
@@ -221,15 +222,20 @@ test-suite helpa-test
     HelVM.HelPA.Assemblers.Backend.EAS.TestData
     HelVM.HelPA.Assemblers.Backend.EAS.ReducerSpec
 
+    HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptionsExtra
+
+    HelVM.HelPA.Assemblers.Frontend.EIR.AsmParserSpec
+    HelVM.HelPA.Assemblers.Frontend.EIR.FileExtra
+
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.AssemblerSpec
-    HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptionsExtra
     HelVM.HelPA.Assemblers.Frontend.WSA.CodeGeneratorSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.FileExtra
     HelVM.HelPA.Assemblers.Frontend.WSA.LinkerSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.ReducerSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.TestData
     HelVM.HelPA.Assemblers.Frontend.WSA.TestDataReduced
+
   build-depends:
       hspec
     , hspec-core

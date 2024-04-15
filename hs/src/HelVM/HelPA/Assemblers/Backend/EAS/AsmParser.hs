@@ -4,7 +4,7 @@ module HelVM.HelPA.Assemblers.Backend.EAS.AsmParser (
 
 import           HelVM.HelPA.Assemblers.Backend.EAS.Instruction
 
-import           HelVM.HelPA.Assembler.Lexer
+import           HelVM.HelPA.Assembler.AsmParserExtra
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
@@ -43,9 +43,9 @@ zeroOperandInstructionParser =
 
 naturalNumberParser :: Parser Instruction
 naturalNumberParser = N <$> (
-      naturalValueParser
-  <|> (asciiCI "N" *> skipHorizontalSpace *> naturalValueParser)
-  <|> (asciiCI "Number" *> endWordParser *> skipHorizontalSpace *> naturalValueParser)
+      labelNaturalValueParser
+  <|> (asciiCI "N" *> skipHorizontalSpace *> labelNaturalValueParser)
+  <|> (asciiCI "Number" *> endWordParser *> skipHorizontalSpace *> labelNaturalValueParser)
   )
 
 unescapedStringParser :: Parser Instruction
@@ -85,8 +85,8 @@ commentChar = '#'
 
 ----
 
-naturalValueParser :: Parser NaturalValue
-naturalValueParser = labelNaturalParser <|> naturalRightParser
+labelNaturalValueParser :: Parser NaturalValue
+labelNaturalValueParser = labelNaturalParser <|> naturalRightParser
 
 labelNaturalParser :: Parser NaturalValue
 labelNaturalParser = Variable . toIdentifier <$> (char '<' *> many1 letter)

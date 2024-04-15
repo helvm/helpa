@@ -1,7 +1,5 @@
 module HelVM.HelPA.Assemblers.Frontend.WSA.Instruction where
 
---import           HelVM.HelPA.Assemblers.Frontend.ELVM.DSL
-
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Collections.SList

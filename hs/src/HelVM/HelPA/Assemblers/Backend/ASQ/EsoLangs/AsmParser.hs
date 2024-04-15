@@ -6,7 +6,7 @@ import           HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Instruction
 
 import           HelVM.HelPA.Assemblers.Backend.ASQ.Util.AsmParser
 
-import           HelVM.HelPA.Assembler.Lexer
+import           HelVM.HelPA.Assembler.AsmParserExtra
 
 import           HelVM.HelIO.Control.Safe
 

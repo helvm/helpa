@@ -1,4 +1,4 @@
-# Comparations
+# Comparisons
 
 ## Table ot True
 | s | d |  - | = | <> |  < | \> | <= | \>= |
@@ -7,7 +7,7 @@
 | 0 | 1 | -1 | 0 |  1 |  1 |  0 |  1 |   0 |
 | 1 | 0 |  1 | 0 |  1 |  0 |  1 |  0 |   1 |
 
-## Maping
+## Mapping
 | ASM | OP  | WS | JMP |
 |-----|-----|---:|----:|
 | EQ  | =   |  Z |  NZ |

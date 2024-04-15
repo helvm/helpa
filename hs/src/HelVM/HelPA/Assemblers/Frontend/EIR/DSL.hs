@@ -1,98 +1,98 @@
-module HelVM.HelPA.Assemblers.Frontend.ELVM.DSL where
+module HelVM.HelPA.Assemblers.Frontend.EIR.DSL where
 
 import           HelVM.HelPA.Assemblers.Common.DSL
 
 import qualified HelVM.HelPA.Assemblers.Backend.WSA.ExtendInstruction as WSA
 
-mov :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+mov :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 mov (Left i)  = movi i
 mov (Right r) = movr r
 
-add :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+add :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 add (Left i)  = addi i
 add (Right r) = addr r
 
-sub :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+sub :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 sub (Left i)  = subi i
 sub (Right r) = subr r
 
-load :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+load :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 load (Left i)  = loadi i
 load (Right r) = loadr r
 
-store :: (ELVM a , MonadDSL a m) => Register -> ImmediateORRegister -> m ()
+store :: (EIR a , MonadDSL a m) => Register -> ImmediateORRegister -> m ()
 store s (Left i)  = storei s i
 store s (Right r) = storer s r
 
-putc :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> m ()
+putc :: (EIR a , MonadDSL a m) => ImmediateORRegister -> m ()
 putc (Left i)  = putci i
 putc (Right r) = putcr r
 
-jeq :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jeq :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jeq (Left i1) (Left i2)   = jeqii i1 i2
 jeq (Left i1) (Right r2)  = jeqir i1 r2
 jeq (Right r1) (Left i2)  = jeqri r1 i2
 jeq (Right r1) (Right r2) = jeqrr r1 r2
 
-jne :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jne :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jne (Left i1) (Left i2)   = jneii i1 i2
 jne (Left i1) (Right r2)  = jneir i1 r2
 jne (Right r1) (Left i2)  = jneri r1 i2
 jne (Right r1) (Right r2) = jnerr r1 r2
 
-jlt :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jlt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jlt (Left i1) (Left i2)   = jltii i1 i2
 jlt (Left i1) (Right r2)  = jltir i1 r2
 jlt (Right r1) (Left i2)  = jltri r1 i2
 jlt (Right r1) (Right r2) = jltrr r1 r2
 
-jgt :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jgt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jgt (Left i1) (Left i2)   = jgtii i1 i2
 jgt (Left i1) (Right r2)  = jgtir i1 r2
 jgt (Right r1) (Left i2)  = jgtri r1 i2
 jgt (Right r1) (Right r2) = jgtrr r1 r2
 
-jle :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jle :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jle (Left i1) (Left i2)   = jleii i1 i2
 jle (Left i1) (Right r2)  = jleir i1 r2
 jle (Right r1) (Left i2)  = jleri r1 i2
 jle (Right r1) (Right r2) = jlerr r1 r2
 
-jge :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
+jge :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
 jge (Left i1) (Left i2)   = jgeii i1 i2
 jge (Left i1) (Right r2)  = jgeir i1 r2
 jge (Right r1) (Left i2)  = jgeri r1 i2
 jge (Right r1) (Right r2) = jgerr r1 r2
 
-jmp :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> m ()
+jmp :: (EIR a , MonadDSL a m) => ImmediateORRegister -> m ()
 jmp (Left i)  = jmpi i
 jmp (Right r) = jmpr r
 
-eq :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+eq :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 eq (Left i)  = eqi i
 eq (Right r) = eqr r
 
-ne :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+ne :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 ne (Left i)  = nei i
 ne (Right r) = ner r
 
-lt :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+lt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 lt (Left i)  = lti i
 lt (Right r) = ltr r
 
-gt :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+gt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 gt (Left i)  = gti i
 gt (Right r) = gtr r
 
-le :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+le :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 le (Left i)  = lei i
 le (Right r) = ler r
 
-ge :: (ELVM a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
+ge :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
 ge (Left i)  = gei i
 ge (Right r) = ger r
 
-class ELVM a where
+class EIR a where
   movi :: MonadDSL a m => Immediate -> Register -> m ()
   movr :: MonadDSL a m => Register -> Register -> m ()
 
@@ -290,7 +290,7 @@ class ELVM a where
     movi i acc
     ger acc r
 
-instance ELVM WSA.ExtendInstruction where
+instance EIR WSA.ExtendInstruction where
   movi = WSA.movi
   movr = WSA.movr
   addr = WSA.addr

@@ -6,22 +6,45 @@ import           HelVM.HelIO.ReadText
 
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
-import           Data.Char
 
-labelParser :: Parser Identifier
-labelParser = identifierParser <* char ':' <* skipHorizontalSpace
+import           Data.Char
+import qualified Data.Text                   as Text
+
+labelParser2 :: Parser NaturalValue
+labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
+
+signedOptIntegerDotOptValueParser :: Parser IntegerValue
+signedOptIntegerDotOptValueParser = Literal <$> signedOptIntegerParser <|> Variable <$> dotOptIdentifierParser
+
+signedOptIntegerValueParser :: Parser IntegerValue
+signedOptIntegerValueParser = Literal <$> signedOptIntegerParser <|> Variable <$> identifierParser
+
+signedIntegerValueParser :: Parser IntegerValue
+signedIntegerValueParser = Literal <$> signedIntegerParser <|> Variable <$> identifierParser
 
 integerValueParser2 :: Parser IntegerValue
 integerValueParser2 = Literal <$> integerParser2 <|> Variable <$> identifierParser
 
-signedIntegerValueParser :: Parser IntegerValue
-signedIntegerValueParser = Literal <$> signedIntegerParser <|> Variable <$> identifierParser
+naturalValueParser :: Parser NaturalValue
+naturalValueParser = Literal <$> naturalParser <|> Variable <$> identifierParser
+
+dotOptLabelParser :: Parser Identifier
+dotOptLabelParser = (Text.cons '.' <$> dotLabelParser) <|> labelParser
+
+dotLabelParser :: Parser Identifier
+dotLabelParser = char '.' *> identifierParser <* char ':' <* skipHorizontalSpace
+
+labelParser :: Parser Identifier
+labelParser = identifierParser <* char ':' <* skipHorizontalSpace
 
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser
 
 signedIntegerParser :: Parser Integer
 signedIntegerParser = signedIntegerLiteralParser <|> ordCharLiteralParser
+
+signedOptIntegerParser :: Parser Integer
+signedOptIntegerParser = signedOptIntegerLiteralParser <|> ordCharLiteralParser
 
 integerParser :: Parser Integer
 integerParser = integerLiteralParser <|> ordCharLiteralParser
@@ -31,6 +54,9 @@ integerParser2 = integerLiteralParser <|> ordCharLiteralParser2
 
 naturalLiteralParser :: Parser Natural
 naturalLiteralParser = readUnsafe <$> many1 digit
+
+signedOptIntegerLiteralParser :: Parser Integer
+signedOptIntegerLiteralParser = signedIntegerLiteralParser <|> integerLiteralParser
 
 signedIntegerLiteralParser :: Parser Integer
 signedIntegerLiteralParser = signed integerLiteralParser
@@ -63,6 +89,9 @@ escape a b = a <$ char '\'' *> char '\\' *> char b <* char '\'' <* skipHorizonta
 charLiteralParser2 :: Parser Char
 charLiteralParser2 = char '\'' *> anyChar <* char '\'' <* skipHorizontalSpace
 
+textParser :: Parser Text
+textParser = toText <$> stringParser
+
 stringParser :: Parser String
 stringParser = char '"' *> many (notChar '"') <* char '"'
 
@@ -71,6 +100,12 @@ skipHorizontalSpace = skipWhile isHorizontalSpace
 
 skip1HorizontalSpace :: Parser ()
 skip1HorizontalSpace = satisfy isHorizontalSpace *> skipWhile isHorizontalSpace
+
+dotOptIdentifierParser :: Parser Identifier
+dotOptIdentifierParser = (Text.cons '.' <$> dotIdentifierParser) <|> identifierParser
+
+dotIdentifierParser :: Parser Identifier
+dotIdentifierParser = char '.' *> identifierParser <* skipHorizontalSpace
 
 identifierParser :: Parser Identifier
 identifierParser = toIdentifier <$> liftA2 (:) letter_ (many alphaNum_)
