@@ -1,29 +1,22 @@
-[ Push
-    ( Literal 3 )
+[ Push 3
 , Mark "LOOP"
 , Dup
 , OutputNum
-, PushS
-    ( Literal " bottles of beer on the wall, " )
+, PushS " bottles of beer on the wall, "
 , Call "prints"
 , Dup
 , OutputNum
-, PushS
-    ( Literal " bottles of beer" )
+, PushS " bottles of beer"
 , Call "printsln"
-, PushS
-    ( Literal "Take one down, pass it around" )
+, PushS "Take one down, pass it around"
 , Call "printsln"
-, Push
-    ( Literal 1 )
+, Push 1
 , Sub Nothing
 , Dup
 , OutputNum
-, PushS
-    ( Literal " bottles of beer on the wall" )
+, PushS " bottles of beer on the wall"
 , Call "printsln"
-, PushS
-    ( Literal "" )
+, PushS ""
 , Call "printsln"
 , Dup
 , BranchNZ "LOOP"
@@ -38,8 +31,7 @@
 , Return
 , Mark "printsln"
 , Call "prints"
-, Push
-    ( Literal 10 )
+, Push 10
 , OutputChar
 , Return
 ]

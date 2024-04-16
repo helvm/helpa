@@ -5,28 +5,28 @@ import           HelVM.HelPA.Assembler.Value
 import           HelVM.HelIO.Collections.SList
 
 pushLiteral :: Integer -> Instruction
-pushLiteral = Push . Literal
+pushLiteral = Push
 
 pushSLiteral :: SString -> Instruction
-pushSLiteral = PushS . Literal
+pushSLiteral = PushS
 
 ----
 data Instruction =
 -- Stack instructions
-    Push  !IntegerValue
-  | PushS !StringValue
+    Push  !Integer
+  | PushS !SString
   | Pop
   | Dup
   | Swap
 -- Arithmetic
-  | Add !(Maybe IntegerValue)
-  | Sub !(Maybe IntegerValue)
-  | Mul !(Maybe IntegerValue)
-  | Div !(Maybe IntegerValue)
-  | Mod !(Maybe IntegerValue)
+  | Add !(Maybe Integer)
+  | Sub !(Maybe Integer)
+  | Mul !(Maybe Integer)
+  | Div !(Maybe Integer)
+  | Mod !(Maybe Integer)
 -- Heap access
-  | Store !(Maybe IntegerValue)
-  | Load  !(Maybe IntegerValue)
+  | Store !(Maybe Integer)
+  | Load  !(Maybe Integer)
 -- Control
   | Mark     !Identifier
   | Call     !Identifier
