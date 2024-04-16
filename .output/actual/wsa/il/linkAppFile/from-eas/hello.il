@@ -1,17 +1,10 @@
-[ Push
-    ( Literal 32 )
-, Push
-    ( Literal 44 )
-, Push
-    ( Literal 111 )
-, Push
-    ( Literal 108 )
-, Push
-    ( Literal 108 )
-, Push
-    ( Literal 101 )
-, Push
-    ( Literal 72 )
+[ Push 32
+, Push 44
+, Push 111
+, Push 108
+, Push 108
+, Push 101
+, Push 72
 , OutputChar
 , OutputChar
 , OutputChar
@@ -19,20 +12,13 @@
 , OutputChar
 , OutputChar
 , OutputChar
-, Push
-    ( Literal 10 )
-, Push
-    ( Literal 33 )
-, Push
-    ( Literal 100 )
-, Push
-    ( Literal 108 )
-, Push
-    ( Literal 114 )
-, Push
-    ( Literal 111 )
-, Push
-    ( Literal 119 )
+, Push 10
+, Push 33
+, Push 100
+, Push 108
+, Push 114
+, Push 111
+, Push 119
 , OutputChar
 , OutputChar
 , OutputChar

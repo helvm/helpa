@@ -2,95 +2,83 @@ module HelVM.HelPA.Assemblers.Frontend.EIR.DSL where
 
 import           HelVM.HelPA.Assemblers.Common.DSL
 
+import           HelVM.HelPA.Assembler.Value
+
 import qualified HelVM.HelPA.Assemblers.Backend.WSA.ExtendInstruction as WSA
 
+import           Control.Monad.RWS.Lazy
+
 mov :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-mov (Left i)  = movi i
-mov (Right r) = movr r
+mov (Literal i)  = movi i
+mov (Variable r) = movr r
 
 add :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-add (Left i)  = addi i
-add (Right r) = addr r
+add (Literal i)  = addi i
+add (Variable r) = addr r
 
 sub :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-sub (Left i)  = subi i
-sub (Right r) = subr r
+sub (Literal i)  = subi i
+sub (Variable r) = subr r
 
 load :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-load (Left i)  = loadi i
-load (Right r) = loadr r
+load (Literal i)  = loadi i
+load (Variable r) = loadr r
 
 store :: (EIR a , MonadDSL a m) => Register -> ImmediateORRegister -> m ()
-store s (Left i)  = storei s i
-store s (Right r) = storer s r
+store s (Literal i)  = storei s i
+store s (Variable r) = storer s r
 
 putc :: (EIR a , MonadDSL a m) => ImmediateORRegister -> m ()
-putc (Left i)  = putci i
-putc (Right r) = putcr r
+putc (Literal i)  = putci i
+putc (Variable r) = putcr r
 
-jeq :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jeq (Left i1) (Left i2)   = jeqii i1 i2
-jeq (Left i1) (Right r2)  = jeqir i1 r2
-jeq (Right r1) (Left i2)  = jeqri r1 i2
-jeq (Right r1) (Right r2) = jeqrr r1 r2
+jeq :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jeq (Literal i)  = jeqi i
+jeq (Variable r) = jeqr r
 
-jne :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jne (Left i1) (Left i2)   = jneii i1 i2
-jne (Left i1) (Right r2)  = jneir i1 r2
-jne (Right r1) (Left i2)  = jneri r1 i2
-jne (Right r1) (Right r2) = jnerr r1 r2
+jne :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jne (Literal i)  = jnei i
+jne (Variable r) = jner r
 
-jlt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jlt (Left i1) (Left i2)   = jltii i1 i2
-jlt (Left i1) (Right r2)  = jltir i1 r2
-jlt (Right r1) (Left i2)  = jltri r1 i2
-jlt (Right r1) (Right r2) = jltrr r1 r2
+jlt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jlt (Literal i)  = jlti i
+jlt (Variable r) = jltr r
 
-jgt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jgt (Left i1) (Left i2)   = jgtii i1 i2
-jgt (Left i1) (Right r2)  = jgtir i1 r2
-jgt (Right r1) (Left i2)  = jgtri r1 i2
-jgt (Right r1) (Right r2) = jgtrr r1 r2
+jgt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jgt (Literal i)  = jgti i
+jgt (Variable r) = jgtr r
 
-jle :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jle (Left i1) (Left i2)   = jleii i1 i2
-jle (Left i1) (Right r2)  = jleir i1 r2
-jle (Right r1) (Left i2)  = jleri r1 i2
-jle (Right r1) (Right r2) = jlerr r1 r2
+jle :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jle (Literal i)  = jlei i
+jle (Variable r) = jler r
 
-jge :: (EIR a , MonadDSL a m) => ImmediateORRegister -> ImmediateORRegister -> Register -> m ()
-jge (Left i1) (Left i2)   = jgeii i1 i2
-jge (Left i1) (Right r2)  = jgeir i1 r2
-jge (Right r1) (Left i2)  = jgeri r1 i2
-jge (Right r1) (Right r2) = jgerr r1 r2
-
-jmp :: (EIR a , MonadDSL a m) => ImmediateORRegister -> m ()
-jmp (Left i)  = jmpi i
-jmp (Right r) = jmpr r
+jge :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> Identifier -> m ()
+jge (Literal i)  = jgei i
+jge (Variable r) = jger r
 
 eq :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-eq (Left i)  = eqi i
-eq (Right r) = eqr r
+eq (Literal i)  = eqi i
+eq (Variable r) = eqr r
 
 ne :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-ne (Left i)  = nei i
-ne (Right r) = ner r
+ne (Literal i)  = nei i
+ne (Variable r) = ner r
 
 lt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-lt (Left i)  = lti i
-lt (Right r) = ltr r
+lt (Literal i)  = lti i
+lt (Variable r) = ltr r
 
 gt :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-gt (Left i)  = gti i
-gt (Right r) = gtr r
+gt (Literal i)  = gti i
+gt (Variable r) = gtr r
 
 le :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-le (Left i)  = lei i
-le (Right r) = ler r
+le (Literal i)  = lei i
+le (Variable r) = ler r
 
 ge :: (EIR a , MonadDSL a m) => ImmediateORRegister -> Register -> m ()
-ge (Left i)  = gei i
-ge (Right r) = ger r
+ge (Literal i)  = gei i
+ge (Variable r) = ger r
 
 class EIR a where
   movi :: MonadDSL a m => Immediate -> Register -> m ()
@@ -113,38 +101,25 @@ class EIR a where
 
   getc :: MonadDSL a m => Register -> m ()
 
-  jeqii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jeqir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jeqri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jeqrr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jeqi :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jeqr :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jneii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jneir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jneri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jnerr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jnei :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jner :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jltii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jltir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jltri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jltrr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jlti :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jltr :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jgtii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jgtir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jgtri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jgtrr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jgti :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jgtr :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jleii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jleir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jleri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jlerr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jlei :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jler :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jgeii :: MonadDSL a m => Immediate -> Immediate -> Register -> m ()
-  jgeir :: MonadDSL a m => Immediate -> Register -> Register -> m ()
-  jgeri :: MonadDSL a m => Register -> Immediate -> Register -> m ()
-  jgerr :: MonadDSL a m => Register -> Register -> Register -> m ()
+  jgei :: MonadDSL a m => Immediate -> Register -> Identifier -> m ()
+  jger :: MonadDSL a m => Register -> Register -> Identifier -> m ()
 
-  jmpi :: MonadDSL a m => Immediate -> m ()
-  jmpr :: MonadDSL a m => Register -> m ()
+  jmp :: MonadDSL a m => Identifier -> m ()
 
   eqi :: MonadDSL a m => Immediate -> Register -> m ()
   eqr :: MonadDSL a m => Register -> Register -> m ()
@@ -164,131 +139,90 @@ class EIR a where
   gei :: MonadDSL a m => Immediate -> Register -> m ()
   ger :: MonadDSL a m => Register -> Register -> m ()
 
+  dump :: MonadDSL a m => m ()
+  mark :: MonadDSL a m => Identifier -> m ()
+  pText :: MonadDSL a m => m ()
+  pData :: MonadDSL a m => Maybe Natural -> m ()
+  pLong :: MonadDSL a m => Integer -> m ()
+  pString :: MonadDSL a m => Text -> m ()
+  pFile :: MonadDSL a m => Natural -> Identifier  -> m ()
+  pLoc :: MonadDSL a m => Natural -> Natural -> Natural -> m ()
+
   addi i r = do
-    movi i acc
-    addr acc r
+    movi i temp0
+    addr temp0 r
 
   subi i r = do
-    movi i acc
-    subr acc r
+    movi i temp0
+    subr temp0 r
 
   loadi i r = do
-    movi i acc
-    loadr acc r
+    movi i temp0
+    loadr temp0 r
 
   storei r i = do
-    movi i acc
-    storer acc r
+    movi i temp0
+    storer temp0 r
 
   putci i = do
-    movi i acc
-    putcr acc
+    movi i temp0
+    putcr temp0
 
-  jeqii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jeqrr acc acc1 r2
+  jeqi i r j = do
+    movi i temp0
+    jeqr temp0 r j
 
-  jeqir i0 r1 r2 = do
-    movi i0 acc
-    jeqrr acc r1 r2
+  jnei i r j = do
+    movi i temp0
+    jner temp0 r j
 
-  jeqri r0 i1 r2 = do
-    movi i1 acc
-    jeqrr r0 acc r2
+  jlti i r j = do
+    movi i temp0
+    jltr temp0 r j
 
-  jneii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jnerr acc acc1 r2
+  jgti i r j = do
+    movi i temp0
+    jgtr temp0 r j
 
-  jneir i0 r1 r2 = do
-    movi i0 acc
-    jnerr acc r1 r2
+  jlei i r j = do
+    movi i temp0
+    jler temp0 r j
 
-  jneri r0 i1 r2 = do
-    movi i1 acc
-    jnerr r0 acc r2
-
-  jltii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jltrr acc acc1 r2
-
-  jltir i0 r1 r2 = do
-    movi i0 acc
-    jltrr acc r1 r2
-
-  jltri r0 i1 r2 = do
-    movi i1 acc
-    jltrr r0 acc r2
-
-  jgtii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jgtrr acc acc1 r2
-
-  jgtir i0 r1 r2 = do
-    movi i0 acc
-    jgtrr acc r1 r2
-
-  jgtri r0 i1 r2 = do
-    movi i1 acc
-    jgtrr r0 acc r2
-
-  jleii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jlerr acc acc1 r2
-
-  jleir i0 r1 r2 = do
-    movi i0 acc
-    jlerr acc r1 r2
-
-  jleri r0 i1 r2 = do
-    movi i1 acc
-    jlerr r0 acc r2
-
-  jgeii i0 i1 r2 = do
-    movi i0 acc
-    movi i1 acc1
-    jgerr acc acc1 r2
-
-  jgeir i0 r1 r2 = do
-    movi i0 acc
-    jgerr acc r1 r2
-
-  jgeri r0 i1 r2 = do
-    movi i1 acc
-    jgerr r0 acc r2
-
-  jmpi i = do
-    movi i acc
-    jmpr acc
+  jgei i r j = do
+    movi i temp0
+    jger temp0 r j
 
   eqi i r = do
-    movi i acc
-    eqr acc r
+    movi i temp0
+    eqr temp0 r
 
   nei i r = do
-    movi i acc
-    ner acc r
+    movi i temp0
+    ner temp0 r
 
   lti i r = do
-    movi i acc
-    ltr acc r
+    movi i temp0
+    ltr temp0 r
 
   gti i r = do
-    movi i acc
-    gtr acc r
+    movi i temp0
+    gtr temp0 r
 
   lei i r = do
-    movi i acc
-    ler acc r
+    movi i temp0
+    ler temp0 r
 
   gei i r = do
-    movi i acc
-    ger acc r
+    movi i temp0
+    ger temp0 r
+
+  dump = tell []
+  pText = dump
+  pData _ = dump
+  pLong _ = dump
+  pString _ = dump
+  pFile _ _= dump
+  pLoc _ _ _= dump
 
 instance EIR WSA.ExtendInstruction where
   movi = WSA.movi
@@ -299,16 +233,18 @@ instance EIR WSA.ExtendInstruction where
   storer = WSA.storer
   putcr = WSA.putcr
   getc = WSA.getc
-  jeqrr = WSA.jeqrr
-  jnerr = WSA.jnerr
-  jltrr = WSA.jltrr
-  jgtrr = WSA.jgtrr
-  jlerr = WSA.jlerr
-  jgerr = WSA.jgerr
-  jmpr = WSA.jmpr
+  jeqr = WSA.jeqr
+  jner = WSA.jner
+  jltr = WSA.jltr
+  jgtr = WSA.jgtr
+  jler = WSA.jler
+  jger = WSA.jger
+  jmp = WSA.jmp
   eqr = WSA.eqr
   ner = WSA.ner
   ltr = WSA.ltr
   gtr = WSA.gtr
   ler = WSA.ler
   ger = WSA.ger
+  mark = WSA.mark
+--  pLong = WSA.pLong

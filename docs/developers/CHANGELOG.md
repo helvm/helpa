@@ -1,6 +1,7 @@
 # 📅 Revision history for HelPA
 
 ## 0.4.6.1 -- 2025-01-11
+* Simpler DSL for WS
 * Add `divmod` test for EAS
 * Update libraries
 

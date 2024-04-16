@@ -4,6 +4,8 @@ import           HelVM.HelPA.Assemblers.Backend.WSA.Instruction
 
 import           HelVM.HelPA.Assemblers.Common.DSL
 
+import           HelVM.HelPA.Assemblers.Common.Environment
+
 import           HelVM.HelPA.Assembler.Value
 
 import           Control.Monad.RWS.Lazy
@@ -12,8 +14,8 @@ import qualified HelVM.HelPA.Assemblers.Backend.WSA.DSL         as WSA
 
 movi :: MonadExtendASM m => Immediate -> Register ->  m ()
 movi s d = do
-  basic $ Push $ Literal $ unImmediate s
   loadRegister d
+  basic $ Push $ unImmediate s
   store
 
 movr :: MonadExtendASM m => Register -> Register ->  m ()
@@ -59,8 +61,8 @@ getc d = do
   basic InputChar
   storeRegister d
 
-jeqrr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jeqrr j s d = do
+jeqr :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jeqr j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -69,8 +71,8 @@ jeqrr j s d = do
   jumpRegister j
   mark l
 
-jnerr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jnerr j s d = do
+jner :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jner j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -80,8 +82,8 @@ jnerr j s d = do
   mark l
 
 -- <=
-jltrr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jltrr j s d = do
+jltr :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jltr j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -91,8 +93,8 @@ jltrr j s d = do
   mark l
 
 -- >= 0 0
-jgtrr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jgtrr j s d = do
+jgtr :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jgtr j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -102,8 +104,8 @@ jgtrr j s d = do
   mark l
 
 -- <
-jlerr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jlerr j s d = do
+jler :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jler j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -113,8 +115,8 @@ jlerr j s d = do
   mark l
 
 -- >
-jgerr :: MonadExtendASM m => Register -> Register -> Register -> m ()
-jgerr j s d = do
+jger :: MonadExtendASM m => Register -> Register -> Identifier -> m ()
+jger j s d = do
   loadRegister s
   loadRegister d
   sub
@@ -123,8 +125,8 @@ jgerr j s d = do
   jumpRegister j
   mark l
 
-jmpr :: MonadExtendASM m => Register -> m ()
-jmpr = jumpRegister
+jmp :: MonadExtendASM m => Identifier -> m ()
+jmp = jumpRegister
 
 eqr :: MonadExtendASM m => Register -> Register -> m ()
 eqr s d = do
@@ -192,34 +194,46 @@ ger s d = do
   movi1 d
   mark l
 
+mark :: MonadExtendASM m => Identifier -> m ()
+mark = basic <$> Mark
+
+--pLong :: MonadExtendASM m => Integer -> m ()
+--pLong s = do
+--  state <- get
+--  modify nextDataLabelCount
+--  basic $ push s
+--  basic $ push (dataLabelCount s)
+--  store
+
 --
 
 movi1 :: MonadExtendASM m => Register -> m ()
-movi1 = movi (I 1)
+movi1 = movi 1
 
 movi0 :: MonadExtendASM m => Register -> m ()
-movi0 = movi (I 0)
+movi0 = movi 0
 
 store :: MonadExtendASM m => m ()
 store = basic Store
 
-mark :: MonadExtendASM m => Identifier -> m ()
-mark = basic <$> Mark
-
 sub :: MonadExtendASM m => m ()
 sub = basic Sub
 
-basic :: MonadExtendASM m => Instruction -> m ()
-basic = dsl <$> Basic
-
 loadRegister :: MonadExtendASM m => Register -> m ()
-loadRegister = dsl <$> LoadRegister
+loadRegister s = do
+  a <- registerAddress s
+  extend $ WSA.reduceLoad $ toInteger a
 
 storeRegister :: MonadExtendASM m => Register -> m ()
-storeRegister = dsl <$> StoreRegister
+storeRegister s = do
+  a <- registerAddress s
+  extend $ WSA.reduceStoreA $ toInteger a
 
 jumpRegister :: MonadExtendASM m => Register -> m ()
 jumpRegister = dsl <$> JumpRegister
+
+basic :: MonadExtendASM m => Instruction -> m ()
+basic = dsl <$> Basic
 
 extend :: MonadExtendASM m => DSL Instruction -> m ()
 extend b = do
@@ -234,6 +248,4 @@ type MonadExtendASM m = MonadDSL ExtendInstruction m
 
 data ExtendInstruction =
     Basic Instruction
-  | LoadRegister Register
-  | StoreRegister Register
   | JumpRegister Register

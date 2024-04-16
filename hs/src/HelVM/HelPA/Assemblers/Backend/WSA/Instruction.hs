@@ -3,12 +3,12 @@ module HelVM.HelPA.Assemblers.Backend.WSA.Instruction where
 import           HelVM.HelPA.Assembler.Value
 
 pushLiteral :: Integer -> Instruction
-pushLiteral = Push . Literal
+pushLiteral = Push
 
 ----
 data Instruction =
 -- Stack instructions
-    Push  !IntegerValue
+    Push  !Integer
   | Pop
   | Dup
   | Swap

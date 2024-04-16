@@ -1,5 +1,4 @@
-[ PushS
-    ( Literal "Hello, world!" )
+[ PushS "Hello, world!"
 , Call "printsln"
 , End
 , Mark "prints"
@@ -12,8 +11,7 @@
 , Return
 , Mark "printsln"
 , Call "prints"
-, Push
-    ( Literal 10 )
+, Push 10
 , OutputChar
 , Return
 ]

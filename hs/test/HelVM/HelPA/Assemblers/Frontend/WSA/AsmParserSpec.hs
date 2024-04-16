@@ -12,8 +12,6 @@ import           HelVM.HelIO.Extra
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
 
-import           HelVM.HelPA.Assembler.Value
-
 import           System.FilePath.Posix
 
 import           Test.Hspec                                      (Spec, describe, it)
@@ -81,32 +79,32 @@ spec = do
 
   describe "Commands with maybe natural operand" $
     forM_ [ ( "add"       , [Add Nothing])
-          , ( "add 0"     , [Add (Just (Literal 0))])
-          , ( "add 1"     , [Add (Just (Literal 1))])
+          , ( "add 0"     , [Add (Just 0)])
+          , ( "add 1"     , [Add (Just 1)])
 
           , ( "sub"       , [Sub Nothing])
-          , ( "sub 0"     , [Sub (Just (Literal 0))])
-          , ( "sub 1"     , [Sub (Just (Literal 1))])
+          , ( "sub 0"     , [Sub (Just 0)])
+          , ( "sub 1"     , [Sub (Just 1)])
 
           , ( "mul"       , [Mul Nothing])
-          , ( "mul 0"     , [Mul (Just (Literal 0))])
-          , ( "mul 1"     , [Mul (Just (Literal 1))])
+          , ( "mul 0"     , [Mul (Just 0)])
+          , ( "mul 1"     , [Mul (Just 1)])
 
           , ( "div"       , [Div Nothing])
-          , ( "div 0"     , [Div (Just (Literal 0))])
-          , ( "div 1"     , [Div (Just (Literal 1))])
+          , ( "div 0"     , [Div (Just 0)])
+          , ( "div 1"     , [Div (Just 1)])
 
           , ( "mod"       , [Mod Nothing])
-          , ( "mod 0"     , [Mod (Just (Literal 0))])
-          , ( "mod 1"     , [Mod (Just (Literal 1))])
+          , ( "mod 0"     , [Mod (Just 0)])
+          , ( "mod 1"     , [Mod (Just 1)])
 
           , ( "store"     , [Store Nothing])
-          , ( "store 0"   , [Store (Just (Literal 0))])
-          , ( "store 1"   , [Store (Just (Literal 1))])
+          , ( "store 0"   , [Store (Just 0)])
+          , ( "store 1"   , [Store (Just 1)])
 
           , ( "retrive"   , [Load Nothing])
-          , ( "retrive 0" , [Load (Just (Literal 0))])
-          , ( "retrive 1" , [Load (Just (Literal 1))])
+          , ( "retrive 0" , [Load (Just 0)])
+          , ( "retrive 1" , [Load (Just 1)])
           ] $ \(line , il) ->
       it line $ parseAssemblyText (toText line) `shouldSafe` il
 
@@ -124,17 +122,17 @@ spec = do
       it line $ parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with natural operand" $
-    forM_ [ ("push 0" , [Push (Literal 0)])
-          , ("push 1" , [Push (Literal 1)])
+    forM_ [ ("push 0" , [Push 0])
+          , ("push 1" , [Push 1])
           , ("test 0" , [Test 0])
           , ("test 1" , [Test 1])
           ] $ \(line , il) ->
       it line $ parseAssemblyText (toText line) `shouldSafe` il
 
   describe "Commands with other operand" $
-    forM_ [ ("pushs \"\""  , [PushS (Literal "")])
-          , ("pushs \"0\"" , [PushS (Literal "0")])
-          , ("pushs \"1\"" , [PushS (Literal "1")])
+    forM_ [ ("pushs \"\""  , [PushS ""])
+          , ("pushs \"0\"" , [PushS "0"])
+          , ("pushs \"1\"" , [PushS "1"])
           ] $ \(line , il) ->
       it line $ parseAssemblyText (toText line) `shouldSafe` il
 

@@ -1,9 +1,7 @@
 [ Mark "LOOP"
 , Dup
-, Push
-    ( Literal 0 )
-, Push
-    ( Literal 1 )
+, Push 0
+, Push 1
 , Sub Nothing
 , Sub Nothing
 , BranchNZ "WRITE"

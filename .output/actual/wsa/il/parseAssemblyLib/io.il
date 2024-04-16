@@ -8,8 +8,7 @@
 , Return
 , Mark "printsln"
 , Call "prints"
-, Push
-    ( Literal 10 )
+, Push 10
 , OutputChar
 , Return
 ]

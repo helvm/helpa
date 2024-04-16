@@ -3,13 +3,11 @@ module HelVM.HelPA.Assemblers.Frontend.WSA.TestData where
 import           HelVM.HelPA.Assemblers.Backend.WSA.Token
 import           HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
 
-import           HelVM.HelPA.Assembler.Value
-
 ioIL :: InstructionList
 ioIL =
   [Mark "prints",Dup,BranchZ "prints_end",OutputChar,Branch "prints"
   ,Mark "prints_end",Pop,Return
-  ,Mark "printsln",Call "prints",Push (Literal 10),OutputChar,Return
+  ,Mark "printsln",Call "prints",Push 10,OutputChar,Return
   ]
 
 ioTL :: TokenList
@@ -24,24 +22,24 @@ memoryIL :: InstructionList
 memoryIL =
   [Mark "memcopy"
   ,Mark "mem_copy"
-  ,Mark "mem_move",Push (Literal 3),Swap,Store Nothing,Push (Literal 2),Swap,Store Nothing,Push (Literal 1),Swap,Store Nothing,Load (Just (Literal 3)),BranchNP "memcopy_end"
-  ,Load (Just (Literal 1)),Load (Just (Literal 2)),Sub Nothing,BranchZ "memcopy_end"
-  ,Load (Just (Literal 1)),Load (Just (Literal 2)),Sub Nothing,BranchM "memcopy_loop_dest_greater_source_begin"
+  ,Mark "mem_move",Push 3,Swap,Store Nothing,Push 2,Swap,Store Nothing,Push 1,Swap,Store Nothing,Load (Just 3),BranchNP "memcopy_end"
+  ,Load (Just 1),Load (Just 2),Sub Nothing,BranchZ "memcopy_end"
+  ,Load (Just 1),Load (Just 2),Sub Nothing,BranchM "memcopy_loop_dest_greater_source_begin"
   ,Branch "memcopy_loop_source_greater_dest"
-  ,Mark "memcopy_loop_source_greater_dest",Push (Literal 2),Load Nothing,Push (Literal 1),Load Nothing,Load Nothing,Store Nothing,Push (Literal 2),Push (Literal 2),Load Nothing,Push (Literal 1),Add Nothing,Store Nothing,Push (Literal 1),Push (Literal 1),Load Nothing,Push (Literal 1),Add Nothing,Store Nothing,Push (Literal 3),Push (Literal 3),Load Nothing,Push (Literal 1),Sub Nothing,Store Nothing,Load (Just (Literal 3))
+  ,Mark "memcopy_loop_source_greater_dest",Push 2,Load Nothing,Push 1,Load Nothing,Load Nothing,Store Nothing,Push 2,Push 2,Load Nothing,Push 1,Add Nothing,Store Nothing,Push 1,Push 1,Load Nothing,Push 1,Add Nothing,Store Nothing,Push 3,Push 3,Load Nothing,Push 1,Sub Nothing,Store Nothing,Load (Just 3)
   ,BranchZ "memcopy_end"
   ,Branch "memcopy_loop_source_greater_dest"
-  ,Mark "memcopy_loop_dest_greater_source_begin",Push (Literal 2),Push (Literal 2),Load Nothing,Push (Literal 3),Load Nothing,Add Nothing,Push (Literal 1),Sub Nothing,Store Nothing,Push (Literal 1),Push (Literal 1),Load Nothing,Push (Literal 3),Load Nothing,Add Nothing,Push (Literal 1),Sub Nothing,Store Nothing
-  ,Mark "memcopy_loop_dest_greater_source",Push (Literal 2),Load Nothing,Push (Literal 1),Load Nothing,Load Nothing,Store Nothing,Push (Literal 2),Push (Literal 2),Load Nothing,Push (Literal 1),Sub Nothing,Store Nothing,Push (Literal 1),Push (Literal 1),Load Nothing,Push (Literal 1),Sub Nothing,Store Nothing,Push (Literal 3),Push (Literal 3),Load Nothing,Push (Literal 1),Sub Nothing,Store Nothing,Load (Just (Literal 3))
+  ,Mark "memcopy_loop_dest_greater_source_begin",Push 2,Push 2,Load Nothing,Push 3,Load Nothing,Add Nothing,Push 1,Sub Nothing,Store Nothing,Push 1,Push 1,Load Nothing,Push 3,Load Nothing,Add Nothing,Push 1,Sub Nothing,Store Nothing
+  ,Mark "memcopy_loop_dest_greater_source",Push 2,Load Nothing,Push 1,Load Nothing,Load Nothing,Store Nothing,Push 2,Push 2,Load Nothing,Push 1,Sub Nothing,Store Nothing,Push 1,Push 1,Load Nothing,Push 1,Sub Nothing,Store Nothing,Push 3,Push 3,Load Nothing,Push 1,Sub Nothing,Store Nothing,Load (Just 3)
   ,BranchZ "memcopy_end"
   ,Branch "memcopy_loop_dest_greater_source"
   ,Mark "memcopy_end",Return
   ,Mark "mem_zero"
   ,Mark "mem_zero_start",Dup,BranchZ "mem_zero_end"
-  ,Swap,Dup,Push (Literal 0),Store Nothing,Push (Literal 1),Add Nothing,Swap,Push (Literal 1),Sub Nothing,Branch "mem_zero_start"
+  ,Swap,Dup,Push 0,Store Nothing,Push 1,Add Nothing,Swap,Push 1,Sub Nothing,Branch "mem_zero_start"
   ,Mark "mem_zero_end",Pop,Pop,Return
-  ,Mark "numeriere",Push (Literal 2),Swap,Store Nothing,Push (Literal 1),Swap,Store Nothing,Push (Literal 1),Load Nothing
-  ,Mark "numeriere_start",Dup,Dup,Store Nothing,Push (Literal 1),Add Nothing,Dup,Push (Literal 2),Load Nothing,Sub Nothing
+  ,Mark "numeriere",Push 2,Swap,Store Nothing,Push 1,Swap,Store Nothing,Push 1,Load Nothing
+  ,Mark "numeriere_start",Dup,Dup,Store Nothing,Push 1,Add Nothing,Dup,Push 2,Load Nothing,Sub Nothing
   ,BranchZ "numeriere_end"
   ,Branch "numeriere_start"
   ,Mark "numeriere_end"
@@ -58,17 +56,17 @@ memoryWS = ""
 
 primIL :: InstructionList
 primIL =
-  [Mark "st",PushS (Literal "prim numbers [2-100]"),Call "printsln",Push (Literal 0)
-  ,Mark "f_start_1",Test 100,BranchZ "f_finished_1",Dup,Add (Just (Literal 100)),Push (Literal 1),Store Nothing,Add (Just (Literal 1)),Branch "f_start_1"
-  ,Mark "f_finished_1",Pop,Push (Literal 2)
-  ,Mark "f_start_2",Test 11,BranchZ "f_finished_2",Push (Literal 2)
+  [Mark "st",PushS "prim numbers [2-100]",Call "printsln",Push 0
+  ,Mark "f_start_1",Test 100,BranchZ "f_finished_1",Dup,Add (Just 100),Push 1,Store Nothing,Add (Just 1),Branch "f_start_1"
+  ,Mark "f_finished_1",Pop,Push 2
+  ,Mark "f_start_2",Test 11,BranchZ "f_finished_2",Push 2
   ,Mark "f_start_3",Test 100,BranchZ "f_finished_3"
-  ,Dup,Push (Literal 1),Swap,Store Nothing,Swap,Dup,Push (Literal 2),Swap,Store Nothing,Swap,Load (Just (Literal 1)),Load (Just (Literal 2)),Mul Nothing,Add (Just (Literal 100)),Push (Literal 0),Store Nothing,Add (Just (Literal 1)),Branch "f_start_3"
-  ,Mark "f_finished_3",Pop,Add (Just (Literal 1)),Branch "f_start_2"
-  ,Mark "f_finished_2",Pop,Push (Literal 2)
-  ,Mark "f_start_4",Test 100,BranchZ "f_finished_4",Dup,Add (Just (Literal 100)),Load Nothing,BranchZ "nodraw",Dup,OutputNum,PushS (Literal " "),Call "prints"
-  ,Mark "nodraw",Add (Just (Literal 1)),Branch "f_start_4"
-  ,Mark "f_finished_4",Pop,Push (Literal 0),Call "printsln",End
+  ,Dup,Push 1,Swap,Store Nothing,Swap,Dup,Push 2,Swap,Store Nothing,Swap,Load (Just 1),Load (Just 2),Mul Nothing,Add (Just 100),Push 0,Store Nothing,Add (Just 1),Branch "f_start_3"
+  ,Mark "f_finished_3",Pop,Add (Just 1),Branch "f_start_2"
+  ,Mark "f_finished_2",Pop,Push 2
+  ,Mark "f_start_4",Test 100,BranchZ "f_finished_4",Dup,Add (Just 100),Load Nothing,BranchZ "nodraw",Dup,OutputNum,PushS " ",Call "prints"
+  ,Mark "nodraw",Add (Just 1),Branch "f_start_4"
+  ,Mark "f_finished_4",Pop,Push 0,Call "printsln",End
   ]
 
 primTL :: TokenList

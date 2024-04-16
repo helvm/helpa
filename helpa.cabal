@@ -155,11 +155,14 @@ library
     HelVM.HelPA.Assemblers.Backend.WSA.Instruction
     HelVM.HelPA.Assemblers.Backend.WSA.Token
 
+    HelVM.HelPA.Assemblers.Common.Config
     HelVM.HelPA.Assemblers.Common.DSL
+    HelVM.HelPA.Assemblers.Common.Environment
 
     HelVM.HelPA.Assemblers.Frontend.EIR.AsmParser
     HelVM.HelPA.Assemblers.Frontend.EIR.DSL
     HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
+    HelVM.HelPA.Assemblers.Frontend.EIR.Reducer
 
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler

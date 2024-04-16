@@ -1,6 +1,5 @@
 [ Include "io"
-, PushS
-    ( Literal "Hello, world!" )
+, PushS "Hello, world!"
 , Call "printsln"
 , End
 ]

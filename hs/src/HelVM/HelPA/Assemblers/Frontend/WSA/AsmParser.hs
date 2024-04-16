@@ -5,7 +5,6 @@ module HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser (
 import           HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
 
 import           HelVM.HelPA.Assembler.AsmParserExtra
-import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 
@@ -57,7 +56,7 @@ maybeOperandInstructionParser =
   <|> parser Mod   "mod"
   <|> parser Store "store"
   <|> parser Load  "retrive"
-    where parser f t = f <$> (asciiCI t *> optional (Literal <$> (skip1HorizontalSpace *> integerParser)))
+    where parser f t = f <$> (asciiCI t *> optional (skip1HorizontalSpace *> integerParser))
 
 identifierOperandInstructionParser :: Parser Instruction
 identifierOperandInstructionParser =
@@ -78,10 +77,10 @@ testParser :: Parser Instruction
 testParser = Test <$> (asciiCI "test" *> skipHorizontalSpace *> integerParser)
 
 pushParser :: Parser Instruction
-pushParser = Push . Literal <$> (asciiCI "push" *> skip1HorizontalSpace *> integerParser)
+pushParser = Push <$> (asciiCI "push" *> skip1HorizontalSpace *> integerParser)
 
 pushSParser :: Parser Instruction
-pushSParser = PushS . Literal . fromString <$> (asciiCI "pushs" *> skipHorizontalSpace *> stringParser)
+pushSParser = PushS . fromString <$> (asciiCI "pushs" *> skipHorizontalSpace *> stringParser)
 
 ----
 

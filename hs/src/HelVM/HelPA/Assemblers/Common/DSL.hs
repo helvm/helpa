@@ -1,47 +1,43 @@
 module HelVM.HelPA.Assemblers.Common.DSL where
 
+import           HelVM.HelPA.Assemblers.Common.Config
+import           HelVM.HelPA.Assemblers.Common.Environment
+
 import           HelVM.HelPA.Assembler.Value
 
 import           Control.Monad.RWS.Lazy
 
-import qualified Data.ListLike               as LL
-
-newtype Register = R Text
+import qualified Data.ListLike                             as LL
 
 calculateLabel :: MonadDSL a m => m Identifier
 calculateLabel = do
-  label <- get
-  modify (+ 1)
-  pure $ show label
+  s <- get
+  modify nextTextLabelCount
+  pure $ show $ textLabelCount s
 
 calculateLocalLabel :: MonadDSL a m => Identifier -> m Identifier
 calculateLocalLabel label = do
-  suffix <- get
-  modify (+ 1)
-  pure $ label <> ":" <> show suffix
+  s <- get
+  modify nextTextLabelCount
+  pure $ label <> ":" <> show (textLabelCount s)
 
-acc :: Register
-acc = R ""
+temp0 :: Register
+temp0 = "temp0"
 
-acc1 :: Register
-acc1 = R "1"
-
-newtype Immediate = I Integer
+type Immediate = Integer
 
 unRegister :: Register -> Text
-unRegister (R n) = n
+unRegister n = n
 
 unImmediate :: Immediate -> Integer
-unImmediate (I i) = i
+unImmediate i = i
 
-type ImmediateORRegister = Either Immediate Register
+type ImmediateORRegister = IntegerValue
 
 dsl :: MonadDSL a m => a -> m ()
 dsl = tell . LL.singleton
 
-type Config = Natural
-
-type Environment = Natural
+type Register = Text
 
 type MonadDSL a m = MonadRWS Config [a] Environment m
 
