@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.1 -- 2024-04-16
+* Compile ELVM to WS
+
 ## 0.4.6.0 -- 2024-04-16
 * Add ELVM Parser
 
