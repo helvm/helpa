@@ -33,6 +33,7 @@ spec =
           , "bottles2"
           , "bottles3"
           , "euclid"
+          , "divmod"
           ] $ \fileName -> do
       let path = SourcePath {dirPath = easDir , filePath = buildAbsolutePathToEasFile fileName}
       let assemble = assembleFile path
