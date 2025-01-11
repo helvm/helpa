@@ -1,9 +1,8 @@
 module Main where
 
+import           Slow
 import qualified Spec
-import           Test.Hspec      (hspec)
-import           Test.Hspec.Slow
+import           Test.Hspec (hspec)
 
 main :: IO ()
-main = main' =<< configure 1 where
-  main' config = hspec $ timeThese config Spec.spec
+main = (hspec . flip timeThese Spec.spec) =<< configure 1
