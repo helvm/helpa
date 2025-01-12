@@ -237,6 +237,9 @@ test-suite helpa-test
     HelVM.HelPA.Assemblers.Frontend.EIR.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.EIR.FileExtra
 
+    HelVM.HelPA.Assemblers.Frontend.HPL.AsmParserSpec
+    HelVM.HelPA.Assemblers.Frontend.HPL.FileExtra
+
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.AssemblerSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.CodeGeneratorSpec

@@ -7,8 +7,8 @@ import           Data.Char
 import qualified Data.Text                                       as T
 import           Text.Parser.Combinators                         (between)
 
-parseHapyli :: Text -> Either String [Element]
-parseHapyli = parseOnly fileParser
+parseAssemblyText :: Text -> Either String [Element]
+parseAssemblyText = parseOnly fileParser
 
 fileParser :: Parser [Element]
 fileParser = many' (elementParser <* skipSpace)
