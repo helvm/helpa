@@ -181,6 +181,7 @@ library
     , filepath
     , ListLike
     , mtl
+    , parsers
     , split
     , type-operators
   ghc-options:
