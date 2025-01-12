@@ -5,6 +5,7 @@ import           HelVM.HelPA.Assemblers.Frontend.Piet.FileExtra
 import           HelVM.HelPA.Assemblers.Frontend.Piet.Instruction
 
 import           HelVM.HelPA.Assembler.Macro
+import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 
@@ -40,8 +41,8 @@ spec = do
 
   describe "Directive " $
     forM_ [ ("1"                           , PushInteger 1)
-          , ("2:"                          , Label (LNatural 2))
-          , ("_track_0:"                   , Label (LIdentifier "_track_0"))
+          , ("2:"                          , Label (Literal 2))
+          , ("_track_0:"                   , Label (Variable "_track_0"))
           , ("halt"                        , Halt)
           , (".track #1"                   , Track)
           , (".track #2"                   , Track)
@@ -68,8 +69,11 @@ spec = do
           , ("dup 8 sub bz.1b.pop"         , [Command Dup, Directive (PushInteger 8), Command Sub, Directive (Branch (Just Pop) (Just BZ) (BLNatural (Just Backward) 1) )])
           , (".btbl _track_1 _track_2\n"   , [Directive (BranchTable [BLIdentifier "_track_1", BLIdentifier "_track_2"])])
           , (".btbl _track_1\n0"           , [Directive (BranchTable [BLIdentifier "_track_1"]), Directive (PushInteger 0)])
-          , (".btbl _track_1\n0:"          , [Directive (BranchTable [BLIdentifier "_track_1"]), Directive (Label (LNatural 0))])
-          , ("0: \"Please\" b.entry"       , [Directive (Label (LNatural 0)), Directive (PushString "Please"), Directive (Branch Nothing Nothing (BLIdentifier "entry") )])
+          , (".btbl _track_1\n0:"          , [Directive (BranchTable [BLIdentifier "_track_1"]), Directive (Label (Literal 0))])
+          , (".btbl 0f\n"                  , [Directive (BranchTable [BLNatural (Just Forward) 0])])
+          , (".btbl 0f  \n"                , [Directive (BranchTable [BLNatural (Just Forward) 0])])
+          , (".btbl 0f 1f\n"               , [Directive (BranchTable [BLNatural (Just Forward) 0, BLNatural (Just Forward) 1])])
+          , ("0: \"Please\" b.entry"       , [Directive (Label (Literal 0)), Directive (PushString "Please"), Directive (Branch Nothing Nothing (BLIdentifier "entry") )])
           ] $ \(line , il) ->
       it line $ parseAssemblyText (toText line) `shouldSafe` (Micro <$> il)
 

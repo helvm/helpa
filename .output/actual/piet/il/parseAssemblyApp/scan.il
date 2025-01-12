@@ -2,7 +2,7 @@
     [ Micro
         ( Directive
             ( Label
-                ( LNatural 1 )
+                ( Literal 1 )
             )
         )
     , Micro ( Command In )
@@ -20,7 +20,7 @@
     , Micro
         ( Directive
             ( Label
-                ( LNatural 2 )
+                ( Literal 2 )
             )
         )
     , Micro ( Command In )
@@ -77,7 +77,7 @@
     , Micro
         ( Directive
             ( Label
-                ( LNatural 2 )
+                ( Literal 2 )
             )
         )
     , Micro ( Command Dup )
@@ -105,7 +105,7 @@
     , Micro
         ( Directive
             ( Label
-                ( LNatural 1 )
+                ( Literal 1 )
             )
         )
     ]

@@ -10,7 +10,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LIdentifier "entry" )
+            ( Variable "entry" )
         )
     )
 , Micro
@@ -31,13 +31,17 @@
 , Micro
     ( Directive
         ( BranchTable
-            [ BLNatural ( Just Forward ) 0 ]
+            [ BLNatural ( Just Forward ) 0
+            , BLNatural ( Just Forward ) 1
+            , BLNatural ( Just Forward ) 2
+            , BLNatural ( Just Forward ) 3
+            ]
         )
     )
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro
@@ -55,7 +59,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 1 )
+            ( Literal 1 )
         )
     )
 , Micro ( Command Pop )
@@ -72,7 +76,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 2 )
+            ( Literal 2 )
         )
     )
 , Micro ( Command Pop )
@@ -89,7 +93,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 3 )
+            ( Literal 3 )
         )
     )
 , Micro ( Command Pop )

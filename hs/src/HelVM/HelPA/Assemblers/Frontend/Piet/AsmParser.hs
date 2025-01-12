@@ -2,7 +2,11 @@ module HelVM.HelPA.Assemblers.Frontend.Piet.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.Piet.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParser.Mega
+--import           HelVM.HelPA.Assembler.AsmParser.Atto.Extra
+--import           HelVM.HelPA.Assembler.AsmParser.Atto.Parsers
+--import           HelVM.HelPA.Assembler.AsmParser.Atto.ValueParsers
+import           HelVM.HelPA.Assembler.AsmParser.Mega.Parsers
+import           HelVM.HelPA.Assembler.AsmParser.Mega.ValueParsers
 
 import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
@@ -11,22 +15,22 @@ import           HelVM.HelIO.CartesianProduct
 
 import           HelVM.HelIO.Control.Safe
 
-import           HelVM.HelIO.Extra                                (many1', showP)
+import           HelVM.HelIO.Extra                                 (many1', showP)
 
 import           Control.Type.Operator
 
-import           Text.Megaparsec                                  hiding (Label, many)
+--import           Data.Attoparsec.Text                              hiding (many1')
+import           Text.Megaparsec                                   hiding (Label, many)
 import           Text.Megaparsec.Char
-import qualified Text.Megaparsec.Char.Lexer                       as L
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
 parseAssemblyText = either (liftError . showP) pure . runParser (instructionListParser <* eof) "assembly"
 
 instructionListParser :: Parser InstructionList
-instructionListParser = spaceConsumer *> many (instructionParser <* spaceConsumer)
+instructionListParser = sc *> many (instructionParser <* sc)
 
 instructionList1Parser :: Parser $ NonEmpty Instruction
-instructionList1Parser = spaceConsumer *> many1' (instructionParser <* spaceConsumer)
+instructionList1Parser = sc *> many1' (instructionParser <* sc)
 
 instructionParser :: Parser Instruction
 instructionParser = choice
@@ -38,7 +42,7 @@ instructionParser = choice
 --
 
 defParser :: Parser Instruction
-defParser = def =<< (symbol "macro" *> instructionList1Parser <* symbol "def")
+defParser = def =<< (symbol sc "macro" *> instructionList1Parser <* symbol sc "def")
 
 def :: MonadFail f => NonEmpty Instruction -> f Instruction
 def i =  flip (Def []) (init i) <$> checkCall (last i) where
@@ -72,38 +76,32 @@ microInstructionParser =
 
 directiveParser :: Parser Directive
 directiveParser =
-      Label       <$> try labelParser
+      Label       <$> try naturalLabelParser
   <|> PushInteger <$> integerParser
-  <|> PushString  <$> stringLiteral
-  <|> Print       <$> (symbol "@" *> stringLiteral)
-  <|> BranchTable <$> (string ".btbl" *> branchLabelsParser  <* newline)
+  <|> PushString  <$> textParser
+  <|> Print       <$> (char '@' *> textParser)
+  <|> BranchTable <$> (string ".btbl" *> parseBranchLabels <* nlc <* sc)
   <|> branchParser
-  <|> symbolParser Track ".track"
-  <|> symbolParser Halt  "halt"
+  <|> symbolParser sc Track ".track"
+  <|> symbolParser sc Halt  "halt"
 
-branchLabelsParser :: Parser [BranchLabel]
-branchLabelsParser = parseBranchLabels =<< readTillNewline
-
-parseBranchLabels :: MonadFail m => Text -> m [BranchLabel]
-parseBranchLabels = either (fail . show) pure . runParser (many (hspace1 *> branchLabelParser)) "branch labels"
-
-readTillNewline :: Parser Text
-readTillNewline = toText <$> takeWhileP Nothing (/= '\n')
+parseBranchLabels :: Parser [BranchLabel]
+parseBranchLabels = many (try (skipHorizontalSpace *> branchLabelParser)) <* optional skipHorizontalSpace
 
 branchParser :: Parser Directive
 branchParser = branch
   <$> (preBranchParser *> optional branchConditionParser)
-  <*> (symbol "." *> branchLabelParser)
-  <*> optional (symbol "." *>  commandParser)
+  <*> (char '.' *> branchLabelParser')
+  <*> optional (char '.' *>  commandParser)
 
 branch :: Maybe BranchCondition-> BranchLabel -> Maybe Command -> Directive
 branch b l c = Branch c b l
 
 preBranchParser :: Parser Text
-preBranchParser = try $ symbols ["br" , "b"]
+preBranchParser = try $ symbols sc ["br" , "b"]
 
 commandParser :: Parser Command
-commandParser = symbolsParser
+commandParser = symbolsParser sc
   [ Push   >< "push"
   , Pop    >< "pop"
   , Add    >< "add"
@@ -123,13 +121,8 @@ commandParser = symbolsParser
   , Out    >< "out"
   ]
 
-labelParser :: Parser Label
-labelParser =
-      LIdentifier <$> (identifierParser <* symbol ":")
-  <|> LNatural    <$> (L.decimal <* symbol ":")
-
 branchConditionParser :: Parser BranchCondition
-branchConditionParser = symbolsParser
+branchConditionParser = symbolsParser sc
   [ BZ  >< "z"
   , BNZ >< "nz"
   , BGT >< "gt"
@@ -139,10 +132,32 @@ branchConditionParser = symbolsParser
 branchLabelParser :: Parser BranchLabel
 branchLabelParser =
       BLIdentifier   <$> identifierParser
-  <|> flip BLNatural <$> L.decimal <*> optional branchIdentifierDirectionParser
+  <|> flip BLNatural <$> naturalLiteralParser <*> optional branchIdentifierDirectionParser
 
 branchIdentifierDirectionParser :: Parser BranchIdentifierDirection
-branchIdentifierDirectionParser = symbolsParser
+branchIdentifierDirectionParser = choiceMap parser
+  [ Backward  >< 'b'
+  , Forward   >< 'f'
+  ] where parser (f , c) = f <$ char c
+
+branchLabelParser' :: Parser BranchLabel
+branchLabelParser' =
+      BLIdentifier   <$> identifierParser
+  <|> flip BLNatural <$> naturalLiteralParser <*> optional branchIdentifierDirectionParser'
+
+branchIdentifierDirectionParser' :: Parser BranchIdentifierDirection
+branchIdentifierDirectionParser' = symbolsParser sc
   [ Backward >< "b"
   , Forward  >< "f"
   ]
+
+--
+
+nlc :: Parser ()
+nlc = newlineConsumer commentPrefix
+
+sc :: Parser ()
+sc = spaceConsumer commentPrefix
+
+commentPrefix :: Text
+commentPrefix = "#"

@@ -69,7 +69,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 1 )
+            ( Literal 1 )
         )
     )
 , Micro
@@ -134,7 +134,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 1 )
+            ( Literal 1 )
         )
     )
 , Micro
@@ -150,7 +150,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro
@@ -164,7 +164,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 4 )
+            ( Literal 4 )
         )
     )
 , Call [] "print"
@@ -191,7 +191,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 3 )
+            ( Literal 3 )
         )
     )
 , Micro
@@ -212,7 +212,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 1 )
+            ( Literal 1 )
         )
     )
 , Micro

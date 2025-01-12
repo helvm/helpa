@@ -3,7 +3,7 @@
     , Micro
         ( Directive
             ( Label
-                ( LNatural 0 )
+                ( Literal 0 )
             )
         )
     , Micro
@@ -36,7 +36,7 @@
     , Micro
         ( Directive
             ( Label
-                ( LNatural 1 )
+                ( Literal 1 )
             )
         )
     ]

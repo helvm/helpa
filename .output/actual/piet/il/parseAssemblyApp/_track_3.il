@@ -10,7 +10,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 3 )
+            ( Literal 3 )
         )
     )
 , Call [] "print"
@@ -31,7 +31,9 @@
 , Micro
     ( Directive
         ( BranchTable
-            [ BLNatural ( Just Forward ) 0 ]
+            [ BLNatural ( Just Forward ) 0
+            , BLNatural ( Just Forward ) 4
+            ]
         )
     )
 , Micro ( Command Pop )
@@ -49,7 +51,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro
@@ -102,7 +104,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro ( Command Dup )
@@ -136,7 +138,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro
@@ -165,7 +167,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 0 )
+            ( Literal 0 )
         )
     )
 , Micro
@@ -182,7 +184,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 4 )
+            ( Literal 4 )
         )
     )
 , Micro ( Command Pop )

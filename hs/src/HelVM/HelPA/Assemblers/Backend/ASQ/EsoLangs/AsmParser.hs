@@ -6,7 +6,10 @@ import           HelVM.HelPA.Assemblers.Backend.ASQ.EsoLangs.Instruction
 
 import           HelVM.HelPA.Assemblers.Backend.ASQ.Util.AsmParser
 
-import           HelVM.HelPA.Assembler.AsmParser.Atto
+import           HelVM.HelPA.Assembler.AsmParser.Atto.Parsers
+import           HelVM.HelPA.Assembler.AsmParser.Atto.ValueParsers
+
+import           HelVM.HelPA.Assembler.AsmParser.Extra
 
 import           HelVM.HelIO.CartesianProduct
 

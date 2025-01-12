@@ -1,72 +1,28 @@
-module HelVM.HelPA.Assembler.AsmParser.Atto where
+module HelVM.HelPA.Assembler.AsmParser.Atto.Parsers where
 
-import           HelVM.HelPA.Assembler.Extra
+import           HelVM.HelPA.Assembler.AsmParser.Extra
+
 import           HelVM.HelPA.Assembler.Value
 
-import           HelVM.HelIO.ReadText
-
 import           HelVM.HelIO.CartesianProduct
-import           HelVM.HelIO.Control.Safe     hiding ((<?>))
-
-import           Control.Type.Operator
+import           HelVM.HelIO.ReadText
 
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
+import qualified Data.Attoparsec.Text                  as P
 
-import           Data.Char
-import qualified Data.Text                    as Text
+import qualified Data.Text                             as Text
 
-parseWholeText :: MonadSafe m => Parser () -> Parser a -> Text -> m [a]
-parseWholeText commentSign instructionParser = parseText (listParser commentSign instructionParser <* skipSpace <* endOfInput)
+symbolsParser :: Parser () -> [(a, Text)] -> Parser a
+symbolsParser sc = choice . (<$>) (uncurry $ symbolParser sc)
 
-parseFirstPartOfText :: MonadSafe m => Parser () -> Parser a -> Text -> m [a]
-parseFirstPartOfText commentSign instructionParser = parseText (listParser commentSign instructionParser <* skipSpace)
+symbolParser :: Parser () -> a -> Text -> Parser a
+symbolParser sc f = (<$) f . symbol sc
 
-parseText :: MonadSafe m => Parser a -> Text -> m a
-parseText p = liftEitherLegacy . parseOnly p
-
-listParser :: Parser () -> Parser a -> Parser [a]
-listParser commentSign instructionParser = catMaybes <$> many (maybeParser commentSign instructionParser)
-
-maybeParser :: Parser () -> Parser a -> Parser $ Maybe a
-maybeParser commentSign instructionParser = choice
-  [ Nothing <$ (skipSpace *> commentSign *> skipAllToEndOfLine)
-  , Just <$> (skipSpace *> instructionParser)
-  ]
+symbols :: Parser () -> [Text] -> Parser Text
+symbols sc l = choice $ symbol sc <$> l
 
 --
-
-zeroOperandParser :: Parser () -> a -> Text -> Parser a
-zeroOperandParser endWordParser i = mapLParser endWordParser (const i)
-
-mapLParser :: Parser a -> (a -> b) -> Text -> Parser b
-mapLParser = slipl mapParser
-
-mapParser :: (a -> b) -> Text -> Parser a -> Parser b
-mapParser f t p = f <$> (asciiCI t *> p)
-
---
-
-labelParser2 :: Parser NaturalValue
-labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
-
-signedOptIntegerDotOptValueParser :: Parser IntegerValue
-signedOptIntegerDotOptValueParser = Literal <$> signedOptIntegerParser <|> Variable <$> dotOptIdentifierParser
-
-signedOptIntegerValueParser :: Parser IntegerValue
-signedOptIntegerValueParser = variableParser signedOptIntegerParser
-
-signedIntegerValueParser :: Parser IntegerValue
-signedIntegerValueParser = variableParser signedIntegerParser
-
-integerValueParser2 :: Parser IntegerValue
-integerValueParser2 = variableParser integerParser2
-
-naturalValueParser :: Parser NaturalValue
-naturalValueParser = variableParser naturalParser
-
-variableParser :: Parser a -> Parser $ Value a
-variableParser p = Literal <$> p <|> Variable <$> identifierParser
 
 dotOptLabelParser :: Parser Identifier
 dotOptLabelParser = (Text.cons '.' <$> dotLabelParser) <|> labelParser
@@ -76,6 +32,9 @@ dotLabelParser = char '.' *> identifierParser <* char ':' <* skipHorizontalSpace
 
 labelParser :: Parser Identifier
 labelParser = identifierParser <* char ':' <* skipHorizontalSpace
+
+naturalLiteralLabelParser :: Parser Natural
+naturalLiteralLabelParser = naturalLiteralParser <* char ':' <* skipHorizontalSpace
 
 naturalParser :: Parser Natural
 naturalParser = naturalLiteralParser <|> ordCharLiteralParser
@@ -174,23 +133,38 @@ skipMany1EndLine = many1 (char '\n')
 asciiCIChoices :: [Text] -> Parser Text
 asciiCIChoices = choiceMap asciiCI
 
-choiceMap :: Alternative f => (a1 -> f a2) -> [a1] -> f a2
-choiceMap f l = choice $ f <$> l
-
 isNotEndOfLine :: Char -> Bool
 isNotEndOfLine = not . isEndOfLine
 
-isAlpha_ :: Char -> Bool
-isAlpha_ c = isAlpha c || '_' == c
+--
 
-isAlphaNum_ :: Char -> Bool
-isAlphaNum_ c = isAlphaNum c || '_' == c
+newlineConsumer :: Text -> Parser ()
+newlineConsumer = consumer skipNewLine
 
-isAlphaNumDot_ :: Char -> Bool
-isAlphaNumDot_ c = isAlphaNum_ c || '.' == c
+spaceConsumer :: Text -> Parser ()
+spaceConsumer = consumer skipSpace
 
-isPlusMinus :: Char -> Bool
-isPlusMinus c = '+' == c || '-' == c
+consumer :: Parser () -> Text -> Parser ()
+consumer sp prefix = skipMany $ choice [sp, skipLineComment prefix]
 
-unEscape :: String -> String
-unEscape s = readUnsafe $ "\"" <> s <> "\""
+skipLineComment :: Text -> Parser ()
+skipLineComment prefix = string prefix *> void (P.takeWhile (not . isNewline))
+
+--
+
+skipNewLine :: Parser ()
+skipNewLine = skip isNewline
+
+newline :: Parser Char
+newline = satisfy isNewline <?> "newline"
+
+--
+
+symbol :: Parser () -> Text -> Parser Text
+symbol spc = lexeme spc . string
+
+lexeme :: Applicative f => f b -> f a -> f a
+lexeme spc p = p <* spc
+
+choiceMap :: Alternative f => (a1 -> f a2) -> [a1] -> f a2
+choiceMap f l = choice $ f <$> l

@@ -1,7 +1,7 @@
 [ Micro
     ( Directive
         ( Label
-            ( LIdentifier "_track_0" )
+            ( Variable "_track_0" )
         )
     )
 , Micro ( Command Dup )

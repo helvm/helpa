@@ -5,7 +5,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LNatural 2 )
+            ( Literal 2 )
         )
     )
 , Micro ( Command Dup )
@@ -54,7 +54,7 @@
 , Micro
     ( Directive
         ( Label
-            ( LIdentifier "_track_0" )
+            ( Variable "_track_0" )
         )
     )
 , Micro

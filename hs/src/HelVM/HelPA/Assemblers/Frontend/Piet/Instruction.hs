@@ -11,7 +11,7 @@ data MicroInstruction = Directive Directive | Command Command
   deriving stock (Eq , Read , Show)
 
 data Directive =
-    Label Label
+    Label NaturalValue
   | Halt
   | Branch (Maybe Command) (Maybe BranchCondition) BranchLabel
   | BranchTable [BranchLabel]
@@ -19,11 +19,6 @@ data Directive =
   | PushString Text
   | Print Text
   | Track
-  deriving stock (Eq , Read , Show)
-
-data Label =
-    LIdentifier Identifier
-  | LNatural Natural
   deriving stock (Eq , Read , Show)
 
 data BranchCondition = BZ | BNZ | BGT | BLE

@@ -2,7 +2,10 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParser.Atto
+import           HelVM.HelPA.Assembler.AsmParser.Atto.Extra
+import           HelVM.HelPA.Assembler.AsmParser.Atto.Parsers
+import           HelVM.HelPA.Assembler.AsmParser.Atto.ValueParsers
+
 import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
 
@@ -11,8 +14,9 @@ import           HelVM.HelIO.CartesianProduct
 import           HelVM.HelIO.Control.Safe
 
 import           Control.Type.Operator
+
 import           Data.Attoparsec.Text
-import           Data.Char                                       hiding (Space)
+import           Data.Char                                         hiding (Space)
 import           Data.Function.Flip
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList

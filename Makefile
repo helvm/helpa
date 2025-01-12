@@ -68,7 +68,7 @@ sdist:
 
 stan:
 	./stan.sh
-	mv stan.html docs/reports
+	mv stan.html docs/reports/stan.html
 
 stylish:
 	#curl -sL https://raw.github.com/haskell/stylish-haskell/master/scripts/latest.sh | sh -s "-r -v -i hs"
