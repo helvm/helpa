@@ -1,0 +1,40 @@
+#Dim pc
+#Dim sp
+#Dim fib_0 fin_1
+#DIM result
+#Table stack
+
+--pop
+
+--push
+
+--call
+#BLOCK  tocall next
+  inc 1 sp
+  wtable sp stack next
+  set pc tocall 
+#ENDBLOCK
+
+--ret
+#BLOCK 
+  rtable sp stack pc 
+  dec 1 sp
+#ENDBLOCK
+
+UNEQ 0 pc
+  UNEQ 1 pc
+    
+    call 3 2
+    
+  END
+  UNEQ 2 pc
+
+    --print 
+    SET pc 0
+  END
+--fib 
+  UNEQ 3 pc
+
+    SET pc 0
+  END
+END

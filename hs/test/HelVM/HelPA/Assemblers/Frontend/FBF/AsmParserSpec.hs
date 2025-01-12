@@ -2,14 +2,10 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParserSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser
 import           HelVM.HelPA.Assemblers.Frontend.FBF.FileExtra
---import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
-
-import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 import           HelVM.HelIO.Extra
 
-import           HelVM.Expectations
 import           HelVM.GoldenExpectations
 
 import           System.FilePath.Posix

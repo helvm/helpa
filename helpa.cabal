@@ -146,6 +146,9 @@ library
     HelVM.HelPA.Assemblers.Backend.EAS.Linker
     HelVM.HelPA.Assemblers.Backend.EAS.Reducer
 
+    HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
+
     HelVM.HelPA.Assemblers.Backend.WSA.API.TokenType
 
     HelVM.HelPA.Assemblers.Backend.WSA.AssemblyOptions
@@ -174,6 +177,7 @@ library
   build-depends:
       helio
     , attoparsec
+    , composition-extra
     , containers
     , filepath
     , ListLike
