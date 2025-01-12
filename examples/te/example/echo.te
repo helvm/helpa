@@ -1,0 +1,10 @@
+	.include lib.te
+
+start:	.copy I X
+	.in X
+	.ifeq X I -1 next
+next:	.out X
+	.goto start
+
+	X:0 I:0
+

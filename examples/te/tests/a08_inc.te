@@ -1,0 +1,14 @@
+	.include lib.te
+
+	.out Y
+	.inc Y
+	.out Y
+	.inc Y
+	.out Y
+	.inc Y
+	.out Y
+
+	E:_Z -1
+
+	Y:66
+

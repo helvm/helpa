@@ -1,0 +1,10 @@
+	# FE
+	.include lib.te
+
+	.out X
+	.sub X Z X
+	.out X
+	_Z -1
+
+	X:70 Z:1
+

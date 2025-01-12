@@ -1,0 +1,8 @@
+	.include lib.te
+
+	.out H
+	.out i
+	0 -1
+
+	H:72 i:105
+

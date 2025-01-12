@@ -1,0 +1,10 @@
+	.include lib.te
+
+	.out Y
+	.copy X Y
+	.out Y
+
+	E:_Z -1
+
+	X:65 Y:66
+

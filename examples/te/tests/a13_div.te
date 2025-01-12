@@ -1,0 +1,18 @@
+	# <(2
+	.include lib.te
+
+	.div X Y2 Z R
+	.out Z
+
+	.div X Y3 Z R
+	.out Z
+
+	.div X Y70 Z R
+	.out R
+
+
+	_Z -1
+
+	X:120 Y2:2
+	Z:0 R:0
+	Y70:70 Y3:3

@@ -1,0 +1,13 @@
+	.include lib.te
+
+	.copy X Y
+	.out Y
+	.rollR Y
+	.out Y
+	.rollL Y
+	.out Y
+
+	E:_Z -1
+
+	X:111 Y:66
+

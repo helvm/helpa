@@ -1,0 +1,7 @@
+	.include lib.te
+
+	.out X
+	E:_Z -1
+
+	X:88
+

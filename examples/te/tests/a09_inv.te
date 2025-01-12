@@ -1,0 +1,19 @@
+	# F9FF
+	.include lib.te
+
+	.out Y
+	.inv Y
+	.set0 Y 7
+	.out Y
+	.inv Y
+	.set0 Y 7
+	.out Y
+
+	.inv Y
+	.inv Y
+	.out Y
+
+	E:_Z -1
+
+	Y:70
+

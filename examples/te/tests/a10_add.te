@@ -1,0 +1,12 @@
+	# FP
+	.include lib.te
+
+	.out Z
+	.add X Y Z
+	.out Z
+
+	E:_Z -1
+
+	X:10 Y:70
+	Z:70
+

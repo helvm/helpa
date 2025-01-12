@@ -1,0 +1,16 @@
+
+	.include lib.te
+
+	#-3 7?; .set0 R 0; .goto 5?; .set1 R 0
+	#-3 7?; .set0 R 1; .goto 5?; .set1 R 1
+
+	#.add R X0 R
+	.in R
+	.out R
+	0 -1
+
+	X0:48 X1:49
+	R:0
+
+
+

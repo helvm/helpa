@@ -1,0 +1,28 @@
+	.include lib.te
+
+start:	.deref p X
+	.testH X next back1
+next:	.out X
+	.next p
+	.goto start
+
+back1:	.prev p
+back2:	.prev p
+	.deref p X
+	.testH X out end
+out:	.out X
+	.goto back2
+
+end:	.out EOL
+	0 -1
+
+	p:H X:0
+	-1 H:72 
+	101 108 
+	108 111 
+	44 32 
+	87 111 
+	114 108 
+	100 33 
+	EOL:10 -1
+

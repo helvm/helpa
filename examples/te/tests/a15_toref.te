@@ -1,0 +1,19 @@
+	# HH
+
+	.include lib.te
+
+	.out X
+	.toref H P
+	.out X
+
+	.out A
+	.deref P A
+	.out A
+
+	0 -1
+
+	H:72 A:65
+	X:65  P:X
+
+
+

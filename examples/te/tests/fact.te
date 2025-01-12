@@ -1,0 +1,16 @@
+	.include lib.te
+
+start:	.prn X
+	.mul X Y Y
+	.out ex
+	.out eq
+	.prn Y
+	.out eol
+	.inc X
+
+	.ifeq X TH -1 start
+
+	X:1 Y:1
+	ex:33 eol:10 
+	eq:61 TH:10
+

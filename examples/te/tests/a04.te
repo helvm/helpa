@@ -1,0 +1,15 @@
+	.include lib.te
+
+	.out X
+	.set1 X 1
+	.out X
+	.set0 X 0
+	.out X
+
+	.copyb X 1 X 0
+	.out X
+
+	E:_Z -1
+
+	X:65
+
