@@ -1,0 +1,14 @@
+#DIM pc
+SET pc 1
+
+-- preambua
+UNEQ 0 pc
+  UNEQ 1 pc
+    MSG Hello
+    SET pc 2
+  END
+  UNEQ 2 pc
+    MSG World!
+    SET pc 0
+  END
+END

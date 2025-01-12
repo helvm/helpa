@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.3 -- 2025-01-19
+* Implement `fbf` parser
+
 ## 0.4.6.2 -- 2025-01-12
 * Add `te` examples
 * Add `bbj` examples

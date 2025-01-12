@@ -104,7 +104,7 @@ uneq stones 0
 		line
 		line
 		ifeq stones 0
-			msg HAHAHAHAHAHAHAHAHA!!! I WON! LOOOOOOOSSSEEEEERRRRRRRRRRRRRRRRR..........			
+			msg HAHAHAHAHAHAHAHAHA!!! I WON! LOOOOOOOSSSEEEEERRRRRRRRRRRRRRRRR..........
 			line
 		end
 		set humanturn 2
@@ -138,7 +138,7 @@ uneq stones 0
 			line
 		end
 		ifeq stones 0
-			msg Oh shit... You won... Stupid cheater...			
+			msg Oh shit... You won... Stupid cheater...
 			line
 		end
 		line
