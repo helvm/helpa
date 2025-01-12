@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.6.1
+version:               0.4.6.2
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -206,6 +206,7 @@ test-suite helpa-test
   other-modules:
     Slow
     Spec
+    SpecHook
 
     HelVM.Expectations
     HelVM.GoldenExpectations
