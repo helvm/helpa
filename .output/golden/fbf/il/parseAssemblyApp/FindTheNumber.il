@@ -35,8 +35,10 @@
 , Code
     ( Read "temp" )
 , Code
-    ( UnEq
-        ( Variable "high" ) "low" []
+    ( Call "uneq"
+        [ Variable "low"
+        , Variable "high"
+        ]
     )
 , Code
     ( Sub
@@ -109,40 +111,51 @@
 , Code
     ( Read "temp2" )
 , Code
-    ( IfEq
-        ( Literal 49 ) "temp" []
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 49
+        ]
     )
 , Code
     ( Copy "guess" "low" )
 , Code
     ( Copy "low" "high" )
-, Code End
 , Code
-    ( IfEq
-        ( Literal 50 ) "temp" []
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 50
+        ]
     )
 , Code
     ( Copy "guess" "high" )
 , Code
     ( Dec 1 "high" )
-, Code End
 , Code
-    ( IfEq
-        ( Literal 51 ) "temp" []
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 51
+        ]
     )
 , Code
     ( Copy "guess" "low" )
 , Code
     ( Inc 1 "low" )
-, Code End
+, Code
+    ( Call "end" [] )
 , Code
     ( Comp
         ( Variable "low" )
         ( Variable "high" ) "temp"
     )
 , Code
-    ( IfEq
-        ( Literal 1 ) "temp" []
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 1
+        ]
     )
 , Code
     ( Msg
@@ -167,7 +180,9 @@
 , Code
     ( Msg [ "." ] )
 , Code Line
-, Code End
+, Code
+    ( Call "end" [] )
 , Code Line
-, Code End
+, Code
+    ( Call "end" [] )
 ]

@@ -2,7 +2,8 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParserExtra.Atto
+
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
@@ -61,7 +62,7 @@ zeroOperandCompilerParser :: Parser CompilerInstruction
 zeroOperandCompilerParser =
       parser Echo "#echo"
   <|> parser ByteCells "#bytecells"
-  <|> parser EndBlock "#endblock"
+--  <|> parser EndBlock "#endblock"
     where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
@@ -80,14 +81,10 @@ dimParser :: Parser CompilerInstruction
 dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser)
 
 blockCompilerParser :: Parser CompilerInstruction
-blockCompilerParser = lift2 block a b where
+blockCompilerParser = lift3 Block a b c where
   a = asciiCI "#block" *> skipHorizontalSpace *> identifierParser
   b = skipHorizontalSpace *> identifiersParser
---  c = instructionListParser
-    -- <* skipSpace <* asciiCI "#endblock"
-
-block :: Identifier ->  [Identifier] -> CompilerInstruction
-block a b = Block a b []
+  c = instructionListParser <* skipHorizontalSpace <* asciiCI "#endblock" <* endWordParser
 
 --
 
@@ -97,7 +94,7 @@ zeroOperandCodeParser =
   <|> parser Line "line"
   <|> parser Space "space"
   <|> parser Tab "tab"
-  <|> parser End "end"
+--  <|> parser End "end"
   <|> parser Rem "rem"
     where parser i t = i <$ (asciiCI t *> endWordParser)
 
@@ -171,14 +168,10 @@ eqCodeParser =
   <|> parser IfEq "ifeq"
   <|> parser IfNotEq "ifnoteq"
     where
-      parser f t = lift2 (flip (eqBlock f)) (a t) b
+      parser f t = lift3 (flip f) (a t) b c
       a t = asciiCI t *> skip1HorizontalSpace *> identifierParser
       b = skip1HorizontalSpace *> integerValueParser2
---      c = instructionListParser
-       -- <* skipSpace <* asciiCI "end"
-
-eqBlock :: (IntegerValue -> Identifier -> InstructionList -> CodeInstruction) -> IntegerValue ->  Identifier -> CodeInstruction
-eqBlock f a b = f a b []
+      c = instructionListParser <* skipHorizontalSpace <* asciiCI "end" <* endWordParser
 
 byte2AsciiCodeParser :: Parser CodeInstruction
 byte2AsciiCodeParser =

@@ -1,6 +1,6 @@
 module HelVM.HelPA.Assemblers.Backend.ASQ.Util.AsmParser where
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParserExtra.Atto
 
 import           Data.Attoparsec.Text
 

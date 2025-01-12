@@ -13,8 +13,10 @@
 , Compiler
     ( Table 256 "stack" )
 , Code
-    ( UnEq
-        ( Literal 1 ) "stop" []
+    ( Call "uneq"
+        [ Variable "stop"
+        , Literal 1
+        ]
     )
 , Code
     ( CopySize "stack" "a" )
@@ -40,15 +42,20 @@
 , Code
     ( Set 0 "found" )
 , Code
-    ( IfEq
-        ( Literal 10 ) "temp" []
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 10
+        ]
     )
 , Code
     ( Inc 1 "stop" )
-, Code End
 , Code
-    ( IfEq
-        ( Literal 32 ) "temp" []
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 32
+        ]
     )
 , Code
     ( Inc 1 "found" )
@@ -64,15 +71,20 @@
         , "1"
         ]
     )
-, Code End
 , Code
-    ( IfEq
-        ( Literal 0 ) "found" []
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "found"
+        , Literal 0
+        ]
     )
 , Code
     ( Push
         ( Variable "stack" ) "temp"
     )
-, Code End
-, Code End
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
 ]

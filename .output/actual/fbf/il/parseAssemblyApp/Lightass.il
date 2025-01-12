@@ -52,8 +52,10 @@
 , Code
     ( Copy "seed" "temp" )
 , Code
-    ( UnEq
-        ( Literal 1 ) "exit" []
+    ( Call "uneq"
+        [ Variable "exit"
+        , Literal 1
+        ]
     )
 , Code
     ( Read "char" )
@@ -63,8 +65,10 @@
         ( Variable "char" ) "temp"
     )
 , Code
-    ( IfEq
-        ( Literal 10 ) "char" []
+    ( Call "ifeq"
+        [ Variable "char"
+        , Literal 10
+        ]
     )
 , Code
     ( Mod
@@ -77,19 +81,25 @@
         ( Literal 3 ) "temp"
     )
 , Code
-    ( IfEq
-        ( Literal 2 ) "temp" []
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 2
+        ]
     )
 , Code
     ( Msg [ "Yes." ] )
-, Code End
 , Code
-    ( IfNotEq
-        ( Literal 2 ) "temp" []
+    ( Call "end" [] )
+, Code
+    ( Call "ifnoteq"
+        [ Variable "temp"
+        , Literal 2
+        ]
     )
 , Code
     ( Msg [ "No." ] )
-, Code End
+, Code
+    ( Call "end" [] )
 , Code Line
 , Code
     ( Copy "seed" "temp" )
@@ -101,6 +111,8 @@
         ]
     )
 , Code Line
-, Code End
-, Code End
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
 ]

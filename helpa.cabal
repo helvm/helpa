@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.6.5
+version:               0.4.6.6
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -105,12 +105,14 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.HelPA.Assembler.AsmParserExtra
     HelVM.HelPA.Assembler.Extra
     HelVM.HelPA.Assembler.Value
 
     HelVM.HelPA.Assembler.API.Separator
     HelVM.HelPA.Assembler.API.SourcePath
+
+    HelVM.HelPA.Assembler.AsmParserExtra.Atto
+    HelVM.HelPA.Assembler.AsmParserExtra.Mega
 
     HelVM.HelPA.Assembler.IO.BusinessIO
 
@@ -185,6 +187,7 @@ library
     , containers
     , filepath
     , ListLike
+    , megaparsec
     , mtl
     , split
     , type-operators
@@ -247,8 +250,6 @@ test-suite helpa-test
 
     HelVM.HelPA.Assemblers.Frontend.SblAsm.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.SblAsm.FileExtra
-
-    HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
 
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.WSA.AssemblerSpec

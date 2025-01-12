@@ -41,8 +41,10 @@
 , Code
     ( Read "temp" )
 , Code
-    ( UnEq
-        ( Literal 10 ) "temp" []
+    ( Call "uneq"
+        [ Variable "temp"
+        , Literal 10
+        ]
     )
 , Code
     ( Inc 1 "tot" )
@@ -53,7 +55,8 @@
     )
 , Code
     ( Read "temp" )
-, Code End
+, Code
+    ( Call "end" [] )
 , Code
     ( Msg
         [ "Wait"
@@ -70,8 +73,10 @@
 , Code
     ( Copy "tot" "lastchange" )
 , Code
-    ( UnEq
-        ( Literal 0 ) "lastchange" []
+    ( Call "uneq"
+        [ Variable "lastchange"
+        , Literal 0
+        ]
     )
 , Code
     ( Inc 1 "times" )
@@ -81,8 +86,10 @@
 , Code
     ( Inc 1 "tot" )
 , Code
-    ( UnEq
-        ( Variable "tot" ) "subcur" []
+    ( Call "uneq"
+        [ Variable "subcur"
+        , Variable "tot"
+        ]
     )
 , Code
     ( RTable
@@ -92,7 +99,8 @@
     ( Print [ "temp" ] )
 , Code
     ( Inc 1 "subcur" )
-, Code End
+, Code
+    ( Call "end" [] )
 , Code
     ( Dec 1 "tot" )
 , Code
@@ -102,8 +110,10 @@
 , Code
     ( Set 0 "lastchange" )
 , Code
-    ( UnEq
-        ( Variable "templastchange" ) "cur" []
+    ( Call "uneq"
+        [ Variable "cur"
+        , Variable "templastchange"
+        ]
     )
 , Code
     ( RTable
@@ -121,8 +131,10 @@
         ( Variable "temp2" ) "compres"
     )
 , Code
-    ( IfEq
-        ( Literal 0 ) "compres" []
+    ( Call "ifeq"
+        [ Variable "compres"
+        , Literal 0
+        ]
     )
 , Code
     ( Copy "cur" "lastchange" )
@@ -140,9 +152,12 @@
     )
 , Code
     ( Inc 1 "cur" )
-, Code End
-, Code End
-, Code End
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
 , Code
     ( Set 1 "cur" )
 , Code

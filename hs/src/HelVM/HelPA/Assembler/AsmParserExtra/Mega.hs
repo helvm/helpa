@@ -1,15 +1,17 @@
-module HelVM.HelPA.Assembler.AsmParserExtra where
+module HelVM.HelPA.Assembler.AsmParserExtra.Mega where
 
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
-import           Control.Applicative.HT
-import           Data.Attoparsec.Combinator
-import           Data.Attoparsec.Text
+import           Text.Megaparsec             hiding (many, some)
+import           Text.Megaparsec.Char
+import           Text.Megaparsec.Char.Lexer  hiding (space)
 
 import           Data.Char
 import qualified Data.Text                   as Text
+
+type Parser = Parsec Void Text
 
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
@@ -60,7 +62,7 @@ signedOptIntegerLiteralParser :: Parser Integer
 signedOptIntegerLiteralParser = signedIntegerLiteralParser <|> integerLiteralParser
 
 signedIntegerLiteralParser :: Parser Integer
-signedIntegerLiteralParser = signed integerLiteralParser
+signedIntegerLiteralParser = signed space integerLiteralParser
 
 integerLiteralParser :: Parser Integer
 integerLiteralParser = readUnsafe <$> many1 digit
@@ -109,10 +111,10 @@ dotIdentifierParser :: Parser Identifier
 dotIdentifierParser = char '.' *> identifierParser <* skipHorizontalSpace
 
 identifierParser :: Parser Identifier
-identifierParser = toIdentifier <$> lift2 (:) letter_ (many alphaNum_)
+identifierParser = toIdentifier <$> liftA2 (:) letter_ (many alphaNum_)
 
 fileNameParser :: Parser Identifier
-fileNameParser = toIdentifier <$> lift2 (:) letter (many alphaNumDot_)
+fileNameParser = toIdentifier <$> liftA2 (:) letter (many alphaNumDot_)
 
 letter_ :: Parser Char
 letter_ = satisfy isAlpha_ <?> "letter_"
@@ -128,8 +130,8 @@ skipAllToEndOfLine = skipWhile isNotEndOfLine
 
 ----
 
-asciiCIChoices :: [Text] -> Parser Text
-asciiCIChoices = choice . map asciiCI
+chunkChoices :: [Text] -> Parser Text
+chunkChoices = choice . map chunk
 
 isNotEndOfLine :: Char -> Bool
 isNotEndOfLine = not . isEndOfLine
@@ -148,3 +150,29 @@ isPlusMinus c = '+' == c || '-' == c
 
 unEscape :: String -> String
 unEscape s = readUnsafe $ "\"" <> s <> "\""
+
+----
+
+isHorizontalSpace :: Char -> Bool
+isHorizontalSpace c = c == ' ' || c == '\t'
+
+isEndOfLine :: Char -> Bool
+isEndOfLine c = c == '\n' || c == '\r'
+
+skipWhile :: (Char -> Bool) -> Parser ()
+skipWhile predicate = void $ takeWhileP Nothing predicate
+
+letter :: Parser Char
+letter = satisfy isLetter <?> "letter"
+
+notChar :: Char -> Parser Char
+notChar c = satisfy (/= c) <?> "any character except " <> show c
+
+anyChar :: Parser Char
+anyChar = satisfy (const True) <?> "any character"
+
+digit :: Parser Char
+digit = digitChar
+
+many1 :: Parser a -> Parser [a]
+many1 = some
