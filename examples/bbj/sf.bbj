@@ -1,0 +1,41 @@
+       # BitBitJump Self-Interpreter
+       # oleg 2009
+
+       Z0:0 Z1:0 start
+       .include lib.bbj
+
+       :heap:0 0 0
+       ip:heap prog:heap x:0
+
+       .def map X offset Y
+       .testH X no yes
+ yes:  .copy X Y
+       0 0 ret
+ no:   .add X offset Y
+ ret:  0 0
+       .end
+
+       # move pointers to program
+ start:.add ip BASE ip
+       .add ip BASE ip
+       .add ip BASE ip
+       .add prog BASE prog
+       .add prog BASE prog
+       .add prog BASE prog
+
+       # load 2 operands
+ loop: .deref ip x
+       .map x prog i1
+       .add ip BASE ip
+       .deref ip x
+       .map x prog i2
+
+       # execute instruction
+       i1:0 i2:0
+
+       # load and do jump operand
+       .add ip BASE ip
+       .deref ip x
+       .map x prog ip
+       .testH ip loop -1
+

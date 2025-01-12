@@ -1,0 +1,9 @@
+	Z0:0 Z1:0
+
+	.out H
+	.out i
+	0 0 -1
+
+	H:72 i:105
+
+	.include lib.bbj

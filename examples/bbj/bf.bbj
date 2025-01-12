@@ -1,0 +1,183 @@
+	# BitBitJump brainfuck (DBFI) interpreter
+	# oleg 2009
+
+	Z0:0 Z1:0 start
+	.include lib.bbj
+
+	# define infinite memory and
+	# instantiate at the end
+	:mem:0 0 0
+	mem mem
+
+	# global variables
+	ip_start:mem ip:mem ip_end:0
+	mp_start:0 mp:0 mp_end:0
+
+	x:0 y:0 m1:-1  
+	SPACE:32 MINUS:45 PLUS:43
+	TICK:39 EOL:10 Excl:33
+	LEFT:60 RIGHT:62 LB:91 
+	RB:93 DOT:46 COMMA:44
+
+	# start code section
+	# read bf program
+start:	.copy ZERO x
+	.in x
+	.ifeq x ZERO initgl chkex
+chkex:	.ifeq x Excl initgl storei
+storei:	.toref x ip
+	.add ip BASE ip
+	0 0 start
+
+	# bf program loaded - init globals
+initgl:	.copy ip ip_end
+	.copy ip mp_start
+	.copy ip mp
+	.copy ip mp_end
+	.add mp_end BASE mp_end
+	.copy ip_start ip
+	# 1st memory cell is set to 0
+
+loop:	0 0
+	.deref ip x
+
+	.ifeq x PLUS plus chk_ms
+plus:	.plus
+	0 0 next_ip
+
+chk_ms: .ifeq x MINUS minus chk_lt
+minus:	.minus
+	0 0 next_ip
+
+chk_lt:	.ifeq x LEFT left chk_rt
+left:	.left
+	0 0 next_ip
+
+chk_rt: .ifeq x RIGHT right chk_dt
+right:	.right
+	0 0 next_ip
+
+chk_dt: .ifeq x DOT dot chk_cm
+dot:	.deref mp x
+	.out x
+	0 0 next_ip
+
+chk_cm: .ifeq x COMMA comma chk_lb
+comma:	.copy ZERO x
+	.in x
+	.toref x mp
+	0 0 next_ip
+
+chk_lb: .ifeq x LB lb chk_rb
+lb:	.lb
+	0 0 next_ip
+
+chk_rb: .ifeq x RB rb next_ip
+rb:	.rb
+	0 0 next_ip
+
+next_ip: 0 0 
+	# uncomment this line for debugging
+	# .dump
+	.add ip BASE ip
+	.ifeq ip ip_end exit loop
+
+exit:	0 0 -1
+	# end of code section
+
+	# definitions
+
+	.def plus : mp x
+	.deref mp x
+	.inc x
+	.toref x mp
+	.end
+
+
+	.def minus : mp x
+	.deref mp x
+	.dec x
+	.toref x mp
+	.end
+
+
+	.def right : mp BASE mp_end x ZERO
+	.add mp BASE mp
+	.iflt mp mp_end ret incend
+incend: .add mp_end BASE mp_end
+	.copy ZERO x
+	.toref x mp
+ret:	0 0
+	.end
+
+
+	.def left : mp BASE
+	.sub mp BASE mp
+	.end
+
+
+	.def lb : ip mp x y ZERO ONE BASE LB RB
+	.deref mp x
+	.ifeq x ZERO gort ret
+gort:	.copy ONE y
+loop:	.add ip BASE ip
+	.deref ip cmd
+	.ifeq cmd LB incy chk_rb
+chk_rb: .ifeq cmd RB decy loop
+
+incy:	.inc y
+	0 0 loop
+
+decy:	.dec y
+	.iflt ZERO y loop ret
+
+	cmd:0 0
+ret:	0 0
+	.end
+
+
+	.def rb : ip mp x y ZERO ONE BASE LB RB
+	.deref mp x
+	.ifeq x ZERO ret golt
+golt:	.copy ONE y
+loop:	.sub ip BASE ip
+	.deref ip cmd
+	.ifeq cmd RB incy chk_lb
+chk_lb: .ifeq cmd LB decy loop
+
+incy:	.inc y
+	0 0 loop
+
+decy:	.dec y
+	.iflt ZERO y loop ret
+
+	cmd:0 0
+ret:	0 0
+	.end
+
+
+	.def dump : ip_start x y BASE ip_end mp_start mp_end SPACE ip mp TICK EOL
+	
+	# dump i
+	.copy ip_start y
+dumpi:	.deref y x
+	.out x
+	.ifeq y ip outi noi
+outi:	.out TICK
+noi:	.add y BASE y
+	.ifeq y ip_end dumpmst dumpi
+
+	# dump m
+dumpmst: 0 0
+	.copy mp_start y
+dumpm:	.deref y x
+	.out SPACE
+	.ifeq y mp outm nom
+outm:	.out TICK
+nom:	.prn x
+	.add y BASE y
+	.ifeq y mp_end ret dumpm
+
+ret: 	.out EOL
+	.end
+

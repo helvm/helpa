@@ -1,0 +1,17 @@
+       # print string in reverse order
+       Z0:0 Z1:0 start
+       .include lib.bbj
+       :mem:0 0 0
+       m0:mem m:mem
+       x:0 Z:0 m1:-1
+ start: .copy m1 x
+       .in x
+       .ifeq x m1 next store
+ store: .toref x m
+       .out x
+       .add m BASE m
+       0 0 start
+ next: .sub m BASE m
+       .deref m x
+       .out x
+       .ifeq m m0 -1 next
