@@ -1,32 +1,32 @@
 module HelVM.HelPA.Assemblers.Frontend.EIR.FileExtra (
-  buildAbsolutePathToWsaFile,
+  buildAbsolutePathToBfFile,
   buildAbsolutePathToIlFile,
   libDir,
   appDir,
-  wsaDir,
+  langDir,
   dir,
   lang,
 ) where
 
 import           System.FilePath.Posix
 
-buildAbsolutePathToWsaFile :: FilePath -> FilePath
-buildAbsolutePathToWsaFile fileName = lang </> "wsa" </> fileName <.> "wsa"
+buildAbsolutePathToBfFile :: FilePath -> FilePath
+buildAbsolutePathToBfFile fileName = lang </> "bf" </> fileName <.> "bf"
 
 buildAbsolutePathToIlFile :: FilePath -> FilePath
 buildAbsolutePathToIlFile fileName = lang </> "il" </> fileName <.> "il"
 
 libDir :: FilePath
-libDir = wsaDir </> "libs"
+libDir = langDir </> "libs"
 
 appDir :: FilePath
-appDir = wsaDir </> "apps"
+appDir = langDir </> "apps"
 
-wsaDir :: FilePath
-wsaDir = dir </> lang
+langDir :: FilePath
+langDir = dir </> lang
 
 dir :: FilePath
 dir = "examples"
 
 lang :: FilePath
-lang = "eir"
+lang = "fbf"
