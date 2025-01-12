@@ -1,0 +1,55 @@
+#linebreaks 80
+#dim low high guess temp temp2 temp3
+
+msg Think of a number between 1 and 100. And press any key when ready.
+
+set low 1
+set high 100
+
+read temp
+
+uneq low high
+	sub high low guess
+	div guess 2 guess
+	add low guess guess
+	
+	byte2ascii guess temp temp2 temp3
+	
+	msg My guess is
+	space
+	print temp temp2 temp3
+	msg .
+	line
+	msg 1. Correct!
+	line
+	msg 2. Smaller than the hidden number.
+	line
+	msg 3. Bigger than the hidden number.
+	line
+
+	read temp
+	read temp2	
+	ifeq temp '1'
+		copy guess low
+		copy low high
+	end
+	ifeq temp '2'
+		copy guess high
+		dec high 1
+	end
+	ifeq temp '3'
+		copy guess low
+		inc low 1
+	end
+
+	comp low high temp
+	ifeq temp 1
+		msg I found it! It's
+		space
+		byte2ascii low temp temp2 temp3
+		print temp temp2 temp3
+		msg .
+		line
+	end
+	line
+end

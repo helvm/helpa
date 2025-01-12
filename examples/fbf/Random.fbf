@@ -1,0 +1,78 @@
+-- This program produces random bytes and counts how many times each byte is produced. When one of the bytes has been produced 100 times the program prints how many times each byte has been produced and exits. This program has been written for FBF 1.5.0. The random number generator I used is very complex. ;-)
+
+#dim i j temp run
+#dim random curplace
+#dim fliptemp fliptemp2
+#linebreaks 80
+#bytecells
+#table pairs 256
+#table totals 256
+
+#block createtable
+	set i 255
+	uneq i 0
+		wtable pairs i i
+		dec i 1
+	end
+	wtable pairs i i
+#endblock
+
+#block advancerandom
+	multi random random temp
+	inc random 7
+	multi temp random temp
+	inc temp 1
+	multi random temp random
+	add random curplace random
+	rtable pairs random random
+#endblock
+
+
+#block flip flip_initial flip_final
+	rtable pairs flip_initial fliptemp
+	rtable pairs flip_final fliptemp2
+	wtable pairs flip_initial fliptemp2
+	wtable pairs flip_final fliptemp
+#endblock	
+
+
+createtable
+
+read random
+
+set run 1
+uneq run 0
+	add temp random temp
+	advancerandom
+	flip random curplace
+	inc curplace 1
+	advancerandom
+	add temp random temp
+	rtable totals random temp
+	inc temp 1
+	wtable totals random temp
+	ifeq temp 100
+		set run 0
+	end
+	msg .
+end
+
+line
+set run 0
+byte2ascii run i j temp
+print i j temp
+space
+rtable totals i temp
+byte2ascii temp i j temp
+print i j temp
+line
+uneq run 255
+	byte2ascii run i j temp
+	print i j temp
+	space
+	rtable totals run temp
+	byte2ascii temp i j temp
+	print i j temp
+	line
+	inc run 1
+end

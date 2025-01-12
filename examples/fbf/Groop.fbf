@@ -1,0 +1,425 @@
+-- Groop is a simple text adventure game written in FBF by Tritonio. Written for FBF v1.0
+#linebreaks 80
+#dim room
+#dim oldroom
+#dim has_green
+#dim has_sword
+#dim has_red
+#dim playing
+#dim temp
+
+set playing 1
+set room 1
+
+line
+line
+line
+msg Welcome to Groop.
+line
+msg This game was written in FBF and then compiled to brainfuck with the FBF compiler by Tritonio. This is just a demo version.
+line
+msg You must get out before the come for you!
+line
+
+uneq playing 0
+
+ifeq room 0
+line
+msg *** MENU ***
+line
+msg 1. Exit Game
+line
+msg 2. Continue Game
+line
+ifnoteq has_red 0
+	msg You have a red key.
+	line
+end
+ifnoteq has_green 0
+	msg You have a green key.
+	line
+end
+ifnoteq has_sword 0
+	msg You have a sword.
+	line
+end
+read temp
+dec temp 48
+ifeq temp 1
+	set playing 0
+end
+ifeq temp 2
+	copy oldroom room
+end
+ifeq temp 8
+	read room
+	dec room 48
+end
+end
+
+ifeq room 1
+line
+msg You are in the entrance room of an old house. The huge door to the south is jammed. There is a door to the north and one more to the east.
+line
+msg 1. Go north through the door.
+line
+msg 2. Go east through the door.
+line
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	set room 9
+	msg You went north.
+end
+ifeq temp 2
+	set room 6
+	msg You went east.
+end
+line
+end
+
+ifeq room 2
+line
+msg You are in a kitchen. There is a very small closet to the west. There is a door to the east.
+line
+msg 1. Open the closet.
+line
+msg 2. Go east through the door.
+line
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	ifeq has_green 1
+		msg There is nothing more in the closet.
+	end
+	ifeq has_green 0
+		set has_green 1
+		msg You found a rusty green key in the closet! You took it.
+	end
+end
+ifeq temp 2
+	set room 9
+	msg You went east.
+end
+line
+end
+
+ifeq room 3
+line
+ifeq has_red 1
+	msg You are in a small cellar. There are wine bottles everywhere.
+	line
+	msg 1. Go north through the door.
+	line
+	msg 0. Menu
+	line
+	line
+	read temp
+	dec temp 48
+	ifeq temp 0
+		copy room oldroom
+		set room 0
+	end
+	ifeq temp 1
+		set room 7
+		msg You went north.
+	end
+end
+ifeq has_red 0
+	msg You are in a small cellar. There are wine bottles everywhere. There is something in one of the bottles.
+	line
+	msg 1. Go north through the door.
+	line
+	msg 2. Break the bottle.
+	line
+	msg 0. Menu
+	line
+	line
+	read temp
+	dec temp 48
+	ifeq temp 0
+		copy room oldroom
+		set room 0
+	end
+	ifeq temp 1
+		set room 7
+		msg You went north.
+	end
+	ifeq temp 2
+		msg You broke the bottle and found a red key! You took it!
+		set has_red 1
+	end
+end
+line
+end
+
+ifeq room 4
+line
+msg You are in the servants bedroom. There is a door to the west and a blue one to the east.
+line
+msg 1. Go east through the door.
+line
+msg 2. Go west through the door.
+line
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	set room 6
+	msg You went east.
+end
+ifeq temp 2
+	set room 9
+	msg You went west.
+end
+line
+end
+
+ifeq room 5
+line
+ifeq has_sword 0
+	msg You are in the back yard. A guard sees you. You try to run but he strikes you with his sword. You fall dead.
+end
+ifeq has_sword 1
+	msg You are in the back yard. A guard sees you. He tries to hit you but you defend with your sword and fight back. You finally beat the guard. Congratulations! You are free now! Thank you for playing
+end
+line
+set playing 0
+end
+
+ifeq room 6
+line
+ifeq has_green 0
+	msg You are in a huge bedroom. There are two doors to the west: a blue one and a small wooden door. There is also a locked door on the floor.
+	line
+	msg 1. Go west through the blue door.
+	line
+	msg 2. Go west through the small wooden door.
+	line
+	msg 0. Menu
+	line
+	line
+	read temp
+	dec temp 48
+	ifeq temp 0
+		copy room oldroom
+		set room 0
+	end
+	ifeq temp 1
+		set room 4
+		msg You went west through the blue door.
+	end
+	ifeq temp 2
+		set room 1
+		msg You went west through a small wooden door.
+	end
+end
+ifeq has_green 2
+	msg You are in a huge bedroom. There are two doors to the west: a blue one and a small wooden door. There is also a door on the floor.
+	line
+	msg 1. Go west through the blue door.
+	line
+	msg 2. Go west through the small wooden door.
+	line
+	msg 3. Go down through the floor door.
+	line
+	msg 0. Menu
+	line
+	line
+	read temp
+	dec temp 48
+	ifeq temp 0
+		copy room oldroom
+		set room 0
+	end
+	ifeq temp 1
+		set room 4
+		msg You went west through the blue door.
+	end
+	ifeq temp 2
+		set room 1
+		msg You went west through a small wooden door.
+	end
+	ifeq temp 3
+		set room 7
+		msg You went down.
+	end
+end
+
+ifeq has_green 1
+	msg You are in a huge bedroom. There are two doors to the west: a blue one and a small wooden door. There is also a locked door on the floor.
+	line
+	msg 1. Go west through the blue door.
+	line
+	msg 2. Go west through the small wooden door.
+	line
+	msg 3. Unlock the floor door.
+	line
+	msg 0. Menu
+	line
+	line
+	read temp
+	dec temp 48
+	ifeq temp 0
+		copy room oldroom
+		set room 0
+	end
+	ifeq temp 1
+		set room 4
+		msg You went west through the blue door.
+	end
+	ifeq temp 2
+		set room 1
+		msg You went west through a small wooden door.
+	end
+	ifeq temp 3
+		set has_green 2
+		msg You unlocked the door on the floor!
+	end
+end
+line
+end
+
+ifeq room 7
+line
+msg You are in a dark room. There are doors to the west, to the east and to the south.
+line
+msg 1. Go east through the door.
+line
+msg 2. Go west through the door.
+line
+msg 3. Go south through the door.
+line
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	ifeq has_red 0
+		msg You can't! It's locked!
+	end
+	ifeq has_red 1
+		msg You unlocked the door! You went east.
+		set room 8
+	end
+end
+ifeq temp 2
+	set room 6
+	msg You went west.
+end
+ifeq temp 3
+	set room 3
+	msg You went south.
+end
+line
+end
+
+ifeq room 8
+line
+msg There is a table in this room. You can hear whispers. There is a door to the west.
+ifeq has_sword 0
+	msg  There is a long sword on a table.
+end
+line
+msg 1. Go west through the door.
+line
+msg 2. Look behind you!
+line
+ifeq has_sword 0
+	msg 3. Take the sword.
+	line
+end
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	set room 7
+	msg You ran out of this room!
+end
+ifeq temp 2
+	msg You see no one. Don't be such a wimp...
+end
+ifeq temp 3
+	ifeq has_sword 0
+		msg You take the sword! It glows blue in your hands!
+		set has_sword 1
+	end
+end
+line
+end
+
+ifeq room 9
+line
+msg You are in a hallway. There are four doors. One in each direction.
+line
+msg 1. Go west.
+line
+msg 2. Go north.
+line
+msg 3. Go east.
+line
+msg 4. Go south.
+line
+msg 0. Menu
+line
+line
+read temp
+dec temp 48
+ifeq temp 0
+	copy room oldroom
+	set room 0
+end
+ifeq temp 1
+	set room 2
+	msg You went west.
+end
+ifeq temp 2
+	msg You went north.
+	set room 5
+end
+ifeq temp 3
+	set room 4
+	msg You went east.
+end
+ifeq temp 4
+	set room 1
+	msg You went south.
+end
+line
+end
+
+end
+
+msg Bye Bye!
+line

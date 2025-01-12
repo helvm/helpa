@@ -1,0 +1,35 @@
+-- Written for FBF version 1.4.0. It is port of a program which I originally wrote in Visual Basic. You may check my website for more information. Go to the old programs section.
+#dim exit char seed temp
+#linebreaks 80
+
+msg Welcome to Brainfuck Lightass!
+line
+msg To download the original Lightass visit: http://students.ceid.upatras.gr
+line
+line
+msg Give the plot character:
+read seed
+line
+
+msg Give me question.
+line
+copy seed temp
+
+uneq exit 1
+	read char
+	add temp char temp
+	ifeq char 10
+		mod temp 10 temp
+		comp temp 3 temp
+		ifeq temp 2
+			msg Yes.
+		end
+		ifnoteq temp 2
+			msg No.
+		end
+		line
+		copy seed temp
+		msg Give me question.
+		line
+	end
+end

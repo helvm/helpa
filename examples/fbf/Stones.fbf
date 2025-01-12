@@ -1,0 +1,154 @@
+-- Stones is a logic game written in FBF by Tritonio. Written for FBF v1.0
+#linebreaks 80
+#dim stones
+#dim humanturn
+#dim a
+#dim b
+#dim c
+#dim max
+#dim maxplusone
+#dim drawstone
+
+
+line
+msg How many stones will we have initially? Write a number smaller than 256 and then press enter.
+line
+
+read stones
+dec stones 48
+read a
+ifnoteq a 10
+	multi stones 10 stones
+	dec a 48
+	add stones a stones
+	read a
+	ifnoteq a 10
+		multi stones 10 stones
+		dec a 48
+		add stones a stones
+		read a
+	end
+end
+
+line
+msg How many stones will we be allowed to draw per turn? Write a number between 1 and 9.
+line
+read max
+dec max 48
+add max 1 maxplusone
+
+line
+line
+msg Shall I go first? (y/n)
+line
+read a
+ifeq a 'n'
+	set humanturn 1
+end
+
+line
+line
+
+uneq stones 0
+	
+	msg Stones:
+	space
+	copy stones drawstone
+	uneq drawstone 0
+		msg O
+		dec drawstone 1
+	end
+	space
+	msg =
+	space
+	div stones 100 a
+	mod stones 100 b
+	mod b 10 c
+	div b 10 b
+	inc a 48
+	inc b 48
+	inc c 48
+	ifnoteq a 48
+		print a
+	end
+	ifeq b 48
+		ifnoteq a 48
+			print b
+		end
+	end
+	ifnoteq b 48
+		print b
+	end
+	print c
+	line
+
+	ifeq humanturn 0
+		mod stones maxplusone a
+		ifeq a 0
+			set a 1
+		end
+
+		sub stones a stones
+		msg I will draw
+		space
+		inc a 48
+		print a
+		space
+		dec a 48
+		ifeq a 1
+			msg stone.
+		end
+		ifnoteq a 1
+			msg stones.
+		end
+		line
+		line
+		ifeq stones 0
+			msg HAHAHAHAHAHAHAHAHA!!! I WON! LOOOOOOOSSSEEEEERRRRRRRRRRRRRRRRR..........			
+			line
+		end
+		set humanturn 2
+	end
+	ifeq humanturn 1
+		msg How many stones will you draw?
+		line
+		read a
+		line
+		dec a 48
+		comp stones a b
+		comp a max c
+		ifeq a 0
+			msg You must take at least one stone!
+			line
+		end
+		ifnoteq a 0
+			ifnoteq b 2
+				ifeq c 0
+					msg You cannot take that many stones!
+					line
+				end
+				ifnoteq c 0
+					sub stones a stones
+					set humanturn 0
+				end
+			end
+		end
+		ifeq b 2
+			msg Yeah sure...
+			line
+		end
+		ifeq stones 0
+			msg Oh shit... You won... Stupid cheater...			
+			line
+		end
+		line
+	end
+	ifeq humanturn 2
+		set humanturn 1
+	end
+
+end
+
+line
+msg This program was written in FBF by Tritonio. http://students.ceid.upatras.gr/~asimakis/FBF.html
+line

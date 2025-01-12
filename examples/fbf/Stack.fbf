@@ -1,0 +1,32 @@
+-- a simple program to demonstrate the stack capabilities of FBF. It pushes every character the user types into a table. If the user presses space it will pop and print a character and then wait for any key before clearing it from the screen and continue asking for characters. While it waits for a character it will print the size of the stack, that is how many characters are stored. Written for FBF 1.7
+#linebreaks 80
+#dim stop temp found a b c
+#table stack 256
+
+uneq stop 1
+
+	copysize stack a
+	byte2ascii a a b c
+	print a b c
+
+	read temp
+	msgclear 3
+	
+	set found 0
+	
+	ifeq temp 10
+		inc stop 1
+	end
+	
+	ifeq temp 32
+		inc found 1
+		pop stack temp
+		print temp
+		read temp
+		msgclear 1
+	end
+	
+	ifeq found 0
+		push stack temp
+	end
+end

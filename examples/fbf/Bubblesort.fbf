@@ -1,0 +1,62 @@
+-- Bubblesort program. Written for FBF v1.1
+#linebreaks 80
+#dim tot cur subcur temp lastchange templastchange temp2 compres times temp3
+#table mem 256
+
+line
+msg OK give me a sentence and then press enter. I cannot hold more than 256 letters
+line
+read temp
+uneq temp 10
+	inc tot 1
+	wtable mem tot temp
+	read temp
+end
+msg Wait while I bubble-sort the characters...
+line
+inc cur 1
+copy tot lastchange
+uneq lastchange 0
+        inc times 1
+	line
+	set subcur 1
+	inc tot 1
+	uneq subcur tot
+		rtable mem subcur temp
+		print temp
+		inc subcur 1
+	end
+	dec tot 1
+	set cur 1
+	copy lastchange templastchange
+	set lastchange 0
+	uneq cur templastchange
+		rtable mem cur temp
+		inc cur 1
+	        rtable mem cur temp2
+		comp temp temp2 compres
+		ifeq compres 0
+			copy cur lastchange
+			wtable mem cur temp
+			dec cur 1
+			wtable mem cur temp2
+			inc cur 1
+		end
+	end
+end
+set cur 1
+inc tot 1
+line
+msg Finished! It took me
+space
+BYTE2ASCII times temp temp2 temp3
+print temp temp2 temp3
+space
+msg itterations. While the sentence was
+space
+dec tot 1
+BYTE2ASCII tot temp temp2 temp3
+print temp temp2 temp3
+space
+msg characters long.
+line
