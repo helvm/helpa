@@ -1,0 +1,14 @@
+import "stdlib/base.hpl"
+
+def f () = 42       ; You can declare "constant functions" too! Literals are 
+                    ; no different than any other expressions. 
+
+def main () = 
+    let
+        a = 65      ; a, b, and c all equal the same value. 
+        b = 0x41
+        c = 'A'
+    in
+        (do (print-number a) (print-char '\n')
+            (print-number b) (print-char '\n')
+            (print-number c) (print-char '\n'))

@@ -1,0 +1,41 @@
+import "stdlib/base.hpl"
+
+var *A = 123
+var *B = (1 2 3)
+var *C = "ABC"
+var *D = ('A' 'B' 'C' '\0')
+var *E(10)
+
+def print-A () =
+    (do (print-number (ref *A)) (print-char '\n'))
+    
+def print-B () = 
+    (do (print-number (ref *B 0)) (print-char ' ')
+        (print-number (ref *B 1)) (print-char ' ')
+        (print-number (ref *B 2)) (print-char '\n'))
+        
+def print-C () = (do (print-string *C) (print-char '\n'))
+
+def print-D () = (do (print-string *D) (print-char '\n'))
+
+def fill (*array size fromIndex value) =
+    (if (== fromIndex size)
+        0
+        (do (set *array fromIndex value)
+            (fill *array size (+ fromIndex 1) value)))
+    
+def print-array (*array size fromIndex) = 
+    (if (== fromIndex size)
+        (print-char '\n')
+        (do (print-number (ref *array fromIndex))
+            (print-char ' ')
+            (print-array *array size (+ fromIndex 1))))
+    
+def main () = 
+    (do (print-A)
+        (print-B)
+        (print-C)
+        (print-D)
+        (fill *E 10 0 5)
+        (print-array *E 10 0))        
+        

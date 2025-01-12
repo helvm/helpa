@@ -1,0 +1,7 @@
+import "stdlib/base.hpl"
+
+def f (a b) = (print-string "Two Parameters")
+
+def f (a b c) = (print-string "Three Parameters")
+
+def main() = (f 1 2 3)

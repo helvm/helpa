@@ -1,0 +1,24 @@
+import "stdlib/base.hpl"
+
+def f () = (print-string "Hello!\n")
+def f (*msg) = (print-string *msg)
+
+asm main () = 
+    let 
+        *msg = "Goodbye!\n"
+    in
+    (
+                    ; f~0 accepts no arguments.
+        call f~0    ; Call f~0
+        pop         ; Pop the return value of f~0
+        
+                    ; f~1 accepts 1 argument.
+        copy 0      ; Pass in *msg. 
+        call f~1    ; Call f~1 
+        pop         ; Pop the return value of f~1
+        
+        pop         ; Pop parameters and local variables
+                    ; (just *msg in this case). 
+        
+        push 0      ; Push a return value.
+    )

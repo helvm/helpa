@@ -1,0 +1,7 @@
+import "stdlib/base.hpl"
+
+def main () = 
+    (do (print-string "Hello, ")
+        (print-string "world!\n")
+        (print-string "Testing\n")
+        (print-string "... and so on... \n"))

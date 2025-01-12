@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Functions - The HaPyLi Programming Language</title>
+<link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+<h1>The HaPyLi Programming Language</h1>
+
+<div id="menu">
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li>
+            <b>Tutorial</b>
+            <ol>
+                <li><b>Functions</b></li>
+                <li><a href="expressions.html">Expressions</a></li>
+                <li><a href="variables.html">Variables and the Heap</a></li>
+                <li><a href="assembler.html">Embedding Whitespace</a></li>
+            </ol>
+        </li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><a href="https://github.com/wspace/cybis-hapyli">GitHub</a></li>
+    </ul>
+</div>
+
+<div id="content">
+
+    <h2>Section 1: Functions</h2>
+    <div>
+
+        <h3>Hello World</h3>
+        <div>
+        
+            <p>Let's start with a simple "hello world" application 
+            to illustrate the HaPyLi syntax.</p>
+               
+            <hr>
+<pre>
+    <a href="hello.hpl">File: hello.hpl</a>
+    
+        import "stdlib/base.hpl"
+        
+        def main() = (print-string "Hello, world!")
+
+        ; Program comments are denoted by the semi-colon character,
+        ; just as in LISP. 
+</pre>        
+            <hr>
+
+                    
+                
+            <p>All programs must define a "main" function (lower case) with zero parameters.
+            The body of any function consists of just a single expression.
+            In the above example, "print-string" is an imported function of one parameter.</p>
+                
+            <p>Function names may contain any of the following characters:<br>
+            <ul>
+                <li><pre>~ ! @ # $ % ^ & * \ - _ + \ | : , < . > / ?</pre></li>
+                <li>any digit</li>
+                <li>any letter</li>
+            </ul>
+            </p>
+
+        </div>
+            
+        <h3>Power</h3>
+        <div>
+
+            <p>The next example defines a recursive function which accepts two 
+            arguments "x" and "y" and returns the value of "x" raised to the 
+            power of "y". (Yes, this is a bad example because 'power' goes into
+            an infinite loop if "y" is less than 1). Notice that there are no 
+            commas between function parameters.</p>
+                
+            <hr>
+<pre>
+    <a href="power1.hpl">File: power1.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def power(x y) = 
+            (if (== y 1)
+                x
+                (* x (power x (- y 1))))
+
+        def main() = (print-number (power 2 10))
+</pre>
+            <hr>
+            
+        </div>
+        
+        <h3>Local Variables / Let Forms</h3>
+        <div>
+            
+            <p>Any function can contain one let-form before the main body
+            to define local variables.</p>
+                
+            <hr>
+<pre>
+    <a href="power2.hpl">File: power2.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def power(x y) = 
+            (if (== y 1)
+                x
+                (* x (power x (- y 1))))
+
+        def main() = 
+            let 
+                x = (read-number)
+                y = (read-number)
+            in
+                (print-number (power x y))
+</pre>
+            <hr>
+                
+        </div>   
+        
+        <h3>Function Overloading</h3>
+        <div>
+
+            <p>HaPyLi does support a limited form of function overloading. 
+            Two functions are considered unique if they have either different
+            names or if they accept different numbers of parameters.</p>
+                
+            <hr>
+<pre>
+    <a href="params.hpl">File: params.hpl</a>
+    
+        import "stdlib/base.hpl"
+    
+        def f (a b) = (print-string "Two Parameters")
+    
+        def f (a b c) = (print-string "Three Parameters")
+    
+        def main() = (f 1 2 3)
+</pre>
+            <hr>
+                
+        </div>
+        
+        <h3>Inline Functions</h3>
+        <div>
+
+            <p>Due to the nature of the Whitespace virtual machine, ordinary
+            function calls are extremely inefficient. For each "call" instruction
+            in your program, Whitespace will search through every instruction in 
+            the entire program to find the appropriate label to jump to. To avoid
+            this overhead, you may define functions to be inlined. Calls to inlined
+            functions do not emit a "call" instruction, but are instead replaced
+            by a copy of the entire function's body. The only restriction is that
+            inlined functions cannot be recursive.</p>
+                
+            <p>I don't know of any method by which to determine whether a function
+            should be inlined or not. Inlining a function will definitely increase
+            the compiled program's size, so it may either increase or decrease
+            overall performance.</p>
+                
+            <hr>
+<pre>
+    <a href="inline.hpl">File: inline.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        ; Because "sum" is marked as inline, calling it 
+        ; is no different than calling '+' directly. 
+        ; They will compile exactly the same.
+
+        def inline sum (a b) = (+ a b)
+
+        def main () = (print-number (sum 1 2))
+</pre>
+            <hr>
+                
+        </div>
+        
+        <h3>Function Parameters and Return Values</h3>
+        <div>
+
+            <p>Arguments to a function are always passed by value and every function
+            returns exactly one value. Furthermore, a function's parameters and local
+            variables are read-only. The values stored within them cannot be changed
+            during the function's execution. These limitations can be overcome, however, 
+            by defining global variables or allocating arrays on heap memory and 
+            passing/returning pointers to these arrays. These techniques are discussed
+            later.</p>
+
+        </div>
+        
+    </div>
+    
+</div>
+
+<div id="footer">
+    <p>Copyright ©2010</p>
+</div>
+</body>
+</html>
+

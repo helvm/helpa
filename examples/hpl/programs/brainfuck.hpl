@@ -1,0 +1,74 @@
+import "stdlib/base.hpl"
+
+def read-pgm(*buffer) =
+    (if (== (read-char *buffer) '!')
+        (set *buffer 0)
+        (++ (read-pgm (++ *buffer))))
+
+def inline read-pgm() = (alloc (++ (read-pgm (ref 0))))
+
+var mp = 0 
+var memsize = 0
+
+def inline getmem(addr) = (ref (ref 0) addr)
+def inline setmem(addr val) = (set (ref 0) addr val)
+
+def inline left() = (set mp (-- (ref mp)))
+def inline right() = (do
+    (set mp (++ (ref mp)))
+    (if (>= (ref mp) (ref memsize))
+        (do (set memsize (++ (ref memsize)))
+            (setmem (ref mp) 0))
+        0))
+
+def inline inc() = (setmem (ref mp) (++ (getmem (ref mp))))
+def inline dec() = (setmem (ref mp) (-- (getmem (ref mp))))
+def inline inp() = (setmem (ref mp) (read-char))
+def inline out() = (print-char (getmem (ref mp)))
+
+var program = 0 
+var ip = 0
+
+def inline readpgm() = (set program (read-pgm))
+
+def loopahead(depth) = 
+    let curchr = (ref (ref program) (++ (ref ip)))
+    in (if (== depth 0) 
+           0
+           (do (set ip (++ (ref ip)))
+               (if (== curchr '[') (loopahead (++ depth))
+               (if (== curchr ']') (loopahead (-- depth))
+                                   (loopahead depth)))))
+
+def loopback(depth) =
+    let curchr = (ref (ref program) (-- (ref ip)))
+    in (if (== depth 0)
+           0
+           (do (set ip (-- (ref ip)))
+               (if (== curchr '[') (loopback (-- depth))
+               (if (== curchr ']') (loopback (++ depth))
+                                   (loopback depth)))))
+
+
+def inline step() =
+    let curchr = (ref (ref program) (ref ip))
+    in (do 
+         (if (== curchr '+') (inc)
+         (if (== curchr '-') (dec)
+         (if (== curchr '>') (right)
+         (if (== curchr '<') (left)
+         (if (== curchr '.') (out)
+         (if (== curchr ',') (inp)
+         (if (and (== curchr '[') (== 0 (getmem (ref mp)))) (loopahead 1)
+         (if (and (== curchr ']') (!= 0 (getmem (ref mp)))) (loopback 1)
+         (if (== curchr 0) (end)
+             0))))))))))
+
+def run() = (do
+    (step)
+    (set ip (++ (ref ip)))
+    (run))
+
+def main() = (do
+    (readpgm)
+    (run))

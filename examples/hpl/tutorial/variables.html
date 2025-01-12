@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Variables and the Heap - The HaPyLi Programming Language</title>
+<link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+<h1>The HaPyLi Programming Language</h1>
+
+<div id="menu">
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li>
+            <b>Tutorial</b>
+            <ol>
+                <li><a href="functions.html">Functions</a></li>
+                <li><a href="expressions.html">Expressions</a></li>
+                <li><b>Variables and the Heap</b></li>
+                <li><a href="assembler.html">Embedding Whitespace</a></li>
+            </ol>
+        </li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><a href="https://github.com/wspace/cybis-hapyli">GitHub</a></li>
+    </ul>
+</div>
+
+<div id="content">
+
+    <h2>Section 3: Variables and the Heap</h2>
+    <div>
+
+        <h3>Global Variables</h3>
+        <div>
+           
+            <p>Function parameters and local variables defined in let-forms are 
+            allocated on the Whitespace stack. Whitespace, however, also provides
+            access to random-access heap memory. HaPyLi uses this heap for strings
+            and global variables.</p>
+
+               
+            <hr>
+<pre>
+    <a href="globals.hpl">File: globals.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        var *A = 123
+        var *B = (1 2 3)
+        var *C = "ABC"
+        var *D = ('A' 'B' 'C' '\0')
+        var *E(10)
+
+        def print-A () =
+            (do (print-number (ref *A)) (print-char '\n'))
+            
+        def print-B () = 
+            (do (print-number (ref *B 0)) (print-char ' ')
+                (print-number (ref *B 1)) (print-char ' ')
+                (print-number (ref *B 2)) (print-char '\n'))
+                
+        def print-C () = (do (print-string *C) (print-char '\n'))
+
+        def print-D () = (do (print-string *D) (print-char '\n'))
+
+        def fill (*array size fromIndex value) =
+            (if (== fromIndex size)
+                0
+                (do (set *array fromIndex value)
+                    (fill *array size (+ fromIndex 1) value)))
+            
+        def print-array (*array size fromIndex) = 
+            (if (== fromIndex size)
+                (print-char '\n')
+                (do (print-number (ref *array fromIndex))
+                    (print-char ' ')
+                    (print-array *array size (+ fromIndex 1))))
+            
+        def main () = 
+            (do (print-A)
+                (print-B)
+                (print-C)
+                (print-D)
+                (fill *E 10 0 5)
+                (print-array *E 10 0))        
+
+</pre>        
+            <hr>
+
+            <p>The example above illustrates every type of global variable you can define
+            in HaPyLi and how to read and write to them. The '*' on each variable name isn't 
+            anything special - any identifier can contain this character. It is a naming convention 
+            I use to distinguish pointers from other kinds of variables. All global variables are 
+            pointers to data in the heap. To read from these variables, you must use the "ref" function
+            defined in the HaPyLi Standard Library. Likewise, to write to these variables you must use
+            the "set" function.</p>
+                
+            <p>"ref" accepts a pointer to an array and an index and returns the data stored at
+            that index within the array. (ref *X 0) is equivalent to (ref *X).</p>
+
+            <p>Likewise, "set" accepts a pointer to an array, an index, and a value, and writes that value
+            to the array at the index. (set *array 0 value) is equivalent to (set *variable value).</p>
+
+            <p>You must be extremely careful, however, because HaPyLi doesn't provide any bounds checking
+            when reading from or writing to arrays. Writing beyond the end of an array may actually write 
+            to a different variable instead. Reading beyond the end of an array, from an address that's 
+            never been written to, could actually crash the Whitespace interpreter.</p>
+
+        </div>
+        
+        <h3>Local Variables as Pointers</h3>
+        <div>
+
+            <p>The HaPyLi Standard Library defines the "alloc" function which is similar to the "malloc"
+            function in C. It accepts a single parameter indicating the size of the array to allocate
+            and returns a pointer to that array.</p>
+
+            <p>While C provides both "malloc" and "free", there is no equivalent to "free" in HaPyLi. 
+            Sorry, I never wrote one. The HaPyLi Standard Library is unfinished. You can write your 
+            own, however, if it's so important to you. I'll explain everything you need to know in order
+            to do that in the next section. For now, here are examples of "alloc".</p>
+
+            <hr>
+<pre>
+    <a href="alloc.hpl">File: alloc.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        var *global = (1 2 3 4 5)
+
+        def copy (*dest *source count) = 
+            (if (== count 0)
+                0
+                (do (set *dest (ref *source))
+                    (copy (+ *dest 1) (+ *source 1) (- count 1))))
+                
+
+        def print-array (*array size fromIndex) = 
+            (if (== fromIndex size)
+                (print-char '\n')
+                (do (print-number (ref *array fromIndex))
+                    (print-char ' ')
+                    (print-array *array size (+ fromIndex 1))))
+                    
+        def main () = 
+            let
+                *local = (alloc 5)
+            in
+                (do 
+                    (print-array *global 5 0)
+                    (copy *local *global 5)
+                    (print-array *local 5 0))
+</pre>        
+            <hr>    
+
+            <p>Remember that HaPyLi is a typeless language. All variables are ultimately integers. 
+            In the example above, *global and *local evaluate to the address in heap memory
+            where their data is stored. You can add to and subtract from these pointers
+            as if they were ordinary integers - which is exactly how the "copy" function
+            works.</p>
+
+            <p>The example below further illustrates this point:</p>
+
+            <hr>
+<pre>
+    <a href="pointers.hpl">File: pointers.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        var *A = (1 2 3 4 5)
+
+        def print-array (*array size fromIndex) = 
+            (if (== fromIndex size)
+                (print-char '\n')
+                (do (print-number (ref *array fromIndex))
+                    (print-char ' ')
+                    (print-array *array size (+ fromIndex 1))))
+
+        def main () = 
+            let
+                *B = (+ *A 2)
+            in 
+                (do (print-array *A 5 0)
+                    (print-array *B 3 0))
+</pre>        
+            <hr>
+
+            <p>The local variable *B is just like any other array. It points to the beginning
+            of its data in memory. It doesn't matter that *B points to some of the same
+            data as *A.</p>
+
+        </div>    
+
+    </div>
+
+</div>
+
+<div id="footer">
+    <p>Copyright ©2010</p>
+</div>
+</body>
+</html>
+

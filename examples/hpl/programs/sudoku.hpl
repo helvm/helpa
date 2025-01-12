@@ -1,0 +1,150 @@
+import "stdlib/base.hpl"
+
+
+def inline get-cell-index (row column) = (+ (* 9 row) column)
+def inline get-cell-value (*sudoku row column) = (ref *sudoku (get-cell-index row column))
+def inline get-cell-ptr (*sudoku row column) = (+ *sudoku (get-cell-index row column))
+
+def inline get-row (cellIndex) = (/ cellIndex 9)
+def inline get-column (cellIndex) = (% cellIndex 9)
+
+
+def read-sudoku () = 
+let
+    *sudoku = (alloc 81)
+in
+    (read-rows 0 *sudoku)
+        
+        
+def read-rows (currentRow *sudoku) = 
+    (if (< currentRow 9)
+        (do (read-cells-in-row currentRow 0 *sudoku)
+            (read-rows (++ currentRow) *sudoku))
+        *sudoku)
+        
+        
+def read-cells-in-row (row currentColumn *sudoku) = 
+    (if (< currentColumn 9)
+        (do (set (get-cell-ptr *sudoku row currentColumn) (- (read-char) '0'))
+            (read-cells-in-row row (++ currentColumn) *sudoku))
+        (do (read-char)
+            *sudoku))
+
+            
+def print-sudoku (*sudoku) = 
+    (print-rows 0 *sudoku)
+    
+    
+def print-rows (currentRow *sudoku) = 
+    (if (< currentRow 9)
+        (do (if (% currentRow 3) 0 (print-char '\n'))
+            (print-cells-in-row currentRow 0 *sudoku)
+            (print-rows (++ currentRow) *sudoku))
+        *sudoku)
+        
+        
+def print-cells-in-row (row currentColumn *sudoku) =
+    (if (< currentColumn 9)
+        (do (if (% currentColumn 3) 0 (print-char ' '))
+            (print-number (get-cell-value *sudoku row currentColumn))
+            (print-cells-in-row row (++ currentColumn) *sudoku))
+        (do (print-char '\n')
+            *sudoku))
+
+            
+def valid-value? (*sudoku emptyCellIndex value) = 
+let
+    row = (get-row emptyCellIndex)
+    column = (get-column emptyCellIndex)
+    blockRow = (* 3 (/ row 3))
+    blockColumn = (* 3 (/ column 3))
+in
+    (not (or (value-in-row? *sudoku row 0 value)
+             (value-in-column? *sudoku 0 column value)
+             (value-in-block? *sudoku blockRow blockColumn blockRow blockColumn value)))
+
+             
+def value-in-row? (*sudoku row currentColumn value) = 
+    (if (== currentColumn 9)
+        0
+        (if (== (get-cell-value *sudoku row currentColumn) value)
+            1
+            (value-in-row? *sudoku row (++ currentColumn) value)))
+        
+        
+def value-in-column? (*sudoku currentRow column value) = 
+    (if (== currentRow 9)
+        0
+        (if (== (get-cell-value *sudoku currentRow column) value)
+            1
+            (value-in-column? *sudoku (++ currentRow) column value)))
+        
+
+def value-in-block? (*sudoku blockRow blockColumn currentRow currentColumn value) = 
+    (if (< currentRow (+ blockRow 3))
+        (if (< currentColumn (+ blockColumn 3))
+            (if (== (get-cell-value *sudoku currentRow currentColumn) value)
+                1
+                (value-in-block? *sudoku 
+                                 blockRow 
+                                 blockColumn 
+                                 currentRow 
+                                 (++ currentColumn) 
+                                 value))
+            (value-in-block? *sudoku 
+                             blockRow 
+                             blockColumn 
+                             (++ currentRow) 
+                             blockColumn 
+                             value))
+        0)
+
+
+def get-empty-cell-index (*sudoku currentIndex) = 
+    (if (== currentIndex 81)
+        -1
+        (if (ref *sudoku currentIndex)
+            (get-empty-cell-index *sudoku (++ currentIndex))
+            currentIndex))
+            
+            
+def solve-from-cell (*sudoku emptyCellIndex) = 
+    (if (== -1 emptyCellIndex)
+        1
+        (solve-from-cell-value *sudoku emptyCellIndex 1))
+  
+  
+def solve-from-cell-value (*sudoku emptyCellIndex value) = 
+    (if (== value 10)
+        (set *sudoku emptyCellIndex 0)
+        (if (valid-value? *sudoku emptyCellIndex value)
+            (branch *sudoku emptyCellIndex value)
+            (solve-from-cell-value *sudoku emptyCellIndex (++ value))))
+  
+  
+def branch (*sudoku emptyCellIndex value) =
+    (do (set *sudoku emptyCellIndex value)
+        (if (solve-from-cell *sudoku (get-empty-cell-index *sudoku (++ emptyCellIndex)))
+            1
+            (solve-from-cell-value *sudoku emptyCellIndex (++ value))))
+
+def print-menu () = 
+    (do (print-string "\nSudoku Solver - written in Whitespace!\n\n")
+        (print-string "\tInstructions:\n\n")
+        (print-string "Please enter a 9x9 grid of numbers (0-9).\n")
+        (print-string "Do not put spaces between the numbers.\n")
+        (print-string "\'0\' represents an empty cell:\n\n"))
+
+
+def main () = 
+let
+    _0 = (print-menu)
+    *sudoku = (read-sudoku)
+    _1 = (print-string "\nPlease be patient.\nEasy sudokus typically take a minute or two on my Core 2 Duo.\n\n")
+    solved? = (solve-from-cell *sudoku (get-empty-cell-index *sudoku 0))
+in
+    (do (print-sudoku *sudoku)
+        (if solved?
+            (print-string "\nSuccess!\n")
+            (print-string "\nUnsolvable!\n")))
+

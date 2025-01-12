@@ -1,0 +1,19 @@
+asm main () =
+(
+    push    1           ; Put a 1 on the stack.
+    label   begin       ; Set a Label at this point.
+    dup                 ; Duplicate the top stack item.
+    pn                  ; Output the current value.
+    push    '\n'        ; Put a newline character on the stack...
+    pc                  ; ...and output the newline.
+    push    1           ; Put a 1 on the stack.
+    add                 ; Addition. This increments our current value.
+    dup                 ; Duplicate that value so we can test it.
+    push    11          ; Push 11 onto the stack.
+    sub                 ; Subtraction. So if we've reached the end, we have a
+                        ; zero on the stack.
+    jz      the_end     ; If we have a zero, jump to the end.
+    jump    begin       ; Jump to the start.
+    label   the_end     ; Set the end label.
+    
+)

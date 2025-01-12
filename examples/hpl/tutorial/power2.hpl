@@ -1,0 +1,13 @@
+import "stdlib/base.hpl"
+
+def power(x y) = 
+    (if (== y 1)
+        x
+        (* x (power x (- y 1))))
+
+def main() = 
+    let 
+        x = (read-number)
+        y = (read-number)
+    in
+        (print-number (power x y))

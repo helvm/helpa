@@ -1,0 +1,26 @@
+import "stdlib/base.hpl"
+
+var *global = (1 2 3 4 5)
+
+def copy (*dest *source count) = 
+    (if (== count 0)
+        0
+        (do (set *dest (ref *source))
+            (copy (+ *dest 1) (+ *source 1) (- count 1))))
+        
+
+def print-array (*array size fromIndex) = 
+    (if (== fromIndex size)
+        (print-char '\n')
+        (do (print-number (ref *array fromIndex))
+            (print-char ' ')
+            (print-array *array size (+ fromIndex 1))))
+            
+def main () = 
+    let
+        *local = (alloc 5)
+    in
+        (do 
+            (print-array *global 5 0)
+            (copy *local *global 5)
+            (print-array *local 5 0))

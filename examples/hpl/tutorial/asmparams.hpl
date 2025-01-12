@@ -1,0 +1,38 @@
+import "stdlib/base.hpl"
+
+asm f (a b) = 
+    let
+        c = 2
+        d = 1
+    in
+    (
+        copy 3      ; Copy parameter 'a' and print it.
+        pn
+        push '\n'
+        pc 
+        
+        copy 2      ; Copy parameter 'b' and print it.
+        pn
+        push '\n' 
+        pc 
+
+        copy 1      ; Copy local variable 'c' and print it.
+        pn
+        push '\n' 
+        pc 
+        
+        copy 0      ; Copy local variable 'd' and print it.
+        pn
+        push '\n' 
+        pc
+        
+        pop         ; Pop the arguments and local variables
+        pop         ; off the top of the stack.
+        pop
+        pop
+        
+        push 0      ; Push the return value (just '0' in this case),
+                    ; onto the top of the stack. 
+    )
+
+def main () = (print-number (f 4 3))

@@ -1,0 +1,6 @@
+import "stdlib/base.hpl"
+
+def main() = (print-string "Hello, world!")
+
+; Program comments are denoted by the semi-colon character,
+; just as in LISP. 

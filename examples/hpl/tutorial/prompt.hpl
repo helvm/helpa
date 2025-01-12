@@ -1,0 +1,12 @@
+import "stdlib/base.hpl"
+
+def prompt () = 
+    (do (print-string "Enter your favorite number: ")
+        (read-number))
+
+def main () = 
+    let
+        x = (prompt)
+    in
+        (do (print-string "You entered: ")
+            (print-number x))

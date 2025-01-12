@@ -1,0 +1,20 @@
+#menu {
+    float: left;
+    width: 20%;
+}
+#content {
+    margin-left: 20%;
+}
+#footer {
+    text-align: center;
+}
+
+h1 {
+  text-align: center;
+}
+li {
+    margin: 5px;
+}
+li pre {
+    margin: 0;
+}

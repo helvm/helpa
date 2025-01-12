@@ -1,0 +1,17 @@
+import "stdlib/base.hpl"
+
+var *A = (1 2 3 4 5)
+
+def print-array (*array size fromIndex) = 
+    (if (== fromIndex size)
+        (print-char '\n')
+        (do (print-number (ref *array fromIndex))
+            (print-char ' ')
+            (print-array *array size (+ fromIndex 1))))
+
+def main () = 
+    let
+        *B = (+ *A 2)
+    in 
+        (do (print-array *A 5 0)
+            (print-array *B 3 0))

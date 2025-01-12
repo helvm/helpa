@@ -1,0 +1,14 @@
+import "stdlib/base.hpl"
+
+asm inline f () = 
+(
+    jump  HELLO
+    
+    label HELLO
+    push 0
+)
+
+
+def main () = 
+    (do (print-number (f))
+        (print-number (f)))

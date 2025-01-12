@@ -1,0 +1,10 @@
+import "stdlib/base.hpl"
+
+def inline execute (x y) = 0        ; Perform two operations in order.
+def inline execute (x y z) = 0      ; Perform three operations in order
+def inline execute (w x y z) = 0    ; Perform four operations in order 
+                                    ; ... and so on
+
+def main () = 
+    (execute (print-string "ABCDEFG\n")
+             (print-string "1234567\n"))

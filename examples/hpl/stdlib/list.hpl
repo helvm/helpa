@@ -1,0 +1,61 @@
+import "base.hpl"
+
+var *NIL = 0
+
+def inline pair (x y) = 
+let
+    *pair = (alloc 2)
+in
+    (do (set *pair 0 x)
+        (set *pair 1 y)
+        *pair)
+
+def inline head (*p) = (ref *p 0)
+def inline tail (*p) = (ref *p 1)
+def inline null? (*list) = (== *list *NIL)
+
+
+def member? (item *list) = 
+    (if (null? *list)
+        0
+        (if (== item (head *list))
+            1
+            (member? item (tail *list))))
+
+
+def remove (item *list) = 
+    (if (null? *list)
+        *list
+        (if (== item (head *list))
+            (remove item (tail *list))
+            (pair (head *list)
+                  (remove item (tail *list)))))
+            
+            
+def extend (*list *extension) = 
+    (if (null? *list)
+        *extension
+        (pair (head *list)
+              (extend (tail *list) *extension)))
+    
+            
+def range (low high) = 
+    (if (== low high)
+        (pair low *NIL)
+        (pair low (range (++ low) high)))
+        
+
+def print-char-list (*list) = 
+    (if (null? *list) 0
+        (do (print-char (head *list))
+            (print-char '-')
+            (print-char-list (tail *list))))
+            
+
+def print-number-list (*list) = 
+    (if (null? *list) 0
+        (do (print-number (head *list))
+            (print-char '-')
+            (print-number-list (tail *list))))
+            
+

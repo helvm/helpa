@@ -1,0 +1,176 @@
+
+;;; ========== ARITHMETIC ==========
+
+asm inline +  (x y) = ( add )
+asm inline ++ (x)   = ( push 1 add )
+asm inline -  (x y) = ( sub )
+asm inline -  (x)   = ( push 0 swap sub )
+asm inline -- (x)   = ( push 1 sub )
+asm inline *  (x y) = ( mul )
+asm inline /  (x y) = ( div )
+asm inline %  (x y) = ( mod )
+
+
+
+;;; ========== COMPARISON ==========
+
+asm < (x y) = (
+
+    ;; x-y is negative when x < y
+    sub                 ; ( subresult )
+    
+    ;; jump if negative, else return false.
+    jn __STDLIB_<       ; ( )
+    push 0              ; ( false )
+    ret
+
+    ;; return true.
+    label __STDLIB_<    ; ( )
+    push 1              ; ( true )
+    
+    ;; Since this isn't inline,
+    ;; a ret will be added automatically.
+)
+
+def inline > (x y) = (< y x)
+
+def inline <= (x y) = (not (> x y))
+def inline >= (x y) = (not (< x y))
+
+def inline == (x y) = (if (- x y) 0 1)
+def inline != (x y) = (if (- x y) 1 0)
+
+
+
+
+;;; ========== LOGIC ==========
+
+asm inline not (x)   = ( push 1 swap sub )
+asm inline and (x y) = ( mul )
+def inline or  (x y) = (- (+ x y) (* x y))
+
+def inline and (x y z) = (and x (and y z))
+def inline or (x y z) = (or x (or y z))
+
+
+;;; ========== IO ==========
+
+asm inline print-number (n) = ( dup pn )
+asm inline print-char (c) = ( dup pc )
+
+def print-string (*str) = 
+let
+    c = (ref *str)
+in
+    (if c
+        (do (print-char c)
+            (print-string (++ *str))
+            *str)
+        *str)
+        
+
+asm inline read-number (*buffer) = ( dup rn load )
+asm inline read-char (*buffer) = ( dup rc load )
+
+
+var *__STDLIB_INPUT_BUFFER = 0
+def inline read-number () = (read-number *__STDLIB_INPUT_BUFFER)
+def inline read-char () = (read-char *__STDLIB_INPUT_BUFFER)
+
+
+
+def read-string (*buffer max-chars) = 
+    (if (and (!= (read-char *buffer) '\n')
+             max-chars)
+        (++ (read-string 
+                (++ *buffer) 
+                (-- max-chars)))
+        (set *buffer 0))
+
+        
+def read-string (*buffer) =
+    (if (== (read-char *buffer) '\n')
+        (set *buffer 0)
+        (++ (read-string (++ *buffer))))
+
+
+def inline read-string () = 
+let 
+    *unallocated = (ref 0)
+in
+    (alloc (++ (read-string *unallocated)))
+    
+
+
+;;; ========== HEAP ==========
+
+asm inline ref (*address)         = ( load )
+asm inline ref (*array index) = ( add load )
+
+asm inline set (*address value) = (
+    
+    ;; Store the value at the address.
+    copy 1      ; (*address value *address)
+    copy 1      ; (*address value *address value)
+    store       ; (*address value)
+    
+    ;; Return the value we stored.
+    slide 1     ; (value)
+
+)
+
+asm inline set (*array index value) = (
+
+    ;; Get the address at which to store the value.
+    copy 2      ; (*array index value *array)         
+    copy 2      ; (*array index value *array index)
+    add         ; (*array index value *address)
+
+    ;; Store the value at the computed address.
+    copy 1      ; (*array index value *address value)
+    store       ; (*array index value)
+    
+    ;; Return the value we stored.
+    slide 2     ; (value)
+)
+
+asm inline alloc (size) = (
+    
+    ;; Load HaPyLi's heap pointer.
+    ;; The address of unallocated heap memory is stored at 0. 
+    push 0      ; (size *heap)
+    load        ; (size *unallocated)
+    
+    ;; Compute the range of addresses to allocate.
+    ;; *from = starting address.
+    ;; *to   = ending address, exclusive.
+                ; (size *from)
+    swap        ; (*from size)
+    copy 1      ; (*from size *from)
+    add         ; (*from *to)
+    
+    ;; Allocate all memory in the computed range.
+    dup         ; (*from *to *to)
+    push 0      ; (*from *to *to 0)
+    store       ; (*from *to)
+    
+    ;; Set the heap pointer to the new address of
+    ;; unallocated memory.
+                ; (*allocated *unallocated)
+    push 0      ; (*allocated *unallocated *heap)
+    swap        ; (*allocated *heap *unallocated)
+    store       ; (*allocated)
+    
+    ;; Return the address of the newly allocated memory.
+)
+
+
+
+;;; ========== ERROR ==========
+
+asm inline end () = (end)
+
+def inline error (*message) = (do (print-string "\nERROR: ")
+                                  (print-string *message)
+                                  (print-char '\n')
+                                  (end))

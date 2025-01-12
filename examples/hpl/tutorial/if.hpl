@@ -1,0 +1,6 @@
+import "stdlib/base.hpl"
+
+def main () = 
+    (if (read-number)
+        (print-string "TRUE")
+        (print-string "FALSE"))

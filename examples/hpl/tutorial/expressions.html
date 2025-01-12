@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Expressions - The HaPyLi Programming Language</title>
+<link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+<h1>The HaPyLi Programming Language</h1>
+
+<div id="menu">
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li>
+            <b>Tutorial</b>
+            <ol>
+                <li><a href="functions.html">Functions</a></li>
+                <li><b>Expressions</b></li>
+                <li><a href="variables.html">Variables and the Heap</a></li>
+                <li><a href="assembler.html">Embedding Whitespace</a></li>
+            </ol>
+        </li>
+        <li><a href="examples.html">Examples</a></li>
+        <li><a href="https://github.com/wspace/cybis-hapyli">GitHub</a></li>
+    </ul>
+</div>
+
+<div id="content">
+
+    <h2>Section 2: Expressions</h2>
+    <div>
+
+        <p>HaPyLi is a typeless language. Every expression will evaluate 
+        to an integer, so it's up to the programmer to remember what 
+        data is passed to and returned by a function.</p>
+
+        <h3>Numeric Literals</h3>
+        <div>
+           
+            <p>HaPyLi defines three kinds of numeric literals - 
+            decimal integers, hexadecimal integers, and characters. 
+            These literals may be used in place of any expression,
+            including a function body.</p>
+               
+            <hr>
+<pre>
+    <a href="literal.hpl">File: literal.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def f () = 42       ; You can declare "constant functions" too! Literals are 
+                            ; no different than any other expressions. 
+
+        def main () = 
+            let
+                a = 65      ; a, b, and c all equal the same value. 
+                b = 0x41
+                c = 'A'
+            in
+                (do (print-number a) (print-char '\n')
+                    (print-number b) (print-char '\n')
+                    (print-number c) (print-char '\n'))
+</pre>        
+            <hr>
+
+        </div>
+        
+        <h3>String Literals</h3>
+        <div>
+
+            <p>Strings are slightly different than other literals. The HaPyLi compiler converts them
+            into null-terminated arrays of characters and stores them in Whitespace's heap memory.
+            A String literal or a variable containing a string will evaluate to its address in
+            heap memory.</p>
+                
+            <p>Both string and character literals support the following
+            common character escape codes:</p>
+
+            <ul>
+                <li><pre>\s -> space</pre></li>
+                <li><pre>\t -> tab</pre></li>
+                <li><pre>\r -> carriage return</pre></li>
+                <li><pre>\n -> line feed</pre></li>
+                <li><pre>\0 -> null</pre></li>
+                <li><pre>\' -> '</pre></li>
+                <li><pre>\" -> "</pre></li>
+            </ul>
+                
+            <p>In addition, any escaped character not listed above simply translates to itself.</p>
+                
+        </div>
+        
+        <h3>Built-in Functions</h3>
+        <div>
+
+            <p>So far, you've seen plenty of examples of seemingly "built-in" functions in HaPyLi,
+            such as "print-string", "print-number", or the arithmetic operators. Actually, there
+            is nothing special about these functions. They are defined within HaPyLi itself, 
+            in the file "stdlib/base.hpl". This is possible because HaPyLi allows you to embed
+            Whitespace commands directly in your applications.</p>
+
+            <p>There are only two functions that are special to the compiler: "if" and "do".</p>
+
+        </div>
+        
+        <h3>If Expressions</h3>
+        <div>
+
+            <p>Normally, when you call a function in HaPyLi all of its arguments are evaluated first,
+            in order from left-to-right, and then the function itself is executed. If all functions
+            behaved this way, it would be impossible to control the flow of the application. 
+            "if" is the only function which allows short circuiting.</p>
+
+            <p>The syntax of "if" expressions in HaPyLi is the same as those in Lisp.</p>
+
+            <hr>
+<pre>
+    <a href="if.hpl">File: if.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def main () = 
+            (if (read-number)
+                (print-string "TRUE")
+                (print-string "FALSE"))
+</pre>        
+            <hr>
+              
+            <p>Since HaPyLi is typeless, the condition of the if-statement behaves much as it would in C. 
+            The value 0 represents "false" and any non-zero value represents "true". Some of the 
+            functions in the HaPyLi Standard Library, however, assume that "true" is denoted by 
+            the value 1 instead of just anything non-zero, so you must be careful.</p>
+
+        </div>
+        
+        <h3>Do Expressions</h3>
+        <div>
+
+            <p>Sometimes you want to call several functions in order - a series of print functions, 
+            for example. Since all function calls evaluate their arguments in order from left-to-right, 
+            it's very easy to define a function to sequence operations together. Such a function
+            doesn't actually have to do anything. Unfortunately, there's a small caveat to this
+            approach as the example below illustrates:</p>
+
+            <hr>
+<pre>
+    <a href="execute.hpl">File: execute.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def inline execute (x y) = 0        ; Perform two operations in order.
+        def inline execute (x y z) = 0      ; Perform three operations in order
+        def inline execute (w x y z) = 0    ; Perform four operations in order 
+                                            ; ... and so on
+        
+        def main () = 
+            (execute (print-string "ABCDEFG\n")
+                     (print-string "1234567\n"))
+</pre>        
+            <hr>
+
+            <p>We don't need to do this. HaPyLi provides the "do" function, which can accept any number 
+            of parameters. You don't need to pollute your application with 100 'execute' definitions
+            as above just because you want to chain together 100 operations (although I can't imagine 
+            you ever wanting to chain together more than just a few - but at least you now can).</p>
+
+            <hr>
+<pre>
+    <a href="do.hpl">File: do.hpl</a>
+    
+        import "stdlib/base.hpl"
+        
+        def main () = 
+            (do (print-string "Hello, ")
+                (print-string "world!\n")
+                (print-string "Testing\n")
+                (print-string "... and so on... \n"))
+</pre>        
+            <hr>
+
+            <p>Furthermore, "do" expressions return the value returned by their last argument.
+            This can be very useful for computing and returning a result after a series
+            of IO operations, like in prompts.</p>
+
+            <hr>
+<pre>
+    <a href="prompt.hpl">File: prompt.hpl</a>
+    
+        import "stdlib/base.hpl"
+
+        def prompt () = 
+            (do (print-string "Enter your favorite number: ")
+                (read-number))
+
+        def main () = 
+            let
+                x = (prompt)
+            in
+                (do (print-string "You entered: ")
+                    (print-number x))
+</pre>        
+            <hr>
+
+        </div>
+
+    </div>
+    
+</div>
+
+<div id="footer">
+    <p>Copyright ©2010</p>
+</div>
+</body>
+</html>
+
+
+

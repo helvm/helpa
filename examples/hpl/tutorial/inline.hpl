@@ -1,0 +1,9 @@
+import "stdlib/base.hpl"
+
+; Because "sum" is marked as inline, calling it 
+; is no different than calling '+' directly. 
+; They will compile exactly the same.
+
+def inline sum (a b) = (+ a b)
+
+def main () = (print-number (sum 1 2))
