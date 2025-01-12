@@ -1,6 +1,11 @@
 module HelVM.HelPA.Assemblers.Frontend.HPL.Instruction where
 
-data Element
-  = Asm Bool Text [Text] Text
-  | Section Text
+type InstructionList = [Instruction]
+
+
+data Instruction
+  = Import Text
+  | Def Bool Text [Text] Text
+  | Asm Bool Text [Text] Text
   deriving stock (Show)
+
