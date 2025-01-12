@@ -1,0 +1,56 @@
+; Demonstrates .ifndef .else .endif
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence. Please see 0BSD_LICENCE.md for details.
+
+
+.ifndef n
+.equ a 4
+.else
+.equ a 5
+.endif
+
+.ifndef n                            ; Testing an inline comment
+.equ b 6
+.endif
+
+
+.ifndef a
+.equ c 7
+.else
+.equ c 8
+.endif
+
+
+.ifndef a
+  .ifndef c
+  .equ d 9
+  .else
+  .equ d 10
+  .endif
+.else
+  .ifndef c
+  .equ d 11
+  .else
+  .equ d 12
+  .endif
+.endif
+
+
+.ifndef n
+  .ifndef c
+  .equ e 13
+  .else
+  .equ e 14
+  .endif
+.else
+  .ifndef c
+  .equ e 15
+  .else
+  .equ e 16
+  .endif
+.endif
+
+
+.word a b c d e
+

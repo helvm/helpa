@@ -1,0 +1,9 @@
+; Test unknown label error
+;
+; Copyright (C) 2020 Lawrence Woodman <lwoodman@vlifesystems.com>
+; Licensed under a BSD 0-Clause licence.  See 0BSD_LICENCE.md for details.
+
+.equ        HALT -1
+
+            sble  z h+4
+            sble  z z HALT
