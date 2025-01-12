@@ -1,0 +1,39 @@
+0 0 demo
+
+demo:
+
+	# Use ASCII character codes.
+	# Message must end with a 0.
+
+	# test
+	0 ? string.print 't 'e 's 't 10 0
+
+	# a = [a]
+	0 ? string.print 'a '  '= '  string.uint .a 10 0
+
+	# b = [b]
+	0 ? string.print 'b '  '= '  string.uint .b 10 0
+
+	# [a], [b]
+	0 ? string.print string.str .str1 ', '  string.uint .b ', '  string.int .b 10 0
+
+	# Create and format a string in memory.
+	0 ? string.create .str2
+	0 ? string.writeinline .str2 string.str .str1 ', '  string.uint .b ', '  string.int .b 10 0
+	0 ? string.print 'o 'u 't ': '  string.str .str2 0
+	0 ? string.free .str2
+
+	# done
+	0 ? string.print 'd 'o 'n 'e 10 0
+
+	0 ? mem.alloc.verifyfree
+
+	0-1 0 ?-2
+
+	# Variables
+	.a: 103
+	.b: 0-1
+	.str1: ?+1 5 ?+1 'X '  'Y '  'Z
+	.str2: 0
+
+

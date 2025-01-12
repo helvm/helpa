@@ -1,0 +1,42 @@
+#|==============================================================================
+
+
+SICO Master Library
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+master.sico contains all basic libraries for ease of use in other projects.
+
+This library should be included after any other sico files. If it's not, it will
+display an error message and exit.
+
+
+          File      |  Line
+     ---------------+--------
+         $uint.sico  |
+          $int.sico  |
+       $random.sico  |
+       $string.sico  |
+       $memory.sico  |
+
+
+|#
+
+
+master:
+	.len    .z+1    .z-1
+	0-2     .ptr    ?+1
+	?-2     .z-1    master
+	0-1 .z:0 1
+	.ptr: 'E 'R 'R 'O 'R ': '  'm 'a 's 't 'e 'r '. 's 'i 'c
+	      'o '  'm 'u 's 't '  'b 'e '  'i 'n 'c 'l 'u 'd 'e
+	      'd '  'l 'a 's 't 10
+	.len: .len-.ptr+1
+
+

@@ -1,0 +1,90 @@
+#|
+
+cat graphics_demo.sico graphics.sico master.sico > test.sico
+
+|#
+
+0 0 graphicstest.main
+
+
+graphicstest.main:
+	.timestart 0-5 ?+1
+
+	# Set [nfps]=-[freq]/[fps]. [-4] = timing frequency.
+	0 ? uint.div .tmp 0 0-4 .fps
+	.nfps .tmp  ?+1
+
+	0 ? image.create .img .width .height
+	0 ? string.print 65 32 string.uint .img 10 0
+	0 ? image.setbuffer .img
+	0 ? image.drawrect .rectx .recty .rectw .recth
+
+	.y .y ?+1
+.yloop:
+	# Record the time for FPS tracking.
+	.time .time ?+1
+	.time 0-5   ?+1
+	0 ? uint.cmp .y .height ?+3 .ydone .ydone
+	# 0 ? string.print string.uint .y 10 0
+	.x .x ?+1
+.xloop:
+	0 ? uint.cmp .x .width ?+3 .xdone .xdone
+	0 ? uint.xor .argb .x .y
+	0 ? uint.and .argb .argb .mask255
+	0 ? uint.mul 0 .argb .argb .mul
+	0 ? uint.add .argb .argb .alpha
+	0 ? image.setpixel .img .x .y .argb
+	.x .z-1 .xloop
+.xdone:
+	0 ? image.drawwindow .img
+	# Pause to match our FPS rate.
+	.tmp  .tmp  ?+1
+	.tmp  0-5   ?+1
+	.time .tmp  ?+1
+	.tmp  .tmp  ?+1
+	.tmp  .nfps ?+1
+	.tmp  .time ?+4
+	# Pause for some non-zero time.
+	0-6   .tmp  ?+4
+	# We've exceeded our frame time. Pause for 0 seconds.
+	0-6   .z    ?+1
+	.y .z-1 .yloop
+.ydone:
+.loop:
+	# 0 ? string.print string.uint .counter 10 0
+
+	0 ? image.free .img
+
+	# ------------------------ Timing ------------------------
+	0 ? uint.add .timestart .timestart 0-5
+	0 ? uint.div .timestart .tmp .timestart 0-4
+	0 ? uint.mul 0 .tmp .tmp .timedec
+	0 ? uint.div .tmp 0 .tmp 0-4
+	0 ? string.print 't 'i 'm 'e ': '  string.uint .timestart '. string.uintinl .tmp 10 6 '0 10 0
+
+	0 ? mem.alloc.verifyfree
+	0-1 0 ?-2
+
+	# Variables
+	0-1 .z:0 1
+	.mask255:0xff
+	.alpha:0xffff000000000000
+	.mul:0x0000010001000100
+	.img:0
+	.width:1920
+	.height:1080
+	.tmp:0
+	.x:50
+	.y:70
+	.argb:0
+	.time:0
+	.fps:60
+	.nfps:0
+	.rectx:50
+	.recty:25
+	.rectw:100
+	.recth:200
+	.counter:0
+	.timestart:0
+	.timedec:1000000
+

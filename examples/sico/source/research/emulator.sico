@@ -1,0 +1,82 @@
+#|
+
+A SICO emulator in SICO.
+Used for performance testing. Tracks the maximum number of instructions used.
+
+|#
+
+test.measure:
+	# 0 ? test.measure counter return 0 ? func arg0 arg1 ...
+	# counter = the address for counting instructions.
+	# return  = address the function will return to when finished.
+	# Emulates the execution of a function and measures how many instructions it uses.
+	# Uses 24+20*n instructions for n emulated instructions.
+	.tmp    .a0     ?+1
+	.nret   .tmp    ?+1
+	.tmp    0       ?+1
+	.dif    .tmp    ?+1
+	.dif    .z+4    ?+1
+	# Setup counter.
+	0       .z+2    ?+1
+	.p0     .p0     ?+1
+	.p0     0       ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.cnt0   .cnt0   ?+1
+	.cnt0   .tmp    ?+1
+	.cnt1   .cnt1   ?+1
+	.cnt1   .tmp    ?+1
+	.cnt    .cnt    ?+1
+	# Get the negative return address. If [nret]+[dif0]+[dif1]+...=0, then return.
+	0       .z+1    ?+1
+	.p1     .p1     ?+1
+	.p1     0       ?+1
+	.nret   .p1:0   ?+1
+	# Reset stack address.
+	0       0       .loop
+.jmp:
+	# We jumped, set [dif]=[a0]-[c].
+	.tmp    .tmp    ?+1
+	.tmp    .a0     ?+1
+	.dif    .tmp    ?+1
+.loop:
+	# Update a, b, and c addresses.
+	.a0     .dif    ?+1
+	.b0     .dif    ?+1
+	.c0     .dif    ?+1
+	.nret   .dif    ?+1
+	.dif    .dif    ?+1
+	# Return if ip=[ret].
+	.nret   .z      .ret
+	# Increment the instruction counter.
+	.cnt    .z-1    ?+1
+	# Load [a]. a0 will hold the return address when we're done.
+	.tmp    .tmp    .noret
+.ret:
+	.cnt    .cnt0:0 .noret-1
+	.tmp    .tmp    ?+1
+	.tmp    .cnt    ?+1
+	.cnt1:0 .tmp    ?+1
+	.tmp
+.noret:
+	.tmp    .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .tmp    ?+1
+	# Load [b].
+	.tmp    .tmp    ?+1
+	.tmp    .b0:1   ?+1
+	.b      .b      ?+1
+	.b      .tmp    ?+1
+	# Set [dif]=-[c].
+	.dif    .c0:2   ?+1
+	# Execute instruction.
+	.a:0    .b:0    .jmp
+	# We failed to jump, set [dif]=-3.
+	.dif    .dif    ?+1
+	.dif    .z+3    .loop
+	# Variables
+	.tmp:0
+	.nret:0
+	.dif:0
+	.cnt:0
+	0-2 0-1 .z:0 1 2 3 4

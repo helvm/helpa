@@ -1,0 +1,124 @@
+uint.mul:
+	# Call  : 0 ? uint.mul high low a b
+	#
+	# Effect: [high] = [a]*[b] / 2^64
+	#       : [low]  = [a]*[b] % 2^64
+	#
+	# Time  : 53 + 13*bits = 885
+	# Time  : 40 +  7*bits = 488 if high=0
+	#
+	# Use [hval] and [lval] to store the high and low values of [a]*[b]. During each
+	# loop, shift [hval], [lval], and [b] to the left by 1. If the top bit of [b] is
+	# set, add [a] to [lval] and carry into [hval].
+	#
+	# Setup stack pointer.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	# Get low
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.l0     .l0     ?+1
+	.l0     .tmp    ?+1
+	.l1     .l1     ?+1
+	.l1     .tmp    ?+1
+	# Get -[a]. Use -[a] for adding to [lval].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	.a      .a      ?+1
+	.a      .a0:0   ?+1
+	# Get [b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .b0:0   ?+1
+	.b      .b      ?+1
+	.b      .tmp    ?+1
+	# Offset [tmp] by 1 to force [b] to be odd.
+	.tmp    .z+1    ?+1
+	.lval   .lval   ?+1
+	# Get high. Only set if [hret]!=0.
+	.hret   .arg2:2 ?+1
+	.hret   .z      .looplow
+	# If -[a]=1, we have to manually set [low]=[b].
+	.a      .z-1    ?+1
+	.a      .z      .rethigh+3
+	.hval   .hval   ?+1
+	.lval   .z-1    .loophigh+3
+	# -------- Calculate [lval] and [hval] --------
+.loophigh:
+	# If the highest bit of [b] is set, add [a] to [lval] and carry to [hval].
+	.tmp    .b      ?+1
+	.b      .tmp    ?+7
+	.lval   .a      ?+10
+	.hval   .z-1    ?+7
+	# If [b]=0, we are done.
+	.b      .z      .rethigh
+	.lval   .z+1    ?+1
+	# Left shift [hval].
+	.htmp   .htmp   ?+1
+	.htmp   .hval   ?+1
+	.hval   .htmp   ?+1
+	# Left shift [lval] and carry into [hval].
+	.ltmp   .ltmp   ?+1
+	.ltmp   .lval   ?+1
+	.ltmp   .z+1    ?+1
+	.lval   .ltmp   ?+4
+	.hval   .z-1    ?+1
+	.tmp    .tmp    .loophigh
+	# ----------- Only calculate [lval] -----------
+.looplow:
+	# If the highest bit of [b] is set, add [a] to [lval].
+	.b      .tmp    ?+7
+	.lval   .a      ?+1
+	.tmp    .tmp    ?+7
+	# If [b]=0, we are done.
+	.b      .z      .retlow
+	.tmp    .tmp    ?+1
+	# Left shift [lval].
+	.ltmp   .ltmp   ?+1
+	.ltmp   .lval   ?+1
+	.lval   .ltmp   ?+1
+	.tmp    .b      .looplow
+.rethigh:
+	# Because we terminate 1 iteration late, return [htmp] and [ltmp] instead of
+	# [hval] and [lval].
+	.ltmp   .z-1    ?+7
+	.ltmp   .ltmp   ?+1
+	.htmp   .htmp   ?+1
+	# Set [high]
+	.h0     .h0     ?+1
+	.h0     .hret   ?+1
+	.h1     .h1     ?+1
+	.h1     .hret   ?+1
+	.hret   .hret   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .h0:0   ?+1
+	.htmp   .tmp    ?+1
+	.h1:0   .htmp   ?+1
+.retlow:
+	# Set [low]
+	.b      .l0:0   ?+1
+	.ltmp   .b      ?+1
+	.l1:0   .ltmp   ?+1
+	0       0       .arg6:6
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.a:0
+	.b:0
+	.hret:0
+	.hval:0
+	.htmp:0
+	.lval:0
+	.ltmp:0

@@ -1,0 +1,1923 @@
+#|==============================================================================
+
+
+Unsigned Integer Library - v5.06
+
+Copyright 2020 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+uint.sico provides functions for performing most of the common unsigned integer
+operations. In particular, it handles: comparisons, arithmetic, and bitwise
+operations.
+
+SICO typically uses integers modulo 2^64. However: string, integer arithmetic,
+and comparison functions will work with any modulo. Bitwise functions, on the
+other hand, require integers modulo 2^n.
+
+The 0 address will always be 0 upon function return, even if one of the return
+value addresses is 0.
+
+This library does not depend on any other libraries.
+
+Worst case time complexity:
+
+
+       Function  |    Complexity     |  Instructions
+                 |                   |   (64 bits)
+     ------------+-------------------+----------------
+         write   |  --               |     2303
+          read   |  --               |     1456
+           cmp   |  29               |       29
+           min   |  34               |       34
+           max   |  34               |       34
+           set   |  24               |       24
+           neg   |  25               |       25
+           add   |  30               |       30
+           sub   |  31               |       31
+           mul   |  55 + 12.97*bits  |      885
+           div   |  60 +  8.65*bits  |      613
+           gcd   |  40 + 20.17*bits  |     1330
+           shl   |  40 +  2.00*bits  |      168
+           shr   |  31 +  8.00*bits  |      543
+           not   |  26               |       26
+           and   |  37 +  7.00*bits  |      485
+            or   |  38 +  7.00*bits  |      486
+           xor   |  39 +  7.00*bits  |      487
+
+
+--------------------------------------------------------------------------------
+Index
+
+
+Strings
+uint.write [mem] [memlen] [memidx] retidx [num] [base]
+uint.read  [mem] [memlen] [memidx] retidx retnum [base]
+
+Comparisons
+uint.cmp [a] [b] lt eq gt
+uint.min [ret] [a] [b]
+uint.max [ret] [a] [b]
+
+Integer Arithmetic
+uint.set [ret]  [a]
+uint.neg [ret]  [a]
+uint.add [ret]  [a] [b]
+uint.sub [ret]  [a] [b]
+uint.mul [high] [low] [a] [b]
+uint.div [quot] [rem] [num] [den]
+
+Number Theory
+uint.gcd [ret] [a] [b]
+
+Bitwise Arithmetic
+uint.shl [ret] [num] [shift]
+uint.shr [ret] [num] [shift]
+uint.not [ret] [a]
+uint.and [ret] [a] [b]
+uint.or  [ret] [a] [b]
+uint.xor [ret] [a] [b]
+
+
+--------------------------------------------------------------------------------
+Version History
+
+
+1.00
+     Initial version. Used uint.cmp, mem.get, and mem.set for proof of concept.
+     Functions take tens of thousands of instructions.
+2.00
+     Inlined functions so they don't use mem.get and mem.set.
+     Functions take thousands of instructions.
+3.00
+     Optimized functions so they are all under or around 1K instructions.
+3.01
+     Optimized uint.and, uint.or, and uint.xor so the final value is stored in
+     [a]. This removes the need for a temporary storage variable.
+     Cleaned up uint.cmp so its branching is more straight forward.
+3.02
+     Optimized uint.set and uint.add to remove 1 instruction.
+3.03
+     Fixed an error in uint.mul when carrying from low to high. Removed need to
+     offset [b] by 1 to check for carrying.
+     Updated formatting for uint.cmp.
+     Changed uint.div to abort with 0xd0 when dividing by 0.
+     Optimized uint.and, uint.or, and uint.xor by skipping first loop check.
+3.04
+     Optimized uint.and, uint.or, and uint.xor by 18%. [a] and [b] only need to
+     be offset by 1 on the first loop. This removes 2 decrement instructions per
+     loop.
+3.05
+     Optimized uint.and, uint.or, and uint.xor by 11%. Removed the iteration
+     counter and instead check if [b]=0. We only set the bottom bit of [a] in
+     1/4 of cases, and only check if [b]=0 in 1/2 of cases. uint.or and uint.xor
+     are based off of uint.and for their loop.
+3.06
+     Updated comments.
+3.07
+     Replaced average case time complexity with worst case time complexity.
+     Standardized formatting to 8 spaces per column.
+3.08
+     Updated comments.
+3.09
+     Changed division-by-0 abort instruction.
+     Made uint.shl bit length agnostic and lowered run time by 36%.
+     Made uint.shr bit length agnostic and lowered run time by 11%.
+3.10
+     Added uint.min and uint.max.
+     Updated timing measurements to not count calling instruction.
+4.00
+     Re-added calling instruction to timing measurements.
+     Modified uint.shl to calculate bit length on first run.
+     Updated descriptions for uint.mul, uint.div, and uint.and.
+     Made uint.mul bit length agnostic and lowered run time by 5%.
+     Made uint.div bit length agnostic and lowered run time by 6%.
+     All functions are now bit length agnostic.
+4.01
+     Simplified loop termination in uint.mul and uint.div. This is 5% faster.
+     uint.mul will skip calculating [high] if high=0. This is 44% faster.
+     uint.div will skip calculating [quot] if quot=0. This is 29% faster.
+4.02
+     Removed bit counting in uint.shl and lowered run time by 6%.
+     Simplified uint.shr initialization.
+4.03
+     Removed a testing function for uint.shl that was included by accident.
+     Cleaned up function descriptions.
+4.04
+     Added uint.print for string printing.
+4.05
+     Corrected timing for uint.cmp.
+4.06
+     Lowered run time of uint.min and uint.max from 38 to 34 instructions.
+     Cleaned up variable names in uint.set, uint.neg, uint.add, and uint.sub.
+     Removed unnecessary instructions from uint.mul when high=0.
+5.00
+     All integer arithmetic functions work with any modulo on the underlying
+     integers.
+     Remade uint.div and uint.mul to work with any modulo, even non
+     power-of-two, by using the fibonacci sequence.
+     uint.div is 30% faster and uint.mul is 1% faster.
+     Cleaned up version history comments.
+5.01
+     Added uint.gcd.
+5.02
+     Improved the time complexity of uint.gcd from log^2(n) to log(n).
+5.03
+     Updated comments.
+     Removed a few instructions from uint.div and uint.gcd.
+5.04
+     Replaced uint.print with uint.writestring. This will allow the integer and
+     string libraries to interact more naturally.
+     Added uint.readstring.
+5.05
+     Replaced ASCII codes with ASCII literals.
+5.06
+     Renamed readstring/writestring to read/write so that the functions no
+     longer imply that they work with string objects.
+
+
+--------------------------------------------------------------------------------
+TODO
+
+
+Optimize uint.mul to have same time complexity as uint.div
+	We don't need to shift hval0 or hval1 in loop. We know that if 1 is added
+	to hval0, it will end up as hval0+fib0 at the end of the loop. Just add/sub
+	fib0 or fib1 to hval0 and hval1 when a carry occurs.
+	Unroll first loop iteration and simplify loop?
+	See if 2*fib0+fib1<MOD limit works better than fib0+fib1<MOD.
+	mul_opt.cpp, map lval0/lval1 carries to integers. See if unique.
+
+Optimize or/and/xor. Simplify top bit setting by changing .done jump destination
+when terminating loop.
+
+Expand uint.write to allow base 36. Get rid of translation table. Simplify
+[char] to value translation in uint.readstring.
+
+Get rid of mod testing with uint_test.cpp and replace with uint_test.sico.
+
+
+|#
+
+
+#---------------------------------------------------------------------------------
+# Strings
+
+
+uint.write:
+	# Call  : 0 ? uint.write mem memlen memidx retidx num base
+	#
+	# Effect: Converts an unsigned integer to ASCII and writes it to memory.
+	#       : [base] <= 16
+	#       : The first character is written to [mem]+[memidx].
+	#       : The function does not write after [mem]+[memlen]-1 or if [mem]=0,
+	#       : but [retidx] will still be updated.
+	#       : [retidx] = [memidx] + (length of the ASCII string)
+	#       : If [retidx]>[memlen], then the string needs to be resized.
+	#       : If retidx=0, then [retidx] is not written to.
+	#       : Base = 0: c0*0^0 + c1*0^1 + c2*0^2 + ... = c0
+	#       : Base = 1: c0*1^0 + c1*1^1 + c2*1^2 + ... = hash marks
+	#       : Base > 1: regular number
+	#
+	# Time  : Base = 0: 82
+	#       : Base = 1: 80 + 9*MOD
+	#       : Base > 1: 63 + (23 + 6*base)*digits = 2303
+	#       : digits = ceil(ln(MOD)/ln(base))
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	.arg7   0       ?+1
+	.arg8   0       ?+1
+	0       0       ?+1
+	# Get [mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p2     .p2     ?+1
+	.p2     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p2:0   ?+1
+	.mem    .mem    ?+1
+	.mem    .tmp    ?+1
+	# Get [memidx].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p4     .p4     ?+1
+	.p4     .tmp    ?+1
+	.nidx   .nidx   ?+1
+	.nidx   .p4:0   ?+1
+	# Get [memlen]. If [mem]=0 or [memlen]<=[memidx], set [memlen]=0.
+	.mem    .z      .len0
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p3:0   ?+1
+	.memlen .memlen ?+1
+	.memlen .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .nidx   ?+1
+	.memlen .tmp    .len0
+	.memlen .z-1    ?+4
+.len0:
+	.memlen .memlen ?+1
+	# Get retidx.
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [num].
+	.tmp    .tmp    ?+1
+	.tmp    .arg6:6 ?+1
+	.p6     .p6     ?+1
+	.p6     .tmp    ?+1
+	.nnum   .nnum   ?+1
+	.nnum   .p6:0   ?+1
+	.num    .num    ?+1
+	.num    .nnum   ?+1
+	# Get [base].
+	.tmp    .tmp    ?+1
+	.tmp    .arg7:7 ?+1
+	.p7     .p7     ?+1
+	.p7     .tmp    ?+1
+	.nbase  .nbase  ?+1
+	.nbase  .p7:0   ?+1
+	# Set string pointers.
+	.nidx   .mem    ?+1
+	.mem0   .mem0   ?+1
+	.mem0   .nidx   ?+1
+	.mem1   .mem1   ?+1
+	.mem1   .nidx   ?+1
+	.mem2   .mem2   ?+1
+	.mem2   .nidx   ?+1
+	.wret   .wret   ?+1
+	# Make sure [base] <= 16.
+	.nbase  .z      .base0loop
+	.base   .base   ?+1
+	.base   .nbase  ?+1
+	.base   .nbase  ?+1
+	.nbase  .n17    .ret
+	.nbase  .z15    .base1skip
+.base1loop:
+	# [base] = 1. Print hash marks.
+	.num    .z      .ret
+	.wret   .wretb1 ?+4
+	.num    .z+1    .ret
+	.nchar  .hex+2  .write
+.base0loop:
+	# [base] = 0. [char]=[num].
+	.wret   .wretb0 ?+1
+	.nchar  .num    .write
+.base1skip:
+	# Calculate the most significant digit and how many digits are in [num].
+	.nbase  .nbase  ?+1
+	.nbase  .base   ?+1
+	.den    .den    ?+1
+	.den    .z-1    ?+1
+	.chr    .chr    ?+1
+	.chr    .z-1    ?+1
+.msdloop:
+	.digits .z-1    ?+1
+	.chr    .base   ?+1
+	# Loop: num -= den
+	.num    .den    .msddone
+	.chr    .z-2    ?-5
+	# den = den*base
+	.nden   .nden   ?+1
+	.nden   .den    ?+1
+	.den    .den    ?+1
+	.den    .nnum   ?+1
+	.den    .num    ?+1
+	.num    .num    ?+1
+	.num    .nnum   .msdloop
+.msddone:
+	# num += den if num>0. If the original [num]=0, skip any correction.
+	.nnum   .z      .nextloop-6
+	.tmp    .tmp    ?+1
+	.num    .z      ?+4
+	.tmp    .den    ?+4
+	.chr    .z-2    ?+4
+	.num    .tmp    .msdloop+12
+	.den    .den    ?+1
+	.den    .nden   ?+1
+	.base   .z+2    ?+1
+	.chr    .nbase  ?+1
+	.wret   .wret0  .nextwrite
+.nextloop:
+	.digits .z+1    .ret
+	# digit = num/den
+	.chr    .chr    ?+1
+	.num    .den    ?+4
+	.chr    .z-2    ?-5
+	# num = num*base
+	.num    .z      ?+7
+	.num    .nden   ?+1
+	.nnum   .nnum   ?+4
+	.chr    .z-2    ?-5
+	.z+1    .base   ?+1
+	.nnum   .num    ?+1
+	.num    .nnum   ?+1
+	.z+1    .z-2    ?-5
+.nextwrite:
+	# Write a digit.
+	.chr    .nhex   ?+1
+	.nchar  .chr:0  .write
+.write:
+	# Mini function to write a character to the string.
+	.memlen .z+1    .writeskip
+	.mem0:0 .mem1:0 ?+1
+	.mem2:0 .nchar  ?+1
+	.mem2   .z-1    ?+1
+	.mem1   .z-1    ?+4
+.writeskip:
+	.memlen .memlen ?+1
+	.mem0   .z-1    ?+1
+	.nchar  .nchar  .wret:0
+.ret:
+	# return [retidx] = [mem0] - [mem]
+	.mem0   .ret0:0 ?+1
+	.mem    .mem0   ?+1
+	.ret1:0 .mem    ?+1
+	0       0       .arg8:8
+	# Variables
+	0-2 0-1 .z:0 1 2
+	.n17:0-17
+	.z15:15
+	.tmp:0
+	.nnum:0
+	.num:0
+	.nbase:0
+	.base:0
+	.digits:0
+	.den:0
+	.nden:0
+	.nchar:0
+	.nidx:0
+	.memlen:0
+	.mem:0
+	.hex:
+		'0 '0 '1 '1 '2 '2 '3 '3 '4 '4 '5 '5 '6 '6 '7 '7
+		'8 '8 '9 '9 'a 'a 'b 'b 'c 'c 'd 'd 'e 'e 'f 'f
+	.nhex:0-.hex
+	.wretb0:0-.ret
+	.wretb1:0-.base1loop-6
+	.wret0:0-.nextloop
+
+
+uint.read:
+	# Call  : 0 ? uint.read mem memlen memidx retidx retnum base
+	#
+	# Effect: Converts ASCII characters into an unsigned integer.
+	#       : [base] <= 36
+	#       : [retnum] = return value.
+	#       : The first character is read from [mem]+[memidx].
+	#       : The function does not read after [mem]+[memlen]-1 or if [mem]=0,
+	#       : but [retidx] will still be updated.
+	#       : [retidx] = [memidx] + (number of read characters)
+	#       : If retidx=0, then [retidx] is not written to.
+	#
+	# Time  : Base = 1: 94 + 19*MOD
+	#       : Base > 1: 112 + (17 + 2*base)*digits = 1456
+	#       : digits = ceil(ln(MOD)/ln(base))
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	.arg7   0       ?+1
+	.arg8   0       ?+1
+	0       0       ?+1
+	# Get [mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p2     .p2     ?+1
+	.p2     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p2:0   ?+1
+	.mem    .mem    ?+1
+	.mem    .tmp    ?+1
+	# Get [memidx].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p4     .p4     ?+1
+	.p4     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p4:0   ?+1
+	.memidx .memidx ?+1
+	.memidx .tmp    ?+1
+	# Set string pointers.
+	.tmp    .mem    ?+1
+	.mem0   .mem0   ?+1
+	.mem0   .tmp    ?+1
+	# Get retidx.
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get retnum.
+	.tmp    .tmp    ?+1
+	.tmp    .arg6:6 ?+1
+	.ret2   .ret2   ?+1
+	.ret2   .tmp    ?+1
+	.ret3   .ret3   ?+1
+	.ret3   .tmp    ?+1
+	.num    .num    ?+1
+	# Get [memlen]. If [mem]=0 or [memlen]<=[memidx], return.
+	.mem    .z      .ret+3
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p3:0   ?+1
+	.memlen .memlen ?+1
+	.memlen .tmp    ?+1
+	.memlen .memidx .ret+3
+	.memlen .z-1    ?+1
+	# Get [base].
+	.tmp    .tmp    ?+1
+	.tmp    .arg7:7 ?+1
+	.p7     .p7     ?+1
+	.p7     .tmp    ?+1
+	.nbase  .nbase  ?+1
+	.nbase  .p7:0   ?+1
+	# Make sure [base] <= 36.
+	.rret   .rret   ?+1
+	.nbase  .z      .base0loop
+	.base   .base   .base0skip
+.base0loop:
+	.rret   .rret0  ?+1
+	.char   .char   .read
+	.num    .nchar  .ret+3
+.base0skip:
+	# [max]=[base]-1. If [base]=1, we allow [char] to be 0 or 1.
+	.max    .max    ?+1
+	.nbase  .z-2    ?+4
+	.max    .z-1    .whiteloop
+	.nbase  .z+1    ?+1
+	.base   .nbase  ?+1
+	.base   .nbase  ?+1
+	.max    .nbase  ?+1
+	.nbase  .n36    .ret+3
+	# Read whitespace
+.whiteloop:
+	.rret   .rret1  ?+1
+	.char   .char   .read
+	.char   .z32    ?-5
+	.char   .n32    ?+1
+	.rret   .rret2  ?+1
+.parseloop:
+	# [char] >= 'a'
+	.char   .ca1    ?+4
+	.char   .n9     .parsedone
+	.char   .nca1   ?+1
+	# [char] >= 'A'
+	.char   .cA1    ?+4
+	.char   .n9     .parsedone
+	.char   .ncA1   ?+1
+	# [char] >= '0'
+	.nchar  .nc91   .ret
+	.char   .c01    .ret
+	.char   .z+1    ?+1
+.parsedone:
+	# If [char] >= [max], abort.
+	.nchar  .nchar  ?+1
+	.nchar  .char   ?+1
+	.char   .max    ?+4
+	.mem    .z-1    .ret+3
+	# num += num*(base-1)
+	.z+1    .base   ?+4
+	.tmp    .tmp    ?+13
+	.tmp    .tmp    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.z+1    .z-2    ?-5
+	# num += char
+	.num    .nchar  ?+1
+	.char   .char   .read
+.read:
+	# Mini function to read a character from the string.
+	.memlen .z+1    .ret+3
+	.nchar  .nchar  ?+1
+	.nchar  .mem0:0 ?+1
+	.char   .nchar  ?+1
+	.mem0   .z-1    .rret:0
+.ret:
+	# return [retidx] = [mem0] - [mem]
+	.mem0   .z+1    ?+1
+	.mem0   .ret0:0 ?+1
+	.mem    .mem0   ?+1
+	.ret1:0 .mem    ?+1
+	# return [retnum]
+	.tmp    .tmp    ?+1
+	.num    .ret2:0 ?+1
+	.tmp    .num    ?+1
+	.ret3:0 .tmp    ?+1
+	0       0       .arg8:8
+	# Variables
+	0-2 0-1 .z:0 1 2
+	.n36:0-36
+	.n32:0-32
+	.n9:0-9
+	.z32:32
+	.tmp:0
+	.num:0
+	.nbase:0
+	.base:0
+	.nchar:0
+	.char:0
+	.max:0
+	.mem:0
+	.memlen:0
+	.memidx:0
+	.rret0:0-.base0loop-6
+	.rret1:0-.whiteloop-6
+	.rret2:.whiteloop+6-.parseloop
+	.ca1: 'a-1
+	.nca1:1-'a
+	.cA1: 'A-1
+	.ncA1:1-'A
+	.c01: '0-1
+	.nc91:0-'9-1
+
+
+
+#---------------------------------------------------------------------------------
+# Comparisons
+
+
+uint.cmp:
+	# Call  : 0 ? uint.cmp a b lt eq gt
+	#
+	# Effect: if [a]<[b]: goto lt
+	#       : if [a]=[b]: goto eq
+	#       : if [a]>[b]: goto gt
+	#
+	# Time  : 29
+	#
+	# Use [0] to get the calling address.
+	.z      .arg2   ?+1
+	0       .z      ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	0       0       ?+1
+	# Get [a]
+	.z      .z      ?+1
+	.z      .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .z      ?+1
+	.z      .z      ?+1
+	.z      .p0:0   ?+1
+	.a      .a      ?+1
+	.a      .z      ?+1
+	# Get [b]
+	.z      .z      ?+1
+	.z      .arg3:3 ?+1
+	.b      .b      ?+1
+	.b      .z      ?+1
+	# Compute [a]-[b]
+	.z      .z      ?+1
+	.a      .b:0    .le
+	# If [a]>[b]
+	.z      .arg6:6 .ret
+.le:
+	.a      .z      .eq
+	# If [a]<[b]
+	.z      .arg4:4 .ret
+.eq:
+	# If [a]=[b]
+	.z      .arg5:5 .ret
+.ret:
+	.r0     .r0     ?+1
+	.r0     .z      ?+1
+	.z      .z      .r0:0
+	# Variables
+	.z:0 1 2
+	.a:0
+
+
+uint.min:
+	# Call  : 0 ? uint.min ret a b
+	#
+	# Effect: [ret] = min([a],[b])
+	#
+	# Time  : 34
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get ret
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.na     .na     ?+1
+	.na     .p3:0   ?+1
+	.a      .a      ?+1
+	.a      .na     ?+1
+	# Get [b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p4     .p4     ?+1
+	.p4     .tmp    ?+1
+	# Set [ret]
+	.tmp    .tmp    ?+1
+	.a      .p4:0   ?+4
+	.tmp    .a      ?+1
+	.tmp    .ret0:0 ?+1
+	.na     .tmp    ?+1
+	.ret1:0 .na     ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+	.a:0
+	.na:0
+
+
+uint.max:
+	# Call  : 0 ? uint.max ret a b
+	#
+	# Effect: [ret] = max([a],[b])
+	#
+	# Time  : 34
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get ret
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.na     .na     ?+1
+	.na     .p3:0   ?+1
+	.a      .a      ?+1
+	.a      .na     ?+1
+	# Get [b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p4     .p4     ?+1
+	.p4     .tmp    ?+1
+	# Set [ret]
+	.a      .p4:0   ?+4
+	.tmp    .tmp    ?+7
+	.tmp    .tmp    ?+1
+	.tmp    .a      ?+1
+	.tmp    .ret0:0 ?+1
+	.na     .tmp    ?+1
+	.ret1:0 .na     ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+	.a:0
+	.na:0
+
+
+#---------------------------------------------------------------------------------
+# Integer Arithmetic
+
+
+uint.set:
+	# Call  : 0 ? uint.set ret a
+	#
+	# Effect: [ret] = [a]
+	#
+	# Time  : 24
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [ret]
+	.ret0   .arg2:2 ?+1
+	.ret1   .ret0   ?+1
+	.ret2   .ret0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .ret1   ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	# Set [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .a0:0   ?+1
+	.ret0:0 .ret1:0 ?+1
+	.ret2:0 .tmp    ?+1
+	# Return
+	0       0       .arg4:4
+	# Variables
+	.off:2
+	.tmp:0
+
+
+uint.neg:
+	# Call  : 0 ? uint.neg ret a
+	#
+	# Effect: [ret] = -[a]
+	#
+	# Time  : 25
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	# Set [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .a0:0   ?+1
+	.tmp    .ret0:0 ?+1
+	.val    .val    ?+1
+	.val    .tmp    ?+1
+	.ret1:0 .val    ?+1
+	# Return
+	0       0       .arg4:4
+	# Variables
+	.off:2
+	.tmp:0
+	.val:0
+
+
+uint.add:
+	# Call  : 0 ? uint.add ret a b
+	#
+	# Effect: [ret] = [a] + [b]
+	#
+	# Time  : 30
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [ret]
+	.ret0   .arg2:2 ?+1
+	.ret1   .ret0   ?+1
+	.ret2   .ret0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .ret1   ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	# Get [b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp    ?+1
+	# Set [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .a0:0   ?+1
+	.tmp    .b0:0   ?+1
+	.ret0:0 .ret1:0 ?+1
+	.ret2:0 .tmp    ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+
+
+uint.sub:
+	# Call  : 0 ? uint.sub ret a b
+	#
+	# Effect: [ret] = [a] - [b]
+	#
+	# Time  : 31
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	# Get [b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp    ?+1
+	# Set [ret]
+	.val    .val    ?+1
+	.val    .ret1:0 ?+1
+	.val    .b0:0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .a0:0   ?+1
+	.tmp    .val    ?+1
+	.ret0:0 .tmp    ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+	.val:0
+
+
+uint.mul:
+	# Call  : 0 ? uint.mul high low a b
+	#
+	# Effect: [high] = [a]*[b] / MOD
+	#       : [low]  = [a]*[b] % MOD
+	#
+	# Time  : 55 + 12.97*bits = 885
+	#       : 47 +  7.21*bits = 508 if high=0
+	#
+	# Deconstruct [b] into a sum of fibonacci numbers (ex: 15=11+3+1). At the same
+	# time, calculate [a]*[b] by building up a separate fibonacci sequence and adding
+	# [a] to it every time a fibonacci number is a part of [b]'s sum.
+	#
+	# The actual time complexity is
+	#
+	#     n(F) = ceil(log_phi(F*sqrt(5)-1/2))
+	#     time = 32 + 9*n(F)
+	#     time = 34 + 5*n(F) if high=0
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    .firstrun
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	# Get low
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.l0     .l0     ?+1
+	.l0     .tmp    ?+1
+	.l1     .l1     ?+1
+	.l1     .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.a0     .a0     ?+1
+	.a0     .tmp    ?+1
+	.na     .na     ?+1
+	.na     .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .na     ?+1
+	# Get -[b]. We will flip the sign of the result later.
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp    ?+1
+	.nb     .nb     ?+1
+	.nb     .b0:0   ?+1
+	.lval0  .lval0  ?+1
+	.lval1  .lval1  ?+1
+	# Get high. If [hret]=0, skip calculating the high value.
+	.hret   .arg2:2 ?+1
+	.hret   .z      .lowonly
+	# ------- Calculate [lval] and [hval] --------
+	.hval0  .hval0  ?+1
+	.hval1  .hval1  ?+1
+	.nb     .z      .highzero
+	.na     .z      .highzero
+	.nfib0  .fib0i  ?+1
+	.fib0   .nfib0i ?+1
+	.nfib1  .fib1i  ?+1
+	.fib1   .nfib1i .hstart:.highfib0+9
+	# During each loop, fibonacci decrement the [nb]. If [nb]>[fib], reduce [nb]
+	# and add [a] to the return value. Then fibonacci increment the return value.
+.highfib0:
+	.fib1   .fib0   .highret
+	.hval0  .hval1  ?+1
+	# If [lval0]<=[lval1], check for a carry into [hval0].
+	.lval0  .lval1  .highfib1-6
+	# If [nb]>[fib0], add [a] to [lval0] and check for a carry into [hval0].
+	.nb     .fib0   ?+16
+	.lval0  .na     ?+7
+	.hval0  .z+1    ?+1
+	.nfib0  .nfib1  .highfib1
+	.lval0  .z      ?-8
+	.nfib0  .nfib1  .highfib1
+	# [nb]<=[fib0], so restore [nb].
+	.nb     .nfib0  ?+1
+	.nfib0  .nfib1  .highfib1
+	# Checking for a carry from [lval0]-[lval1].
+	.lval0  .z      .highfib0+9
+	.hval0  .z-1    .highfib0+9
+.highfib1:
+	.fib0   .fib1   .highret
+	.hval1  .hval0  ?+1
+	# If [lval1]<=[lval0], check for a carry into [hval1].
+	.lval1  .lval0  .lowonly-6
+	# If [nb]>[fib1], subtract [a] from [lval1] and check for a carry into [hval1].
+	.nb     .fib1   ?+13
+	.lval1  .a      ?+4
+	.nfib1  .nfib0  .highfib0
+	.lval1  .z      ?-5
+	.hval1  .z-1    ?-8
+	# [nb]<=[fib1], so restore [nb].
+	.nb     .nfib1  ?+1
+	.nfib1  .nfib0  .highfib0
+	# Checking for a carry from [lval1]-[lval0].
+	.lval1  .z      .highfib1+9
+	.hval1  .z-1    .highfib1+9
+	# ---------- Only calculate [lval] -----------
+.lowonly:
+	.nb     .z      .lowret+3
+	.nfib0  .fib0i  ?+1
+	.fib0   .nfib0i ?+1
+	.nfib1  .fib1i  ?+1
+	.fib1   .nfib1i .lstart:.lowfib0+6
+	# During each loop, fibonacci decrement the [nb]. If [nb]>[fib], reduce [nb]
+	# and add [a] to the return value. Then fibonacci increment the return value.
+.lowfib0:
+	.fib1   .fib0   .lowret
+	.lval0  .lval1  ?+1
+	# If [nb]>[fib0], add [a] to [lval0].
+	.nb     .fib0   ?+7
+	.lval0  .na     ?+1
+	.nfib0  .nfib1  .lowfib1
+	.nb     .nfib0  ?+1
+	.nfib0  .nfib1  .lowfib1
+.lowfib1:
+	.fib0   .fib1   .lowret
+	.lval1  .lval0  ?+1
+	# If [nb]>[fib1], subtract [a] from [lval1].
+	.nb     .fib1   ?+7
+	.lval1  .a      ?+1
+	.nfib1  .nfib0  .lowfib0
+	.nb     .nfib1  ?+1
+	.nfib1  .nfib0  .lowfib0
+	# -------------- Return values ---------------
+.highret:
+	# Calculate the low return value and subtract [a] from it.
+	# Also check for final carries into the high value.
+	.lval0  .lval1  ?+4
+	.hval1  .z-1    ?+4
+	.lval0  .z      ?-5
+	.lval0  .na     ?+4
+	.hval1  .z-1    ?+1
+	.lval1  .lval1  ?+1
+	.hval0  .na     ?+1
+.highzero:
+	# Set [high]
+	.h0     .h0     ?+1
+	.h0     .hret   ?+1
+	.h1     .h1     ?+1
+	.h1     .hret   ?+1
+	.hval0  .h0:0   ?+1
+	.hval1  .hval0  ?+1
+	.h1:0   .hval1  ?+1
+	.hret   .hret   .lowret+3
+.lowret:
+	# Set [low]
+	.lval0  .na     ?+1
+	.lval1  .l0:0   ?+1
+	.lval0  .lval1  ?+1
+	.l1:0   .lval0  ?+1
+	# Return
+	0       0       .arg6:6
+	# On the first run, calculate the largest fibonacci values that can fit in our
+	# underlying integers.
+	.fdif:.firstrun-uint.mul-3
+	.hdif:.highfib0-.highfib1
+	.ldif:.lowfib0-.lowfib1
+.firstrun:
+	uint.mul+2 .fdif ?+1
+	.nfib1i .fib0i  .firstset1
+	.fib0i  .nfib1i ?-5
+.firstset0:
+	# If [fib0]<[fib1], start on [fib1] loop.
+	.fib1i  .nfib1i ?+1
+	.fib0i  .fib1i  ?+1
+	.nfib0i .fib0i  ?+1
+	.hstart .hdif   ?+1
+	.lstart .ldif   ?+1
+	.fib1i  .z+1    ?+1
+	.nfib1i .z-1    uint.mul+3
+.firstset1:
+	.nfib0i .fib0i  ?+1
+	.nfib1i .nfib0i ?+1
+	.fib1i  .nfib1i ?+1
+	.fib0i  .fib1i  ?+4
+	.fib0i  .nfib1i .firstset1-6
+	.nfib0i .nfib0i .firstset0+3
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.a:0
+	.na:0
+	.nb:0
+	.hret:0
+	.hval0:0
+	.hval1:0
+	.lval0:0
+	.lval1:0
+	.fib0i:1
+	.nfib0i:0
+	.fib1i:0
+	.nfib1i:0-1
+	.fib0:0
+	.nfib0:0
+	.fib1:1
+	.nfib1:0-1
+
+
+uint.div:
+	# Call  : 0 ? uint.div quot rem num den
+	#
+	# Effect: [quot] = [num] / [den] rounded down
+	#       : [rem]  = [num] % [den]
+	#
+	# Time  : 60 + 8.65*bits = 613
+	#       : 50 + 7.21*bits = 511 if quot=0
+	#
+	# Use the fibonacci sequence to build up [den]. Then run the sequence in
+	# reverse to calculate [num]%[den]. While calculating the remainder, calculate
+	# the quotient [num]/[den] by using another, separate fibonacci sequence.
+	#
+	# The actual time complexity is
+	#
+	#     n(F) = ceil(log_phi(F*sqrt(5)-1/2))
+	#     time = 44 + 6*n(F)
+	#     time = 36 + 5*n(F) if quot=0
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	# Get rem
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.r2     .r2     ?+1
+	.r2     .tmp    ?+1
+	.r3     .r3     ?+1
+	.r3     .tmp    ?+1
+	# Get [num]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.num    .num    ?+1
+	.num    .tmp    ?+1
+	# Get [den]
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.nden1  .nden1  ?+1
+	.nden1  .p1:0   ?+1
+	# If [den]=0, abort.
+	.nden1  .z      .divz
+	# Get quot. If [qret]=0, skip calculating the quotient.
+	.qret   .arg2:2 ?+1
+	# If [den]*2>=MOD, we need to skip calculating the largest multiple of [den].
+	.den0   .nden1  ?+1
+	.nden1  .den0   ?+4
+	.den1   .den1   ?+7
+	.den1   .den1   .denhalf
+	# Calculate the largest fibonacci multiple of [den].
+.denloop:
+	.nden1  .den0   .denstart0
+	.den0   .nden1  .denloop
+.denstart1:
+	# [den1]>[den0]. Fill in the rest of the denominators.
+	.den1   .nden1  ?+1
+	.den0   .den1   ?+1
+	.nden0  .den0   ?+1
+	.qret   .z      .remden1+3
+	.quot0  .quot0  .quotden1+6
+.denstart0:
+	# [den0]>=[den1]. Fill in the rest of the denominators.
+	# If [den0]=[den1], we need to swap values.
+	.nden0  .den0   ?+1
+	.nden1  .nden0  ?+1
+	.den1   .nden1  ?+1
+	.den0   .den1   ?+4
+	.den0   .nden1  .denhalf+9
+	.nden0  .nden0  .denstart1+3
+.denhalf:
+	# [den]*2>=MOD. Manually set the denominators to +-[den].
+	.nden0  .den0   ?+1
+	.nden1  .nden0  ?+1
+	.den1   .nden1  ?+1
+	.qret   .z      .remden0+3
+	.quot0  .quot0  .quotden0+6
+	# -------- Calculate [rem] and [quot] --------
+	# During each loop, fibonacci decrement the denominator and increment the
+	# quotient. If [num]>[den], reduce [num] and increment the quotient by 1.
+.quotden0:
+	.den1   .den0   .quotret
+	.quot0  .quot1  ?+1
+	# Test if [num]>[den0].
+	.num    .den0   ?+7
+	.quot0  .z-1    ?+1
+	.nden0  .nden1  .quotden1
+	.num    .nden0  ?+1
+	.nden0  .nden1  .quotden1
+.quotden1:
+	.den0   .den1   .quotret
+	.quot1  .quot0  ?+1
+	# Test if [num]>[den1].
+	.num    .den1   ?+7
+	.quot1  .z+1    ?+1
+	.nden1  .nden0  .quotden0
+	.num    .nden1  ?+1
+	.nden1  .nden0  .quotden0
+	# ----------- Only calculate [rem] -----------
+	# During each loop, fibonacci decrement the denominator. If [num]>[den],
+	# reduce [num].
+.remden0:
+	.den1   .den0   .remret
+	# Test if [num]>[den0].
+	.num    .den0   ?+4
+	.nden0  .nden1  .remden1
+	.num    .nden0  ?+1
+	.nden0  .nden1  .remden1
+.remden1:
+	.den0   .den1   .remret
+	# Test if [num]>[den1].
+	.num    .den1   ?+4
+	.nden1  .nden0  .remden0
+	.num    .nden1  ?+1
+	.nden1  .nden0  .remden0
+	# -------------- Return values ---------------
+.quotret:
+	# Set [quot]. Because of how additions are split, return [quot0]-[quot1]+1.
+	.den1   .num    ?+4
+	.den1   .den1   ?+7
+	.num    .num    ?+1
+	.quot0  .z-1    ?+1
+	.r0     .r0     ?+1
+	.r0     .qret   ?+1
+	.r1     .r1     ?+1
+	.r1     .qret   ?+1
+	.quot0  .r0:0   ?+1
+	.quot1  .quot0  ?+1
+	.r1:0   .quot1  ?+1
+	.quot1  .quot1  ?+1
+	.qret   .qret   .remret+9
+.remret:
+	# Set [rem]=[num]-[den1].
+	.den1   .num    ?+4
+	.den1   .den1   ?+4
+	.num    .num    ?+1
+	.num    .r2:0   ?+1
+	.den1   .num    ?+1
+	.r3:0   .den1   ?+1
+	# Return
+	0       0       .arg6:6
+.divz:
+	# Division by 0. Abort.
+	0-1     0       ?-2
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.num:0
+	.den0:0
+	.nden0:0
+	.den1:0
+	.nden1:0
+	.qret:0
+	.quot0:0
+	.quot1:0
+
+
+#---------------------------------------------------------------------------------
+# Number Theory
+
+
+uint.gcd:
+	# Call  : 0 ? uint.gcd ret a b
+	#
+	# Effect: [ret] = gcd([a],[b])
+	#
+	# Time  : 40 + 20.17*bits = 1330
+	#
+	# Calculate the greatest common denominator using the Euclidean algorithm. By
+	# dynamically calculating the modulus, this algorithm has log time complexity.
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get ret
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p3:0   ?+1
+	.a      .a      ?+1
+	.a      .tmp    ?+1
+	# Get -[b]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p4     .p4     ?+1
+	.p4     .tmp    ?+1
+	.nmul0  .nmul0  ?+1
+	.nmul0  .p4:0   ?+1
+	# Make sure [a]!=0 and [b]!=0, or we'll loop forever.
+	.nmul0  .z      .ret
+	.a      .z      .ret
+.loop:
+	# [mul1]=[b].
+	.mul1   .mul1   ?+1
+	.mul1   .nmul0  ?+1
+	.nmul0  .nmul0  ?+1
+	# Find the largest multiple of [b]<=[a], and reduce [a] as well.
+	.a      .mul1   .muldone+3
+.mulloop:
+	.a      .mul1   .muldone
+	.a      .mul1   .muldone
+	.nmul0  .mul1   ?+1
+	.mul1   .nmul0  .mulloop
+.muldone:
+	.mul0   .nmul0  ?+1
+	.nmul1  .nmul1  ?+1
+	.nmul1  .mul1   .mod1+9
+	# Calculate [a]%[b].
+.mod0:
+	.mul1   .mul0   .moddone
+	# Test if [a]>[mul0].
+	.a      .mul0   ?+4
+	.nmul0  .nmul1  .mod1
+	.a      .nmul0  ?+1
+	.nmul0  .nmul1  .mod1
+.mod1:
+	.mul0   .mul1   .moddone
+	# Test if [a]>[mul1].
+	.a      .mul1   ?+4
+	.nmul1  .nmul0  .mod0
+	.a      .nmul1  ?+1
+	.nmul1  .nmul0  .mod0
+.moddone:
+	# If [mul1]=[b]<=[a], then [a]%[b]=0, so return [b].
+	.mul1   .a      .ret
+	# Otherwise, swap [a] and [b], and continue the algorithm.
+	.nmul0  .a      ?+1
+	.a      .a      ?+1
+	.a      .nmul1  .loop
+.ret:
+	# Return the gcd. Either [a]=0 or [nmul0]=-[b]=0, so [a]-(-[b])=gcd.
+	.a      .ret0:0 ?+1
+	.nmul0  .a      ?+1
+	.ret1:0 .nmul0  ?+1
+	0       0       .arg5:5
+	# Variables
+	.z:0 1 2
+	.a:0
+	.tmp:0
+	.nmul0:0
+	.nmul1:0
+	.mul0:0
+	.mul1:0
+
+
+#---------------------------------------------------------------------------------
+# Bitwise Arithmetic
+
+
+uint.shl:
+	# Call  : 0 ? uint.shl ret num shift
+	#
+	# Effect: [ret] = [num] << [shift]
+	#
+	# Time  : 56 + 16*floor((bits-1)/8) = 168
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get ret.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [shift]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p1:0   ?+1
+	.shift  .tmp    ?+1
+	# Get -[num]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.num    .num    ?+1
+	.num    .p0:0   .done8-3
+	# [num]=[num]<<8. Abort if [num]=0.
+.loop8:
+	.num    .z      .ret
+	.shift  .p8     .done8
+	.tmp    .num    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.num    .tmp    ?+1
+	.tmp    .num    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.num    .tmp    ?+1
+	.tmp    .num    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .tmp    .loop8
+.done8:
+	.shift  .z      .loop8+6
+	.shift  .n8     .done1
+	# [num]=[num]<<3
+	.shift  .z+2    .done3
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.num    .tmp    ?+1
+	.tmp    .tmp    ?+1
+	# [num]=[num]<<3
+	.shift  .z+3    .done3
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.num    .tmp    ?+1
+	.tmp    .tmp    ?+4
+.done3:
+	.shift  .z-3    ?+1
+	# [num]=[num]<<1
+	.shift  .z+1    .done1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .tmp    ?+1
+	# [num]=[num]<<1
+	.shift  .z+1    .done1
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .tmp    ?+1
+.ret:
+	.shift  .shift  ?+1
+.done1:
+	# Set [ret].
+	.tmp    .ret0:0 ?+1
+	.num    .tmp    ?+1
+	.ret1:0 .num    ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	0-3 0-2 0-1 .z:0 1 2 3
+	.p8:8
+	.n8:0-8
+	.num:0
+	.shift:0
+	.tmp:0
+
+
+uint.shr:
+	# Call  : 0 ? uint.shr ret num shift
+	#
+	# Effect: [ret] = [num] >> [shift]
+	#
+	# Time  : 31 + 8*bits = 543
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# On first run, calculate how many bits we are using.
+	.tmp    .tmp    .firsts:?+1
+	.firsts .firstv ?+1
+	.num    .z-1    ?+1
+.firstloop:
+	.num    .z      .firstdone
+	.tmp    .num    ?+1
+	.num    .tmp    ?+1
+	.nbits  .z+1    ?+1
+	.tmp    .tmp    .firstloop
+.firstdone:
+	# Get ret
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	.rval   .rval   ?+1
+	# Get [shift]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	# If [shift]>=[bits], abort.
+	.shift  .nbits  ?+1
+	.shift  .p1:0   .ret
+	# Get [num]
+	.tmp    .arg3:3 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.num    .num    ?+1
+	.num    .tmp    ?+1
+	.tmp    .z+1    ?+1
+.loop:
+	# [num]<<=1. Carry into [rval].
+	.num    .tmp    ?+4
+	.rval   .z-1    ?+1
+	.tmp    .tmp    ?+1
+	.shift  .z+1    .ret+3
+	# [rval]<<=1
+	.tmp    .rval   ?+1
+	.rval   .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .num    .loop
+.ret:
+	.shift  .shift  ?+1
+	# Set [ret].
+	.rval   .ret0:0 ?+1
+	.tmp    .rval   ?+1
+	.ret1:0 .tmp    ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.tmp:0
+	.firstv:.firsts+1-.firstdone
+	.nbits:0
+	.num:0
+	.rval:0
+	.shift:0
+
+
+uint.not:
+	# Call  : 0 ? uint.not ret a
+	#
+	# Effect: [ret] = ~[a]
+	#
+	# Time  : 26
+	#
+	# Use the relation ~A=-1-A.
+	#
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	# Get [a]
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p2     .p2     ?+1
+	.p2     .tmp    ?+1
+	# Set [ret]
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.tmp    .p2:0   ?+1
+	.tmp    .z+1    ?+1
+	.ret    .ret    ?+1
+	.ret    .tmp    ?+1
+	.p1:0   .ret    ?+1
+	# Return
+	0       0       .arg4:4
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.ret:0
+
+
+uint.and:
+	# Call  : 0 ? uint.and ret a b
+	#
+	# Effect: [ret] = [a] & [b]
+	#
+	# Time  : 37 + 7*bits = 485
+	#
+	# Make sure [a] and [b] are odd. Every loop, rotate [a] to the left and shift
+	# [b] to the left. Depending on how the top bits of [a] and [b] are set, add 1
+	# to [a]. Stop when [b]=0, and return [a]. Branches are organized in the loop
+	# to minimize instructions.
+	#
+	# Use [0] to get the calling address.
+	.atmp   .arg2   ?+1
+	0       .atmp   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [ret]
+	.atmp   .atmp   ?+1
+	.atmp   .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .atmp   ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .atmp   ?+1
+	# Get [a]
+	.atmp   .atmp   ?+1
+	.atmp   .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .atmp   ?+1
+	.atmp   .atmp   ?+1
+	.atmp   .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .atmp   ?+1
+	# Get [b]
+	.btmp   .btmp   ?+1
+	.btmp   .arg4:4 ?+1
+	.b0     .b0     ?+1
+	.b0     .btmp   ?+1
+	.btmp   .btmp   ?+1
+	.btmp   .b0:0   ?+1
+	.b      .btmp   ?+1
+	# Perform the first iteration outside of the loop. We need [a] and [b] to be odd
+	# so that we can efficiently check for carrying in the loop. Flag if the top bit
+	# needs to be set at the end.
+	        .atmp   .z+1    ?+1
+	        .btmp   .z+1    ?+1
+	        .a      .atmp   .l0x
+	.l1x:   .b      .btmp   .l00
+	.l11:   .atmp   .atmp   .loop
+	.l0x:   .b      .btmp   .l00
+	.l00:   .top    .z+1    ?+1
+	        .atmp   .atmp   .loop
+	# Loop until [b]=0.
+.loop:
+	# Prepare [b] for shift and carry.
+	        .btmp   .btmp   ?+1
+	        .btmp   .b      ?+1
+	# Left shift [a] and [b] and check for carry. Set low bit of [a] if needed.
+	# If [b]<=[btmp] and [b]=0, then we are done.
+	        .b      .btmp   .f0x
+	.f1x:   .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f11:   .a      .z-1    .f00
+	.f0x:   .b      .z      .done
+	        .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f00:   .atmp   .atmp   .loop
+.done:
+	# Check if the top bit needs to be zero'd.
+	.top    .top:.z ?+4
+	.a      .btmp   ?+1
+	# We have [a]=[a]&[b]+-[btmp] and [btmp]=2^(n-1).
+	.a      .ret0:0 ?+1
+	.btmp   .a      ?+1
+	.ret1:0 .btmp   ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.a:0
+	.atmp:0
+	.b:0
+	.btmp:0
+
+
+uint.or:
+	# Call  : 0 ? uint.or ret a b
+	#
+	# Effect: [ret] = [a] | [b]
+	#
+	# Time  : 38 + 7*bits = 486
+	#
+	# Use bitwise AND and the relation A|B=-1-(~A)&(~B).
+	#
+	# Use [0] to get the calling address.
+	.atmp   .arg2   ?+1
+	0       .atmp   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [ret]
+	.atmp   .atmp   ?+1
+	.atmp   .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .atmp   ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .atmp   ?+1
+	# Get -[a]
+	.atmp   .atmp   ?+1
+	.atmp   .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .atmp   ?+1
+	.a      .a      ?+1
+	.a      .a0:0   ?+1
+	.atmp   .atmp   ?+1
+	.atmp   .a      ?+1
+	# Get -[b]
+	.btmp   .btmp   ?+1
+	.btmp   .arg4:4 ?+1
+	.b0     .b0     ?+1
+	.b0     .btmp   ?+1
+	.b      .b0:0   ?+1
+	.btmp   .btmp   ?+1
+	.btmp   .b      ?+1
+	# Perform the first iteration outside of the loop. We need [a] and [b] to be odd
+	# so that we can efficiently check for carrying in the loop. Flag if the top bit
+	# needs to be set.
+	        .a      .z+1    ?+1
+	        .b      .z+1    ?+1
+	        .a      .atmp   .l0x
+	.l1x:   .b      .btmp   .l00
+	.l11:   .atmp   .atmp   .loop
+	.l0x:   .b      .btmp   .l00
+	.l00:   .top    .z+1    ?+1
+	        .atmp   .atmp   .loop
+	# Loop until [b]=0.
+.loop:
+	# Prepare [b] for shift and carry.
+	        .btmp   .btmp   ?+1
+	        .btmp   .b      ?+1
+	# Left shift [a] and [b] and check for carry. Set low bit of [a] if needed.
+	# If [b]<=[btmp] and [b]=0, then we are done.
+	        .b      .btmp   .f0x
+	.f1x:   .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f11:   .a      .z-1    .f00
+	.f0x:   .b      .z      .done
+	        .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f00:   .atmp   .atmp   .loop
+.done:
+	# Check if the top bit needs to be zero'd.
+	.top    .top:.z ?+4
+	.a      .btmp   ?+1
+	# We have [a]=[a]&[b]+-[btmp] and [btmp]=2^(n-1).
+	# A|B=-1-(~A)&(~B)
+	.a      .z-1    ?+1
+	.btmp   .ret0:0 ?+1
+	.a      .btmp   ?+1
+	.ret1:0 .a      ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.a:0
+	.atmp:0
+	.b:0
+	.btmp:0
+
+
+uint.xor:
+	# Call  : 0 ? uint.xor ret a b
+	#
+	# Effect: [ret] = [a] ^ [b]
+	#
+	# Time  : 39 + 7*bits = 487
+	#
+	# Use bitwise AND and the relation A^B=A+B-2(A&B).
+	#
+	# Use [0] to get the calling address.
+	.atmp   .arg2   ?+1
+	0       .atmp   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [ret]
+	.atmp   .atmp   ?+1
+	.atmp   .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .atmp   ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .atmp   ?+1
+	# Get [a]
+	.atmp   .atmp   ?+1
+	.atmp   .arg3:3 ?+1
+	.a0     .a0     ?+1
+	.a0     .atmp   ?+1
+	.atmp   .atmp   ?+1
+	.atmp   .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .atmp   ?+1
+	# Get [b]
+	.btmp   .btmp   ?+1
+	.btmp   .arg4:4 ?+1
+	.b0     .b0     ?+1
+	.b0     .btmp   ?+1
+	.btmp   .btmp   ?+1
+	.btmp   .b0:0   ?+1
+	.b      .btmp   ?+1
+	# Perform the first iteration outside of the loop. We need [a] and [b] to be odd
+	# so that we can efficiently check for carrying in the loop.
+	.off    .off    ?+1
+	.off    .atmp   ?+1
+	.off    .btmp   ?+1
+	.atmp   .z+1    ?+1
+	.btmp   .z+1    ?+1
+	.a      .atmp   ?+1
+	.b      .btmp   ?+1
+	.atmp   .atmp   .loop
+	# Loop until [b]=0.
+.loop:
+	# Prepare [b] for shift and carry.
+	        .btmp   .btmp   ?+1
+	        .btmp   .b      ?+1
+	# Left shift [a] and [b] and check for carry. Set low bit of [a] if needed.
+	# If [b]<=[btmp] and [b]=0, then we are done.
+	        .b      .btmp   .f0x
+	.f1x:   .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f11:   .a      .z-1    .f00
+	.f0x:   .b      .z      .done
+	        .atmp   .a      ?+1
+	        .a      .atmp   .f00
+	.f00:   .atmp   .atmp   .loop
+.done:
+	# We have [a]=[a]&[b]+-[off] and [off]=2^(n-1).
+	# Use A^B=A+B-2(A&B).
+	.off    .a      ?+1
+	.off    .ret0:0 ?+1
+	.a      .off    ?+1
+	.ret1:0 .a      ?+1
+	# Return
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.a:0
+	.atmp:0
+	.b:0
+	.btmp:0
+	.off:0
+
+

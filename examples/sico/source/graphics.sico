@@ -1,0 +1,507 @@
+#|==============================================================================
+
+
+Graphics - v1.00
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+Requires int and mem libraries.
+
+This library is optimized towards drawing images with no transforms. Lines,
+circles, etc should be pre-rendered to images rather than drawn in real time.
+
+
+--------------------------------------------------------------------------------
+TODO
+
+
+fonts
+	Automate in python.
+	Uniform height, allow custom width.
+	Convert a font to 256x256 images. Shrink when rendering.
+	Only use black/white pixels. Compress with RLE.
+blitting
+lines
+rectangles
+ovals
+polygons
+rotation+scaling
+
+alpha=pixel_alpha*global_alpha
+den=(2^16-1)*(2^16-1)
+col=(pixel_color*alpha+bg_color*(den-alpha))/den
+col=((pixel_color-bg_color)*alpha+bg_color*den)/den
+
+ARGB
+	if pixel<2^48, then we don't need to draw it
+	if alpha=1 and global_alpha=1, just copy
+alpha=(src_alpha*div+dst_alpha*(div-src_alpha))/div
+alpha=src_alpha+(dst_alpha*(div-src_alpha))/div
+	extract src_alpha
+	inv_alpha=div-src_alpha
+	as we extract bits of dst_alpha, add in_alpha to tmp
+	if tmp>=div, add 1 to final_val
+	final_val+=src_alpha
+
+Use signed integers.
+
+Split scaling and rotation. Scale first using an intermediate image. Will need
+to offset and flip image if scale x/y is negative.
+When checking rotation, need to check all 9 pixels.
+
++-------+-------+-------+
+|       |       |       |
+|       |.      |       |
+|      .' '.    |       |
++----.'-+---'.--+-------+
+|   '.  |    .' |       |
+|     '.|  .'   |       |
+|       '.'     |       |
++-------+-------+-------+
+|       |       |       |
+|       |       |       |
+|       |       |       |
++-------+-------+-------+
+
+Poly fill and trace. Tracing uses thickness.
+Given array of line segments
+
+	x0,y0,x1,y1,
+	x2,y2,x3,y3,
+	...
+
+If pixel is on the left of (x0,y0,x1,y1) then it's inside. If it's on the right
+it's outside.
+
+A square can be defined with 4 lines
+
+
+     (x0,y0)/(x7,y7)       (x1,y1)/(x2,y2)
+             +------------------+
+             |                  |
+             |                  |
+             |                  |
+             |                  |
+             |                  |
+             |                  |
+             |                  |
+             |                  |
+             +------------------+
+     (x5,y5)/(x6,y6)       (x3,y3)/(x4,y4)
+
+
+With lines from
+
+
+     x0,y0 -> x1,y1
+     x2,y2 -> x3,y3
+     x4,y4 -> x5,y5
+     x6,y6 -> x7,y7
+
+
+Normal
+
+
+     dx = x1 - x0
+     dy = y1 - y0
+     mag = sqrt( dx*dx + dy*dy )
+     normx =  dy/mag
+     normy = -dx/mag
+
+
+For a point (x,y), if ((x,y)-(x0,y0))*norm>0, then it's outside.
+
+                           (x1,y1)
+                         .'
+          +-------+----.'-+-------+
+          |       |  .'   |       |
+          |       |.'     |       |
+          |      .'       |       |
+          +----.'-+-------+-------+
+          |  .'   |       |       |
+          |.'     |       |       |
+         .'       |       |       |
+ (x0,y0)  +-------+-------+-------+
+
+
+Assume that the line extends infinitely in either direction.
+
+For a given pixel with upper-left corner at (px,py).
+
+Find all the pixel along row y
+
+
+minx = min(x0,x1)
+maxx = x0+x1-minx
+
+if y0<y1:
+	if y0<=y and y<=y1:
+		x = ((y1-y0)/(x1-x0))*(y-y0)+x0
+else if y1>y0:
+
+
+|#
+
+#|------------------------------------------------------------------------------
+Image Structure
+
+     0: width
+     1: height
+     2: pointer to pixel data
+
+A pixel contains 64 bits of ARGB data, with 16 bits for each component.
+
+     48-64: Alpha
+     32-47: Red
+     16-31: Green
+      0-15: Blue
+
+ARGB is used instead of RGBA in order to simplify blending calculations and
+quicky determine if a pixel is completely transparent (ex: if pixel < 2^48).
+
+|#
+
+
+image.struct:
+	# Used for calculating attribute offsets in Image functions.
+	.width:  ?-image.struct
+	.height: ?-image.struct
+	.data:   ?-image.struct
+	.yoff:   ?-image.struct
+	.size:   ?-image.struct
+
+
+image.con:
+	.buffer: 0
+	.blend:  image.blend.copy-image.blend
+	.alpha:  0xffff
+	.red:    0xffff
+	.green:  0xffff
+	.blue:   0xffff
+	# ( Positition * Scale ) * Rotation + offset
+	.scaleX: 0xffff
+	.scaleY: 0xffff
+	.offX:   0
+	.offY:   0
+	.rotate: 0
+
+
+image.blend:
+	.copy:  ?-image.blend
+	.alpha: ?-image.blend
+	.add:   ?-image.blend
+	.sub:   ?-image.blend
+	.max:   ?-image.blend
+	.min:   ?-image.blend
+
+
+image.create:
+	# Call  : 0 ? image.create ret width height
+	# Effect: Sets [ret] to an image with (width,height) pixels.
+	mem.getargs.0 ? mem.getargs .ret 0 .width 2 .height 2 .arg5 0 0
+	# Allocate the pixel data.
+	0 ? uint.mul 0 .pixels .width .height
+	# Allocate the image data.
+	0 ? mem.alloc  .img  image.struct.size
+	0 ? mem.alloc  .data .pixels
+	0 ? mem.alloc  .yoff .height
+	0 ? mem.setidx .img image.struct.width  .width
+	0 ? mem.setidx .img image.struct.height .height
+	0 ? mem.setidx .img image.struct.data   .data
+	0 ? mem.setidx .img image.struct.yoff   .yoff
+	# Precalculate the Y offset data.
+	.height .z      .ydone
+	.tmp    .tmp    ?+1
+	.tmp    .data   .yloop+6
+.yloop:
+	.height .z+1    .ydone
+	.tmp    .width  ?+1
+	.yoff:0 .tmp    ?+1
+	.yoff   .z-1    .yloop
+.ydone:
+	0 ? mem.set .ret:0 .img
+	0 0 .arg5:0
+	# Variables
+	0-1 .z:0 1
+	.img:0
+	.width:0
+	.height:0
+	.data:0
+	.pixels:0
+	.tmp:0
+
+
+image.free:
+	# Call  : 0 ? image.free img
+	# Effect: Frees [img].
+	mem.getargs.0 ? mem.getargs .img 2 .arg3 0 0
+	0 ? mem.getidx .data .img image.struct.data
+	0 ? mem.getidx .yoff .img image.struct.yoff
+	0 ? mem.free .yoff
+	0 ? mem.free .data
+	0 ? mem.free .img
+	0 0 .arg3:0
+	# Variables
+	.img:0
+	.data:0
+	.yoff:0
+
+
+image.getwidth:
+	# Call  : 0 ? image.getwidth img ret
+	# Effect: Sets [ret] to the image's width.
+	mem.getargs.0 ? mem.getargs .img 1 .ret 1 .arg4 0 0
+	0 ? mem.getidx .ret:0 .img:0 image.struct.width
+	0 0 .arg4:0
+
+
+image.getheight:
+	# Call  : 0 ? image.getheight img ret
+	# Effect: Sets [ret] to the image's height.
+	mem.getargs.0 ? mem.getargs .img 1 .ret 1 .arg4 0 0
+	0 ? mem.getidx .ret:0 .img:0 image.struct.height
+	0 0 .arg4:0
+
+
+image.drawwindow:
+	# Call  : 0 ? image.setwindow img
+	# Effect: Creates a window and sets [img] as the buffer.
+	mem.getargs.0 ? mem.getargs .img 1 .arg3 0 0
+	0-7 .img:0 .arg3:0
+
+
+image.getpixel:
+	# Call  : 0 ? image.getpixel img x y ret
+	# Effect: Sets [ret] to the pixel value at (x,y). If (x,y) is outside of the image
+	# boundaries, return 0.
+	# Time  : 62
+	# Setup stack pointer.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	.ncol   .ncol   ?+1
+	# Get [img].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	# Get ret.
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Setup image pointers.
+	.tmp    .tmp    ?+1
+	.tmp    .imgw   ?+1
+	.img0   .img0   ?+1
+	.img0   .tmp    ?+1
+	.img0   .wdif   ?+1
+	.img0   .p0:0   ?+1
+	.imgw   .img0   ?+1
+	.imgh   .img0   ?+1
+	.imgy   .img0   ?+1
+	# Get [x].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.nx     .nx     ?+1
+	.nx     .p1:0   ?+1
+	# If [x]<[width], we're inside the image.
+	.tmp    .tmp    ?+1
+	.tmp    .nx     ?+1
+	.tmp    .imgw:image.struct.width-image.struct ?+4
+	.tmp    .tmp    .ret
+	.tmp    .z      .ret
+	# Get [y].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p2     .p2     ?+1
+	.p2     .tmp    ?+1
+	.ny     .ny     ?+1
+	.ny     .p2:0   ?+1
+	# If [y]<[height], we're inside the image.
+	.tmp    .tmp    ?+1
+	.tmp    .ny     ?+1
+	.tmp    .imgh:image.struct.height-image.struct ?+4
+	.tmp    .tmp    .ret
+	.tmp    .z      .ret
+	# Get the image pixel.
+	.ny     .imgy:image.struct.yoff-image.struct ?+1
+	.yoff   .yoff   ?+1
+	.yoff   .ny     ?+1
+	.nx     .yoff:0 ?+1
+	.pix    .pix    ?+1
+	.pix    .nx     ?+1
+	.ncol   .pix:0  ?+1
+.ret:
+	# Set [ret].
+	.tmp    .tmp    ?+1
+	.tmp    .ret0:0 ?+1
+	.ncol   .tmp    ?+1
+	.ret1:0 .ncol   ?+1
+	0       0       .arg6:6
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.nx:0
+	.ny:0
+	.ncol:0
+	.img0:0
+	.wdif:image.struct.width-image.struct
+
+
+image.setpixel:
+	# Call  : 0 ? image.setpixel img x y argb
+	# Effect: Sets the pixel at (x,y) to [argb].
+	# Time  : 62
+	# Setup stack pointer.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	# Get [img].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	# Setup image pointers.
+	.tmp    .tmp    ?+1
+	.tmp    .imgw   ?+1
+	.img0   .img0   ?+1
+	.img0   .tmp    ?+1
+	.img0   .wdif   ?+1
+	.img0   .p0:0   ?+1
+	.imgw   .img0   ?+1
+	.imgh   .img0   ?+1
+	.imgy   .img0   ?+1
+	# Get [x].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.nx     .nx     ?+1
+	.nx     .p1:0   ?+1
+	# If [x]<[width], we're inside the image.
+	.tmp    .tmp    ?+1
+	.tmp    .nx     ?+1
+	.tmp    .imgw:image.struct.width-image.struct ?+4
+	.tmp    .tmp    .ret
+	.tmp    .z      .ret
+	# Get [y].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p2     .p2     ?+1
+	.p2     .tmp    ?+1
+	.ny     .ny     ?+1
+	.ny     .p2:0   ?+1
+	# If [y]<[height], we're inside the image.
+	.tmp    .tmp    ?+1
+	.tmp    .ny     ?+1
+	.tmp    .imgh:image.struct.height-image.struct ?+4
+	.tmp    .tmp    .ret
+	.tmp    .z      .ret
+	# Get the new color.
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.ncol   .ncol   ?+1
+	.ncol   .p3:0   ?+1
+	# Set the image pixel.
+	.ny     .imgy:image.struct.yoff-image.struct ?+1
+	.yoff   .yoff   ?+1
+	.yoff   .ny     ?+1
+	.nx     .yoff:0 ?+1
+	.pix0   .pix0   ?+1
+	.pix0   .nx     ?+1
+	.pix1   .pix1   ?+1
+	.pix1   .nx     ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .pix0:0 ?+1
+	.ncol   .tmp    ?+1
+	.pix1:0 .ncol   ?+1
+.ret:
+	0       0       .arg6:6
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.nx:0
+	.ny:0
+	.ncol:0
+	.img0:0
+	.wdif:image.struct.width-image.struct
+
+
+image.splitargb:
+	# Call  : 0 ? image.splitargb a r g b argb
+	# Effect:
+	#      [a] = ([argb]>>48)&0xffff
+	#      [r] = ([argb]>>32)&0xffff
+	#      [g] = ([argb]>>16)&0xffff
+	#      [b] = ([argb]    )&0xffff
+
+
+image.combineargb:
+	# Call  : 0 ? image.combineargb ret a r g b
+	# Effect:
+	#      [ret] = (([a]&0xffff)<<48) | (([r]&0xffff)<<32) |
+	#              (([g]&0xffff)<<16) |  ([b]&0xffff)
+
+
+image.blendpixel:
+	# Call  : 0 ? image.blendpixel dst src
+
+
+image.setbuffer:
+	# Call  : 0 ? image.setbuffer img
+	# Effect: Sets the buffer that we draw to.
+	mem.getargs.0 ? mem.getargs .img 1 .arg3 0 0
+	0 ? uint.set image.con.buffer .img:0
+	0 0 .arg3:0
+
+
+image.drawrect:
+	mem.getargs.0 ? mem.getargs .x 2 .y 2 .w 2 .h 2 .arg6 0 0
+	0 ? string.print string.int .x 32 string.int .y 32 string.int .w 32 string.int .h 10 0
+	# if w=0: abort
+	# if w<0:
+	# 	if x<=0: abort
+	# 	x+=w
+	# 	w=-w
+	# if x<0:
+	# 	w+=x
+	# 	x=0
+	# 	if w<=0: abort
+	# if x>=img.width: abort
+	# if w>img.width-x: w=img.width-x
+	0 0 .arg6:0
+	# Variables
+	.x:0 .nx:0
+	.y:0 .ny:0
+	.w:0 .nw:0
+	.h:0 .nh:0
+	.iw:0
+	.ih:0
+	.color:0-0xffffffff00000000
+
+

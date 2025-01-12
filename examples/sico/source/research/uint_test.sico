@@ -1,0 +1,20 @@
+#|
+
+uint.cmp
+for a=0;a<mod;a++
+	for b=0;b<a;b++
+		add a,b,0
+	add a,a,1
+	for b=a+1;b<mod;b++
+		add a,b,2
+
+uint.xor
+	xor[a*2+a0][b*2+b0]=xor[a][b]*2+xor[a0][b0]
+
+uint.test.add
+	adds inputs and results
+uint.test.run
+	shuffle [0,1,2,...,tests-1]
+	compare results
+
+|#

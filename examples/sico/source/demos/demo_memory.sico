@@ -1,0 +1,33 @@
+0 0 demo
+
+demo:
+
+	# Allocation
+	0 ? mem.alloc .mem .len
+	0 ? string.print 'A 'l 'l 'o 'c 'a 't 'i 'n 'g '  string.uint .len '  'c 'e 'l 'l 's '  'a 't '  string.uint .mem 10 0
+
+	# Set values
+	0 ? mem.setidx .mem .z+0 .val+0  # mem[0]=20
+	0 ? mem.setidx .mem .z+1 .val+1  # mem[1]=21
+	0 ? mem.setidx .mem .z+2 .val+2  # mem[2]=22
+
+	# Get value
+	0 ? mem.getidx .tmp .mem .z+1    # tmp=mem[1]
+	0 ? string.print 'V 'a 'l 'u 'e '  'o 'f '  'm 'e 'm '[ string.uint .z+1 '] '  'i 's '  string.uint .tmp 10 0
+
+	# Free memory and verify all blocks have been freed.
+	0 ? mem.free .mem
+	0 ? mem.alloc.verifyfree
+
+	0-1 0 0
+
+	# Variables
+	.mem: 0
+	.len: 20
+
+	.z:   0 1 2 3 4
+	.val: 20 21 22 23
+
+	.tmp: 0
+
+

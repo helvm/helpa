@@ -1,0 +1,27 @@
+0 0 demo
+
+demo:
+
+	# 64 bit
+	0 ? random.get .ret
+	0 ? string.print '6 '4 '  'b 'i 't '  ': '  string.uint .ret 10 0
+
+	# Mod
+	0 ? random.mod .ret .mod
+	0 ? string.print 'm 'o 'd '  string.uint .mod '  ': '  string.uint .ret 10 0
+
+	# Shuffle
+	0 ? random.shuffle .arrptr .arrlen
+	0 ? string.print 's 'h 'u 'f 'f 'l 'e ': '  string.uint .arr+0 '  string.uint .arr+1 ' 
+                      string.uint .arr+2 '  string.uint .arr+3 '  string.uint .arr+4 10 0
+
+	0-1 0 ?-2
+
+	# Variables
+	.ret: 0
+	.mod: 20
+	.arrptr: .arr
+	.arr: 0 1 2 3 4
+	.arrlen: ?-.arr
+
+

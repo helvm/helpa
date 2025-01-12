@@ -1,0 +1,609 @@
+#|==============================================================================
+
+
+Random Number Generator Library - v2.00
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+random.sico provides functions for generating uniform random numbers.
+
+
+--------------------------------------------------------------------------------
+Index
+
+
+random.hash    [ret] [num]
+random.seed    [num]
+random.jump    [num]
+random.get     [ret]
+random.mod     [ret] [mod]
+random.shuffle [[arr]] [len]
+
+
+--------------------------------------------------------------------------------
+Version History
+
+
+1.00
+     Initial version.
+1.01
+     Added shuffling.
+1.02
+     Optimized random.generate by removing offsets during shitfing.
+1.03
+     Initial seed is generate by system time.
+1.04
+     Optimized jump, mod, and shuffle and made them bit length agnostic.
+     Merged random.generate and random.get.
+     Added random.init to initialize random.get and seed using current time.
+1.05
+     Added random.hash.
+1.06
+     Performed testing on rejection sampling for various integer ranges.
+     Accepting "rand-(rand%mod)<=-mod" works for any underlying integers.
+2.00
+     Remade PRNG to work with any underlying integers.
+
+
+--------------------------------------------------------------------------------
+PRNG Overview
+
+
+The PRNG works by incrementing the state, hashing it, and returning the result.
+The hash function has the following form:
+
+
+     tmp=-1-hash
+     hash-=tmp
+     if GT:
+          tmp=-hash
+          hash-=tmp
+          if GT: hash-=con3
+          else : hash-=con2
+     else:
+          tmp=-hash
+          hash-=tmp
+          if GT: hash-=con1
+          else : hash-=con0
+
+
+The ideal number of iterations for the hash function is ceil(log2(mod)/2).
+
+The formulas below provide a way to calculate the constants (con0, con1, ...)
+so that the function provides a full mapping, depending on the modulus of our
+underlying integers modulo 4.
+
+If mod % 4 = 1, for instance, we would pick a random value (A), and choose
+one of the six forms listed below to give us con0, con1, con2, and con3.
+
+The best performers were selected by comparing avalanche and differential
+effects.
+
+if mod % 4 = 0:
+
+     A, B, C, D
+     A%4 != B%4 != C%4 != D%4
+
+     best: A%4 = 0, B%4 = 2, C%4 = 1, D%4 = 3
+
+if mod % 4 = 1:
+
+     A+0, A-3, A+1, A+2
+     A+0, A-3, A+3, A+0
+     A+0, A-2, A+0, A+2
+     A+0, A-2, A+3, A-1
+     A+0, A+0, A+0, A+0
+     A+0, A+0, A+1, A-1
+
+     best: A+0, A-2, A+3, A-1
+
+if mod % 4 = 2:
+
+     A, B, B, A
+     A, A, B, B
+     A%2 != B%2
+
+     best: A%2 = 0, B%2 = 1, B%2 = 1, A%2 = 0
+
+if mod % 4 = 3:
+
+     A+0, A-2, A+1, A-3
+     A+0, A-1, A+1, A+0
+     A+0, A+0, A-1, A-3
+     A+0, A+0, A+0, A+0
+
+     best: A+0, A-2, A+1, A-3
+
+The increment for the PRNG can be found by randomly selecting a value relatively
+prime to the modulus in ~ln(ln(mod)) GCD operations. We can do this by testing:
+
+     while gcd(add,-add)!=1: add=rand()
+
+
+--------------------------------------------------------------------------------
+TODO
+
+
+Figure out better constants for mod%4 = 1 or 3.
+See if there are better seeding algorithms.
+If calling random.mod(0), return random.get().
+
+
+|#
+
+
+random.init:
+	# Get the current and original calling addresses.
+	.orig   .0      ?+1
+	.0      .0      ?+1
+	.0      0       ?+1
+	0       0       ?+1
+	# Make sure we only initialize once.
+	random.seed   +2 .z-3 ?+1
+	random.hash   +2 .z-3 ?+1
+	random.get    +2 .z-3 ?+1
+	random.jump   +2 .z-3 ?+1
+	# Set i to the number of iterations we need properly hash our values.
+	# i~=ceil(log2(mod)/2) has the best hashing characteristics.
+	.mul    .mul    ?+1
+	.mul    .z+1    .idone-3
+.iloop:
+	.i      .z-1    ?+1
+	.tmp    .mul    ?+1
+	.mul    .tmp    .idone
+	.tmp    .tmp    ?+1
+	.tmp    .mul    ?+1
+	.mul    .tmp    .idone
+	.tmp    .tmp    .iloop
+.idone:
+	# Set .get and .hash iteration counters.
+	random.hash.iters .i ?+1
+	random.get.iters  .i ?+1
+	# Reset the PRNG state.
+	random.get.state random.get.state ?+1
+	random.get.inc   random.get.inc   ?+1
+	random.get.inc   .z+1             ?+1
+	# Set the PRNG constants based on the modulus % 4.
+	0 ? uint.div 0 .mod .mod .z+4
+	.i      .z-1    ?+1
+.conloop:
+	# Set random.get's constants.
+	random.get.con0 random.get.con0 ?+1
+	random.get.con0 .con0           ?+1
+	random.get.con1 random.get.con1 ?+1
+	random.get.con1 .con1           ?+1
+	random.get.con2 random.get.con2 ?+1
+	random.get.con2 .con2           ?+1
+	random.get.con3 random.get.con3 ?+1
+	random.get.con3 .con3           ?+1
+	.i      .z+1    .condone
+	.con0   .con0   ?+1
+	.con1   .con1   ?+1
+	.con2   .con2   ?+1
+	.con3   .con3   ?+1
+	.mod    .z      .mod1
+	.mod    .z+1    .mod2
+	.mod    .z+1    .mod3
+.mod0:
+	# A%4 = 0, B%4 = 2, C%4 = 1, D%4 = 3
+	0 ? random.get .tmp
+	.con0   .tmp    ?+1
+	.con0   .tmp    ?+1
+	.con0   .tmp    ?+1
+	.con0   .tmp    ?+1
+	0 ? random.get .tmp
+	.con1   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .z+2    ?+1
+	0 ? random.get .tmp
+	.con2   .tmp    ?+1
+	.con2   .tmp    ?+1
+	.con2   .tmp    ?+1
+	.con2   .tmp    ?+1
+	.con2   .z+1    ?+1
+	0 ? random.get .tmp
+	.con3   .tmp    ?+1
+	.con3   .tmp    ?+1
+	.con3   .tmp    ?+1
+	.con3   .tmp    ?+1
+	.con3   .z+3    ?+1
+	.mod    .z-3    .conloop
+.mod1:
+	# A+0, A-2, A+3, A-1
+	0 ? random.get .tmp
+	.con0   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .z-2    ?+1
+	.con2   .tmp    ?+1
+	.con2   .z+3    ?+1
+	.con3   .tmp    ?+1
+	.con3   .z-1    ?+1
+	.mod    .z      .conloop
+.mod2:
+	# A%2 = 0, B%2 = 1, B%2 = 1, A%2 = 0
+	0 ? random.get .tmp
+	.con0   .tmp    ?+1
+	.con0   .tmp    ?+1
+	.con3   .tmp    ?+1
+	.con3   .tmp    ?+1
+	0 ? random.get .tmp
+	.con1   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .z+1    ?+1
+	.con2   .tmp    ?+1
+	.con2   .tmp    ?+1
+	.con2   .z+1    ?+1
+	.mod    .z-1    .conloop
+.mod3:
+	# A+0, A-2, A+1, A-3
+	0 ? random.get .tmp
+	.con0   .tmp    ?+1
+	.con1   .tmp    ?+1
+	.con1   .z-2    ?+1
+	.con2   .tmp    ?+1
+	.con2   .z+1    ?+1
+	.con3   .tmp    ?+1
+	.con3   .z-3    ?+1
+	.mod    .z-2    .conloop
+.condone:
+	# Set random.hash's constants to the same as random.get.
+	random.hash.con0 random.hash.con0 ?+1
+	random.hash.con0 .con0            ?+1
+	random.hash.con1 random.hash.con1 ?+1
+	random.hash.con1 .con1            ?+1
+	random.hash.con2 random.hash.con2 ?+1
+	random.hash.con2 .con2            ?+1
+	random.hash.con3 random.hash.con3 ?+1
+	random.hash.con3 .con3            ?+1
+	# Seed the generator with the system time.
+	0 ? random.seed 0-5
+	# Return to the calling function.
+	0       .0      .orig:0-4
+	# Variables
+	0-3 0-2 0-1 .z:0 1 2 3 4
+	.0:0
+	.tmp:0
+	.mul:0
+	.i:0
+	.mod:0-1
+	# Start with values that are decent across different mods.
+	.con0:0-1
+	.con1:0-0
+	.con2:0+1
+	.con3:0+2
+
+
+random.hash:
+	# Call  : 0 ? random.hash ret num
+	# Effect: [ret] = a hash of [num]
+	# Time  : 26 + 4.5*bits = 314
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	random.init.0 ? random.init
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get ret.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [num].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.hash   .hash   ?+1
+	.hash   .p0:0   ?+1
+	# Hash [val].
+	.tmp    .tmp    ?+1
+	.i      .iters  ?+4
+.loop:
+	.i      .z+1    .done
+	        .tmp    .z+1    ?+1
+	        .tmp    .hash   ?+1
+	.fxx:   .hash   .tmp    .f0x
+	.f1x:   .tmp    .tmp    ?+1
+	        .tmp    .hash   ?+1
+	        .hash   .tmp    .f10
+	.f11:   .hash   .con3   ?+1
+	        .tmp    .tmp    .loop
+	.f10:   .hash   .con2   ?+1
+	        .tmp    .tmp    .loop
+	.f0x:   .tmp    .tmp    ?+1
+	        .tmp    .hash   ?+1
+	        .hash   .tmp    .f00
+	.f01:   .hash   .con1   ?+1
+	        .tmp    .tmp    .loop
+	.f00:   .hash   .con0   ?+1
+	        .tmp    .tmp    .loop
+.done:
+	# Set [ret] and return.
+	.hash   .ret0:0 ?+1
+	.tmp    .hash   ?+1
+	.ret1:0 .tmp    ?+1
+	0       0       .arg4:4
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.hash:0
+	.i:0
+	# The hash function state.
+	.iters:0
+	.con0:0+1
+	.con1:0+0
+	.con2:0-1
+	.con3:0-2
+
+
+random.seed:
+	# Call  : 0 ? random.seed num
+	# Effect: Sets the PRNG state based on the value of [num].
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	random.init.0 ? random.init
+	.tmp    .arg2   ?+1
+	0       .z+2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	0       0       ?+1
+	# Get [num].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.num    .p0:0   ?+1
+	# Reset the generator state.
+	random.get.state random.get.state ?+1
+	random.get.state .num             ?+1
+	random.get.inc   random.get.inc   ?+1
+	random.get.inc   .z+1             ?+1
+	# Generate a random increment relatively prime to the modulus.
+	# If gcd(num,-num)=1, then it's relatively prime.
+	.tmp    .tmp    ?+1
+.incloop:
+	0 ? random.get .num
+	.tmp    .num    ?+1
+	0 ? uint.gcd .tmp .tmp .num
+	.tmp    .z+1    ?+1
+	.tmp    .z      .incdone
+	.tmp    .tmp    .incloop
+.incdone:
+	# Set [state].
+	random.get.inc   random.get.inc   ?+1
+	random.get.inc   .num             ?+1
+	.num    .num    .arg3:3
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.num:0
+
+
+random.jump:
+	# Call  : 0 ? random.jump num
+	# Effect: Jumps the PRNG state forward or backwards [num] number of steps.
+	# Time  : 62 + 7.21*bits = 523
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	random.init.0 ? random.init
+	.tmp    .arg2   ?+1
+	0       .z+2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	0       0       ?+1
+	# Get [num].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.num    .num    ?+1
+	.num    .tmp    ?+1
+	# [state]+=[inc]*[num]
+	0 ? uint.mul 0 .mul .num:0 random.get.inc
+	.tmp    .tmp    ?+1
+	.tmp    .mul    ?+1
+	random.get.state .tmp ?+1
+	# Return
+	0       0       .arg3:3
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.mul:0
+
+
+random.get:
+	# Call  : 0 ? random.get ret
+	# Effect: [ret] = a uniform random number
+	# Time  : 21 + 9*ceil(bits/2) = 309
+	# Time  :  8 + 9*ceil(bits/2) = 296 for reentry
+	# Use [0] to get the calling address.
+	.hash   .hash   ?+1
+	random.init.0 ? random.init
+	.hash   .arg2   ?+1
+	0       .hash   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	# Get ret.
+	.ret0   .arg2:2 ?+1
+	.ret1   .ret0   ?+1
+	.ret2   .ret0   ?+1
+	.hash   .hash   ?+1
+	.hash   .ret1   ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .hash   ?+1
+.reenter:
+	# Advance the PRNG state.
+	.state  .inc    ?+1
+	.hash   .hash   ?+1
+	.hash   .state  ?+1
+	# Hash the state.
+	.i      .iters  ?+4
+.loop:
+	.i      .z+1    .done
+	        .tmp    .z+1    ?+1
+	        .tmp    .hash   ?+1
+	.fxx:   .hash   .tmp    .f0x
+	.f1x:   .tmp    .tmp    ?+1
+	        .tmp    .hash   ?+1
+	        .hash   .tmp    .f10
+	.f11:   .hash   .con3   ?+1
+	        .tmp    .tmp    .loop
+	.f10:   .hash   .con2   ?+1
+	        .tmp    .tmp    .loop
+	.f0x:   .tmp    .tmp    ?+1
+	        .tmp    .hash   ?+1
+	        .hash   .tmp    .f00
+	.f01:   .hash   .con1   ?+1
+	        .tmp    .tmp    .loop
+	.f00:   .hash   .con0   ?+1
+	        .tmp    .tmp    .loop
+.done:
+	# Set [ret] and return.
+	.ret0:0 .ret1:0 ?+1
+	.ret2:0 .hash   ?+1
+	0       0       .arg3:3
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.hash:0
+	.i:0
+	# The PRNG state.
+	.iters:0
+	.state:0
+	.inc:0-1
+	.con0:0+1
+	.con1:0+0
+	.con2:0-1
+	.con3:0-2
+
+
+random.mod:
+	# Call  : 0 ? random.mod ret mod
+	# Effect: [ret] = a uniform random number in [0,[mod])
+	# Time  : 63 + 8.42*bits = 601
+	# Use [0] to get the calling address.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	0       0       ?+1
+	# Get ret.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [mod].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.nmod   .nmod   ?+1
+	.nmod   .p0:0   ?+1
+	.mod    .mod    ?+1
+	.mod    .nmod   ?+1
+	# Perform rejection sampling until we satisfy rand-(rand%mod)<=-mod.
+	# Return rand%mod.
+	0 ? random.get .rand
+	0 ? uint.div 0 .ret0:0 .rand .mod
+	.rand   .ret1:0 ?+1
+	.rand   .nmod   .arg4:4
+	.tmp    .tmp    random.get.reenter
+	# Variables
+	.z:0 1 2
+	.tmp:0
+	.rand:0
+	.mod:0
+	.nmod:0
+
+
+random.shuffle:
+	# Call  : 0 ? random.shuffle arr len
+	# Effect: Randomly shuffles [[arr]] from [0,[len]).
+	# Use [0] to get the calling address.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2   ?+1
+	0       .z+2    ?+1
+	0       .tmp0   ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	0       0       ?+1
+	# Get [len]. If [len]<=1, return.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg3:3 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp0   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .p1:0   ?+1
+	.len    .len    ?+1
+	.len    .tmp0   ?+1
+	.len    .z+1    .done
+	# Get -[arr].
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp0   ?+1
+	.narr   .narr   ?+1
+	.narr   .p0:0   ?+1
+	# Set array pointers.
+	.i0     .i0     ?+1
+	.i0     .narr   ?+1
+	.i1     .i1     ?+1
+	.i1     .narr   ?+1
+	# Use the Fisher-Yates shuffling algorithm.
+.loop:
+	# Set j=arr+[rand]%(i+1).
+	0 ? random.mod .j0 .z+2
+	.j0     .narr   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .j0     ?+1
+	.j1     .j1     ?+1
+	.j1     .tmp0   ?+1
+	# Increment i.
+	.i0     .z-1    ?+1
+	.i1     .z-1    ?+1
+	# Swap [i] and [j].
+	.tmp0   .tmp0   ?+1
+	.tmp0   .i0:0   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .j0:0   ?+1
+	# [tmp1]=[i]-[j]
+	.tmp1   .tmp0   ?+1
+	.i1:0   .tmp1   ?+1
+	# [tmp0]=[j]-[i]
+	.tmp0   .tmp0   ?+1
+	.tmp0   .tmp1   ?+1
+	.j1:0   .tmp0   ?+1
+	# Next loop.
+	.len    .z+1    .done
+	random.mod.nmod .z+1 ?+1
+	random.mod.mod  .z-1 random.get.reenter
+.done:
+	0       0       .arg4:4
+	# Variables
+	0-1 .z:0 1 2
+	.tmp0:0
+	.tmp1:0
+	.narr:0
+	.len:0
+
+

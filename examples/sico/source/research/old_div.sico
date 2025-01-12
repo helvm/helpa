@@ -1,0 +1,128 @@
+uint.div:
+	# Call  : 0 ? uint.div quot rem num den
+	#
+	# Effect: [quot] = [num] / [den] , rounded down
+	#       : [rem]  = [num] % [den]
+	#
+	# Time  : 53 + 13*bits = 885
+	#       : 45 +  9*bits = 621 if quot=0
+	#
+	# Every loop, shift [quot], [rem], and [num] left by 1. If the top bit of [num] is
+	# set, add 1 to [rem]. Then, if [rem]>=[den], add 1 to [quot] and subtract [den]
+	# from [rem].
+	#
+	# Setup stack pointer.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	.tmp    .z-2    ?+1
+	0       .tmp    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	# Get quot. Only set if qret!=0.
+	.qret   .qret   ?+1
+	.qret   .arg2:2 ?+1
+	# Get rem
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.r2     .r2     ?+1
+	.r2     .tmp    ?+1
+	.r3     .r3     ?+1
+	.r3     .tmp    ?+1
+	# Get [den]
+	.tmp    .tmp    ?+1
+	.tmp    .arg5:5 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.nden   .nden   ?+1
+	.nden   .p1:0   ?+1
+	# If [den]=0, abort.
+	.nden   .z      .divz
+	.nden   .z-1    ?+1
+	.den    .den    ?+1
+	.den    .nden   ?+1
+	# Get [num]
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.num    .num    ?+1
+	.num    .tmp    ?+1
+	# Offset [tmp] by 1 to force [num] to be odd.
+	.tmp    .z+1    ?+1
+	.rem    .rem    ?+1
+	.qret   .z      .looprem
+	# -------- Calculate [rem] and [quot] --------
+.loopquot:
+	# [rem]+=[num]>>63, [num]<<=1. If [num]=0, abort.
+	.num    .tmp    ?+4
+	.rem    .z-1    ?+4
+	.num    .z      .retquot
+	# If [rem]>=[den], [quot]+=1
+	.rem    .den    ?+7
+	.rem    .z+1    ?+1
+	.quot   .z-1    ?+4
+	.rem    .nden   ?+1
+	# [quot]<<=1.
+	.qtmp   .qtmp   ?+1
+	.qtmp   .quot   ?+1
+	.quot   .qtmp   ?+1
+	# [rem]<<=1
+	.rtmp   .rtmp   ?+1
+	.rtmp   .rem    ?+1
+	.rem    .rtmp   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .num    .loopquot
+	# ----------- Only calculate [rem] -----------
+.looprem:
+	# [rem]+=[num]>>63, [num]<<=1. If [num]=0, abort.
+	.num    .tmp    ?+4
+	.rem    .z-1    ?+4
+	.num    .z      .retrem
+	# If [rem]>=[den], [quot]+=1
+	.rem    .den    ?+7
+	.rem    .z+1    ?+1
+	.rtmp   .rtmp   ?+7
+	.rem    .nden   ?+1
+	.rtmp   .rtmp   ?+1
+	# [rem]<<=1
+	.rtmp   .rem    ?+1
+	.rem    .rtmp   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .num    .looprem
+.retquot:
+	# Because we terminate 1 iteration late, return [qtmp] and [rtmp] instead of
+	# [quot] and [rem].
+	# Set [quot]
+	.r0     .r0     ?+1
+	.r0     .qret   ?+1
+	.r1     .r1     ?+1
+	.r1     .qret   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .r0:0   ?+1
+	.qtmp   .tmp    ?+1
+	.r1:0   .qtmp   ?+1
+.retrem:
+	# Set [rem]
+	.num    .r2:0   ?+1
+	.rtmp   .num    ?+1
+	.r3:0   .rtmp   ?+1
+	0       0       .arg6:6
+.divz:
+	# Abort
+	0-1     0       ?-2
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.num:0
+	.den:0
+	.nden:0
+	.qret:0
+	.quot:0
+	.qtmp:0
+	.rem:0
+	.rtmp:0

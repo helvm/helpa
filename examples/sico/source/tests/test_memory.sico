@@ -1,0 +1,622 @@
+#|==============================================================================
+
+
+Memory Testing - v1.01
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+To compile the necessary files together, run
+cat memory_test.sico master.sico > test.sico ; ./sico test.sico
+
+
+--------------------------------------------------------------------------------
+TODO
+
+
+|#
+
+0 0 memtest.main
+
+
+memtest.main:
+	# ------------------------ Timing ------------------------
+	.time .time ?+1
+	.time 0-5   ?+1
+
+	# ------------------------ Tests -------------------------
+	# mem.debug mem.debug ?+1
+	0 ? memtest.alloctest
+	0 ? memtest.copytest
+	0 ? memtest.sorttest
+
+	# ------------------------ Timing ------------------------
+	.tmp  .tmp  ?+1
+	.tmp  0-5   ?+1
+	.time .tmp  ?+1
+	0 ? uint.div .time .tmp .time 0-4
+	0 ? uint.mul 0 .tmp .tmp .timedec
+	0 ? uint.div .tmp 0 .tmp 0-4
+	0 ? string.print 't 'i 'm 'e ': '  string.uint .time '. string.uintinl .tmp 10 6 '0 10 0
+
+	0 ? mem.alloc.verifyfree
+	0-1 0 ?-2
+
+	.tmp:0
+	.time:0
+	.timedec:1000000
+	.num:10
+	.cnt:0
+
+
+memtest.randomfill:
+	# Call  : 0 ? memtest.randomfill mem len
+	# Effect: Fills mem with random values
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [len]. Return if [len]=0.
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.len0   .len0   ?+1
+	.len0   .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .len0:0 ?+1
+	.tmp    .z      .done
+	.len    .tmp    ?+1
+	# Get [mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.mem0   .mem0   ?+1
+	.mem0   .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .mem0:0 ?+1
+	# Setup the initial memory pointer.
+	.rand   0-5     ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+4
+.randloop:
+	.len    .z+1    .done
+	.p0:0   .rand   ?+1
+	.tmp    .rand   ?+1
+	.rand   .tmp    ?+7
+	.rand   .rcon0  ?+1
+	.p0     .z-1    .randloop
+	.rand   .rcon1  ?+1
+	.p0     .z-1    .randloop
+.done:
+	0       0       .arg4:4
+	# Variables
+	0-1 .len:.z:0 1 2
+	.tmp:0
+	.rand: 0xbd050e83a9510f46
+	.rcon0:0xd5b060584a578e86
+	.rcon1:0x6957ad7ef93c6a93
+
+
+memtest.blocklen:
+	# Call  : 0 ? memtest.blocklen ret blk
+	# Effect: Calculates the length of [blk].
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [ret].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [blk].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp    ?+1
+	.blk    .blk    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .b0:0   ?+1
+	.tmp    .z      .done
+	.blk    .tmp    ?+1
+	# Caclulate len.
+	.blk    .z+1    ?+1
+	.blk    .blk:0  ?+1
+	.blk    .z-1    ?+1
+.done:
+	.tmp    .tmp    ?+1
+	.tmp    .ret0:0 ?+1
+	.blk    .tmp    ?+1
+	.ret1:0 .blk    ?+1
+	0       0       .arg4:4
+	# Variables
+	0-1 .z:0 1 2
+	.tmp:0
+
+
+memtest.alloctest:
+	# Test alloc, realloc, and free.
+	# Get call address.
+	.arg2   .arg2   ?+1
+	.arg2   0       ?+1
+	.arg2   .z-2    ?+1
+	0       0       ?+1
+	0 ? string.print 't 'e 's 't 'i 'n 'g '  'a 'l 'l 'o 'c 10 0
+	0 ? mem.alloc .alcbuf .alcmax
+	0 ? mem.alloc .tmpmem .maxlen
+	.alclen .alclen ?+1
+	.trial  .trial  ?+1
+	.pnext  .pnext  ?+1
+	.pnext  .z+1    ?+1
+.loop:
+	0 ? uint.cmp .trial .trials ?+3 .done .done
+	# Determine if we need to change the allocation rate.
+	.pnext .z-2 .pskip
+	.pnext .pnext0 ?+1
+	0 ? random.mod .palloc .pmax
+.pskip:
+	0 ? random.mod .tmp .pmax
+	0 ? uint.cmp .tmp .palloc .alloc .free .free
+.alloc:
+	# Allocate some memory if there's room to track allocations.
+	0 ? uint.cmp .alclen .alcmax ?+3 .realloc .realloc
+	0 ? random.mod .tmp .reprob
+	.tmp .z .realloc
+	0 ? random.mod .len .maxlen
+	0 ? mem.alloc .mem .len
+	0 ? memtest.blocklen .len .mem
+	0 ? memtest.randomfill .mem .len
+	0 ? mem.setidx .alcbuf .alclen .mem
+	.alclen .z-1 .next
+.realloc:
+	# Test reallocating some memory.
+	0 ? random.mod .idx .alcmax
+	0 ? mem.getidx .mem .alcbuf .idx
+	# Copy the data in the current block.
+	0 ? memtest.blocklen .len .mem
+	0 ? mem.copy .tmpmem .mem .len
+	# Reallocate.
+	0 ? random.mod .relen .maxlen
+	0 ? mem.realloc .remem .mem .relen
+	# Make sure the data was copied.
+	0 ? uint.min .len .len .relen
+	.i .i ?+1
+.reloop:
+	0 ? uint.cmp .i .len ?+3 .redone .redone
+	0 ? mem.getidx .tmp .tmpmem .i
+	0 ? mem.getidx .retmp .remem .i
+	0 ? uint.cmp .tmp .retmp ?+3 .reok ?+1
+	0 ? string.print 'r 'e 'a 'l 'l 'o 'c '  'm 'i 's 'm 'a 't 'c 'h 10 0
+	0-1 0 ?-2
+.reok:
+	.i .z-1 .reloop
+.redone:
+	# If we picked an unallocated block, add the new block.
+	0 ? uint.cmp .idx .alclen .notnew ?+2 ?+1
+	0 ? uint.set .idx .alclen
+	.alclen .z-1 ?+1
+.notnew:
+	0 ? mem.setidx .alcbuf .idx .remem
+	0 0 .next
+.free:
+	# Free a random block of memory if we have any allocated.
+	0 ? uint.cmp .alclen .z .next .next ?+1
+	0 ? random.mod .idx .alclen
+	0 ? mem.getidx .mem .alcbuf .idx
+	0 ? mem.free .mem
+	.alclen .z+1 ?+1
+	0 ? mem.getidx .mem .alcbuf .alclen
+	0 ? mem.setidx .alcbuf .idx .mem
+	0 ? mem.setidx .alcbuf .alclen .z
+.next:
+	.trial .z-1 .loop
+.done:
+	.alclen .z .freedone
+	.alclen .z+1 ?+1
+	0 ? mem.getidx .mem .alcbuf .alclen
+	0 ? mem.free .mem
+	0 0 .done
+.freedone:
+	0 ? mem.free .alcbuf
+	0 ? mem.free .tmpmem
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0 0 .arg2:2
+	# Variables
+	0-2 0-1 .z:0 1
+	.trials:200000
+	.trial:0
+	.alcbuf:0
+	.alclen:0
+	.alcmax:256
+	.maxlen:1024
+	.tmpmem:0
+	.palloc:0
+	.pmax:64
+	.pnext:1
+	.pnext0:256
+	.reprob:10
+	.remem:0
+	.relen:0
+	.retmp:0
+	.tmp:0
+	.mem:0
+	.len:0
+	.idx:0
+	.i:0
+
+
+memtest.copytest:
+	# Test alloc, realloc, and free.
+	# Get call address.
+	.arg2   .arg2   ?+1
+	.arg2   0       ?+1
+	.arg2   .z-2    ?+1
+	0       0       ?+1
+	0 ? string.print 't 'e 's 't 'i 'n 'g '  'c 'o 'p 'y 10 0
+	0 ? mem.alloc .mem .maxlen
+	0 ? mem.alloc .tmpmem .maxlen
+.loop:
+	0 ? uint.cmp .trial .trials ?+3 .done .done
+	0 ? memtest.randomfill .mem .maxlen
+	0 ? random.mod .dst .maxlen
+	0 ? random.mod .src .maxlen
+	# len=random%(maxlen-max(dst,src)+1)
+	0 ? uint.max .len .dst .src
+	0 ? uint.sub .len .maxlen .len
+	.len .z-1 ?+1
+	0 ? random.mod .len .len
+	# Offset src and dst indexes by the actual memory position.
+	0 ? uint.add .src .src .mem
+	0 ? uint.add .dst .dst .mem
+	# Copy src data to tmpmem for comparison later.
+	.i .i ?+1
+.tmploop:
+	0 ? uint.cmp .i .len ?+3 .tmpdone .tmpdone
+	0 ? mem.getidx .tmp0 .src .i
+	0 ? mem.setidx .tmpmem .i .tmp0
+	.i .z-1 .tmploop
+.tmpdone:
+	# Copy the data
+	0 ? mem.copy .dst .src .len
+	# Compare the temporary memory with dst.
+	.i .i ?+1
+.verifyloop:
+	0 ? uint.cmp .i .len ?+3 .verifydone .verifydone
+	0 ? mem.getidx .tmp0 .dst .i
+	0 ? mem.getidx .tmp1 .tmpmem .i
+	0 ? uint.cmp .tmp0 .tmp1 ?+3 .verifygood ?+1
+	0 ? string.print 'd 'a 't 'a '  'm 'i 's 'm 'a 't 'c 'h 10 0
+	0 ? string.print 'o 'r 'i 'g ': '  string.uint .tmp1 10 0
+	0 ? string.print 'c 'o 'p 'y ': '  string.uint .tmp0 10 0
+	0 ? string.print 'd 's 't '  ': '  string.uint .dst 10 0
+	0 ? string.print 's 'r 'c '  ': '  string.uint .src 10 0
+	0 ? string.print 'l 'e 'n '  ': '  string.uint .len 10 0
+	0-1 0 ?-2
+.verifygood:
+	.i .z-1 .verifyloop
+.verifydone:
+	.trial  .z-1    .loop
+.done:
+	0 ? mem.free .tmpmem
+	0 ? mem.free .mem
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0       0       .arg2:2
+	# Variables
+	0-2 0-1 .z:0 1
+	.trials:100000
+	.trial:0
+	.mem:0
+	.maxlen:2048
+	.tmpmem:0
+	.dst:0
+	.src:0
+	.len:0
+	.i:0
+	.tmp0:0
+	.tmp1:0
+
+
+memtest.measure:
+	# 0 ? test.measure counter return 0 ? func arg0 arg1 ...
+	# counter = the address for counting instructions.
+	# return  = address the function will return to when finished.
+	# Emulates the execution of a function and measures how many instructions it uses.
+	# Uses 24+20*n instructions for n emulated instructions.
+	.tmp    .a0     ?+1
+	.nret   .tmp    ?+1
+	.tmp    0       ?+1
+	.dif    .tmp    ?+1
+	.dif    .z+4    ?+1
+	# Setup counter.
+	0       .z+2    ?+1
+	.p0     .p0     ?+1
+	.p0     0       ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.cnt0   .cnt0   ?+1
+	.cnt0   .tmp    ?+1
+	.cnt1   .cnt1   ?+1
+	.cnt1   .tmp    ?+1
+	.cnt    .cnt    ?+1
+	# Get the negative return address. If [nret]+[dif0]+[dif1]+...=0, then return.
+	0       .z+1    ?+1
+	.p1     .p1     ?+1
+	.p1     0       ?+1
+	.nret   .p1:0   ?+1
+	# Reset stack address.
+	0       0       .loop
+.jmp:
+	# We jumped, set [dif]=[a0]-[c].
+	.tmp    .tmp    ?+1
+	.tmp    .a0     ?+1
+	.dif    .tmp    ?+1
+.loop:
+	# Update a, b, and c addresses.
+	.a0     .dif    ?+1
+	.b0     .dif    ?+1
+	.c0     .dif    ?+1
+	.nret   .dif    ?+1
+	.dif    .dif    ?+1
+	# Return if ip=[ret].
+	.nret   .z      .ret
+	# Increment the instruction counter.
+	.cnt    .z-1    ?+1
+	# Load [a]. a0 will hold the return address when we're done.
+	.tmp    .tmp    .noret
+.ret:
+	.cnt    .cnt0:0 .noret-1
+	.tmp    .tmp    ?+1
+	.tmp    .cnt    ?+1
+	.cnt1:0 .tmp    ?+1
+	.tmp
+.noret:
+	.tmp    .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .tmp    ?+1
+	# Load [b].
+	.tmp    .tmp    ?+1
+	.tmp    .b0:1   ?+1
+	.b      .b      ?+1
+	.b      .tmp    ?+1
+	# Set [dif]=-[c].
+	.dif    .c0:2   ?+1
+	# Execute instruction.
+	.a:0    .b:0    .jmp
+	# We failed to jump, set [dif]=-3.
+	.dif    .dif    ?+1
+	.dif    .z+3    .loop
+	# Variables
+	.tmp:0
+	.nret:0
+	.dif:0
+	.cnt:0
+	0-2 0-1 .z:0 1 2 3 4
+
+
+#---------------------------------------------------------------------------------
+# Testing Integers
+
+
+testint.struct:
+	.val:  ?-testint.struct
+	.idx:  ?-testint.struct
+	.size: ?-testint.struct
+
+
+testint.create:
+	mem.getargs.0 ? mem.getargs .ret 0 .val 1 .idx 1 .arg5 0 0
+	0 ? mem.alloc  .ti testint.struct.size
+	0 ? mem.setidx .ti testint.struct.val .val:0
+	0 ? mem.setidx .ti testint.struct.idx .idx:0
+	0 ? mem.set .ret:0 .ti
+	0 0 .arg5:0
+	# Variables
+	.ti:0
+
+
+testint.free:
+	mem.getargs.0 ? mem.getargs .ti 1 .arg3 0 0
+	0 ? mem.free .ti:0
+	0 0 .arg3:0
+
+
+testint.print:
+	mem.getargs.0 ? mem.getargs .ti 2 .arg3 0 0
+	0 ? mem.getidx .tmp .ti testint.struct.val
+	0 ? string.print string.uint .tmp ', '  0
+	0 ? mem.getidx .tmp .ti testint.struct.idx
+	0 ? string.print string.uint .tmp 10 0
+	0 0 .arg3:0
+	# Variables
+	.ti:0
+	.tmp:0
+
+
+testint.cmp:
+	# Call  : 0 ? testing.cmp [a] [b] lt eq gt
+	# Effect: Jumps according to a.val<=>b.val.
+	# Time  : 36
+	# Setup stack pointer.
+	.z      .arg2   ?+1
+	0       .z      ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	.arg6   0       ?+1
+	0       0       ?+1
+	# Get [a]
+	.z      .z      ?+1
+	.z      .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .z      ?+1
+	.z      .z      ?+1
+	.z      .p0:0   ?+1
+	.p1     .p1     ?+1
+	.p1     .z      ?+1
+	.z      .z      ?+1
+	.z      .p1:0   ?+1
+	.a      .a      ?+1
+	.a      .z      ?+1
+	# Get [b]
+	.z      .z      ?+1
+	.z      .arg3:3 ?+1
+	.p2     .p2     ?+1
+	.p2     .z      ?+1
+	.z      .z      ?+1
+	.z      .p2:0   ?+1
+	.b      .b      ?+1
+	.b      .z      ?+1
+	# Compute [a]-[b]
+	.z      .z      ?+1
+	.a      .b:0    .le
+	# If [a]>[b]
+	.z      .z      ?+1 # to pad instruction counts
+	.z      .arg6:6 .ret
+.le:
+	.a      .z      .eq
+	# If [a]<[b]
+	.z      .arg4:4 .ret
+.eq:
+	# If [a]=[b]
+	.z      .arg5:5 .ret
+.ret:
+	.r0     .r0     ?+1
+	.r0     .z      ?+1
+	.z      .z      .r0:0
+	# Variables
+	.a:0
+	.z:0 1 2
+
+
+memtest.sorttest:
+	# Test alloc, realloc, and free.
+	# Get call address.
+	.arg2   .arg2   ?+1
+	.arg2   0       ?+1
+	.arg2   .z-2    ?+1
+	0       0       ?+1
+	0 ? string.print 't 'e 's 't 'i 'n 'g '  's 'o 'r 't 'i 'n 'g 10 0
+	0 ? mem.alloc .arr .maxlen
+	0 ? mem.alloc .leninst .maxlen1
+	.i .i ?+1
+.loop0:
+	0 ? uint.cmp .i .maxlen ?+3 .done0 .done0
+	0 ? mem.alloc .ti testint.struct.size
+	0 ? mem.setidx .arr .i .ti
+	.i .z-1 .loop0
+.done0:
+	.trial .trial ?+1
+.trialloop:
+	0 ? uint.cmp .trial .trials ?+3 .trialdone .trialdone
+	0 ? random.mod .len .maxlen1
+	.hash0 .hash0 ?+1
+	.i .i ?+1
+.loop2:
+	0 ? uint.cmp .i .len ?+3 .done2 .done2
+	0 ? mem.getidx .ti .arr .i
+	0 ? random.mod .tmp .maxval
+	0 ? mem.setidx .ti testint.struct.val .tmp
+	0 ? mem.setidx .ti testint.struct.idx .i
+	0 ? random.hash .tmp .tmp
+	.tmp .i ?+1
+	0 ? random.hash .tmp .tmp
+	.tmp .ti ?+1
+	0 ? random.hash .tmp .tmp
+	.hash0 .tmp ?+1
+	.i .z-1 .loop2
+.done2:
+	0 ? uint.add .p1 .leninst .len
+	0 ? memtest.measure .p1:0 ?+7 0 ? mem.sort .arr .len testint.cmp
+	# compare hash0, hash1, and check sort
+	.hash1 .hash1 ?+1
+	.i .i ?+1
+.loop3:
+	0 ? uint.cmp .i .len ?+3 .done3 .done3
+	0 ? mem.getidx .ti .arr .i
+	0 ? mem.getidx .val .ti testint.struct.val
+	0 ? mem.getidx .idx .ti testint.struct.idx
+	0 ? random.hash .tmp .val
+	.tmp .idx ?+1
+	0 ? random.hash .tmp .tmp
+	.tmp .ti ?+1
+	0 ? random.hash .tmp .tmp
+	.hash1 .tmp ?+1
+	.i .z .inorder
+	0 ? uint.cmp .pval .val .inorder ?+2 .ooo
+	0 ? uint.cmp .pidx .idx .inorder .ooo .ooo
+.ooo:
+	# sort out of order
+	0 ? string.print 's 'o 'r 't '  'o 'u 't '  'o 'f '  'o 'r 'd 'e 'r 10 0
+	.i .z+1 ?+1
+	0 ? string.print string.uint .i ': '  string.uint .pval ', '  string.uint .pidx 10 0
+	.i .z-1 ?+1
+	0 ? string.print string.uint .i ': '  string.uint .val ', '  string.uint .idx 10 0
+	0-1 0 ?-2
+.inorder:
+	0 ? uint.set .pval .val
+	0 ? uint.set .pidx .idx
+	.i .z-1 .loop3
+.done3:
+	0 ? uint.cmp .hash0 .hash1 ?+3 .hasheq ?+1
+	# array corrupted
+	0 ? string.print 'a 'r 'r 'a 'y '  'c 'o 'r 'r 'u 'p 't 'e 'd 10 0
+	0 ? string.print string.uintinl .hash0 16 16 '0 10 0
+	0 ? string.print string.uintinl .hash1 16 16 '0 10 0
+	0-1 0 ?-2
+.hasheq:
+	.trial .z-1 .trialloop
+.trialdone:
+	# print instructions
+	.i .i ?+1
+.loop4:
+	0 ? uint.cmp .i .maxlen1 ?+3 .done4 .done4
+	0 ? mem.getidx .tmp .leninst .i
+	0 ? string.print string.uintinl .i 10 2 '  ': '  string.uint .tmp 10 0
+	.i .z-1 .loop4
+.done4:
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	.i .i ?+1
+.loop1:
+	0 ? uint.cmp .i .maxlen ?+3 .done1 .done1
+	0 ? mem.getidx .ti .arr .i
+	0 ? mem.free .ti
+	.i .z-1 .loop1
+.done1:
+	0 ? mem.free .arr
+	0 ? mem.free .leninst
+	0 0 .arg2:2
+	# Variables
+	0-2 0-1 .z:0 1 2
+	.trials:10000
+	.trial:0
+	.arr:0
+	.len:0
+	.maxlen:100
+	.maxlen1:100+1
+	.ti:0
+	.i:0
+	.maxval:32
+	.tmp:0
+	.val:0
+	.idx:0
+	.pval:0
+	.pidx:0
+	.hash0:0
+	.hash1:0
+	.leninst:0
+

@@ -1,0 +1,37 @@
+0 0 demo
+
+demo:
+
+	# Multiplication
+	# ret0 = mul0 * mul1 >> 64
+	# ret1 = mul0 * mul1 & (2^64-1)
+	0 ? uint.mul .ret0 .ret1 .mul0 .mul1
+	0 ? string.print string.uint .mul0 '  '* '  string.uint .mul1 '  '= '  string.uint .ret1 10 0
+
+	# Division
+	# ret0 = num / den
+	# ret1 = num % den
+	0 ? uint.div .ret0 .ret1 .num .den
+	0 ? string.print string.uint .num '  '/ '  string.uint .den '  '  '= '  string.uint .ret0 '  'r 'e 'm 'a 'i 'n 'd 'e 'r '  string.uint .ret1 10 0
+
+	# Bitwise AND
+	# ret0 = and0 & and1
+	0 ? uint.and .ret0 .and0 .and1
+	0 ? string.print 32 string.uint .and0 '  '& '  string.uint .and1 '  '  '= '  string.uint .ret0 10 0
+
+	0-1 0 0
+
+	# Variables
+	.ret0: 0
+	.ret1: 0
+
+	.mul0: 457
+	.mul1: 135
+
+	.num:  933
+	.den:  51
+
+	.and0: 90
+	.and1: 17
+
+

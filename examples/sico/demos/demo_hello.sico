@@ -1,0 +1,11 @@
+loop: 0-2  txt  ?+1         # Print a letter.
+      len  one  exit        # Decrement [len]. If [len]<=1, exit.
+      ?-5  neg  loop        # Increment letter pointer.
+
+exit: 0-1  0    0
+
+txt:  'H 'e 'l 'l 'o ', ' 
+      'W 'o 'r 'l 'd '! 10
+len:  len-txt
+neg:  0-1
+one:  1

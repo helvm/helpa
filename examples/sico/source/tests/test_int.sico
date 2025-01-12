@@ -1,0 +1,583 @@
+#|==============================================================================
+
+
+Signed Integer Testing - v1.02
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+average instructions per function
+cmp: 36
+min: 41
+max: 41
+abs: 30
+mul: 717
+div: 132
+shr: 116
+
+
+|#
+
+
+0 0 test.main
+
+
+test.main:
+	# Signed integer tests.
+	0 ? string.print 's 'i 'g 'n 'e 'd '  'i 'n 't 'e 'g 'e 'r '  't 'e 's 't 's 10 0
+
+	0 ? random.seed .z+1
+
+	# ------------------------ Timing ------------------------
+	.time .time ?+1
+	.time 0-5   ?+1
+
+	# ------------------------- Bits -------------------------
+	# Calculate how many bits we're using. Set [hbit]=1<<(bits-1).
+	.tmp0     .z-1   ?+1
+	.bitloop:
+	.tmp0     .z     .bitdone
+	.hbit     .hbit  ?+1
+	.hbit     .tmp0  ?+1
+	.tmp0     .hbit  ?+1
+	.bits     .z-1   .bitloop
+	.bitdone:
+
+	# Set other bit related values.
+	.nbits    .bits  ?+1
+	.nbits-1  .bits  ?+1
+	.bits+1   .nbits ?+1
+	.bits+2   .nbits ?+1
+	.shiftmax .nbits ?+1
+	.shiftmax .nbits ?+1
+	.shiftmax .nbits ?+1
+	.shiftsub .nbits ?+1
+	.shiftsub .z-2   ?+1
+
+	0 ? string.print 'b 'i 't 's ': 32 string.uint .bits 10 0
+
+.loop:
+	# While trial<trials.
+	.tmp0 .tmp0 ?+1
+	.tmp0 .trials ?+1
+	.tmp1 .tmp1 ?+1
+	.tmp1 .tmp0 ?+1
+	.tmp1 .trial .done
+
+	# ---------------------- Parameters ----------------------
+	# Generate A, B, and C parameters.
+	0 ? test.rand.uint .a
+	0 ? test.rand.uint .b
+	0 ? random.mod     .c .shiftmax
+	.c .shiftsub ?+1
+
+	# Randomly set A=B.
+	0 ? random.mod     .tmp0 .eqprob
+	.tmp0 .z    ?+4
+	.tmp0 .tmp0 .nosetab
+	.tmp0 .b    ?+1
+	.a    .a    ?+1
+	.a    .tmp0 ?+1
+	.nosetab:
+
+	# Copy A, B, and C to compare later.
+	.tmp0 .tmp0 ?+1
+	.tmp0 .a    ?+1
+	.a0   .a0   ?+1
+	.a0   .tmp0 ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .b    ?+1
+	.b0   .b0   ?+1
+	.b0   .tmp0 ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .c    ?+1
+	.c0   .c0   ?+1
+	.c0   .tmp0 ?+1
+
+	# Calculate absolute value and sign of [a].
+	.aabs .aabs ?+1
+	.apos .apos ?+1
+	.aneg .aneg ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .a    ?+1
+	.tmp0 .z+1  ?+1
+	.a    .tmp0 ?+10
+	# [a]<0
+	.tmp0 .z-1  ?+1
+	.aabs .a0   ?+1
+	.aneg .z-1  ?+10
+	# [a]>=0
+	.tmp0 .z-1  ?+1
+	.aabs .tmp0 ?+1
+	.apos .z-1  ?+1
+	.a    .a    ?+1
+	.a    .tmp0 ?+1
+
+	# Calculate absolute value and sign of [b].
+	.babs .babs ?+1
+	.bpos .bpos ?+1
+	.bneg .bneg ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .b    ?+1
+	.tmp0 .z+1  ?+1
+	.b    .tmp0 ?+10
+	# [b]<0
+	.tmp0 .z-1  ?+1
+	.babs .b0   ?+1
+	.bneg .z-1  ?+10
+	# [b]>=0
+	.tmp0 .z-1  ?+1
+	.babs .tmp0 ?+1
+	.bpos .z-1  ?+1
+	.b    .b    ?+1
+	.b    .tmp0 ?+1
+
+	# 0 ? string.print string.uint .trial 32 string.int .a 32 string.int .b 32
+	#                  string.uint .c 10 0
+	# 0 ? string.print string.int .a 10 string.int .aabs 10 string.uint .apos 32
+	#                  string.uint .aneg 10 10 0
+	# 0 ? string.print string.int .b 10 string.int .babs 10 string.uint .bpos 32
+	#                  string.uint .bneg 10 10 0
+
+	# ----------------------- Compare ------------------------
+	# Compare A and B manually.
+	.tmp0 .tmp0 ?+1
+	.tmp0 .aabs ?+1
+	.exp0 .exp0 ?+1
+	.apos .z    .alt0
+	.bneg .z    ?+4
+	.exp0 .z-2  .cmpdone
+	.aabs .babs ?+4
+	.exp0 .z-2  .cmpdone
+	.aabs .z    ?+4
+	.exp0 .z    .cmpdone
+	.exp0 .z-1  .cmpdone
+	.alt0:
+	.bpos .z    ?+4
+	.exp0 .z    .cmpdone
+	.aabs .babs ?+4
+	.exp0 .z    .cmpdone
+	.aabs .z    ?+4
+	.exp0 .z-2  .cmpdone
+	.exp0 .z-1  .cmpdone
+	.cmpdone:
+	.aabs .aabs ?+1
+	.aabs .tmp0 ?+1
+
+	.ret0 .ret0 ?+1
+	0 ? test.measure .cmpops .cmplt 0 ? int.cmp .a .b .cmplt .cmpeq .cmpgt
+	0-1 0 ?-2
+	.cmpgt: .ret0   .z-1  ?+1
+	.cmpeq: .ret0   .z-1  ?+1
+	.cmplt: .cmpops .ret0 ?+1
+	0 ? test.cmp .exp0 .ret0 0
+
+
+	# ----------------------- Minimum ------------------------
+	# [exp0]=min([a],[b])
+	.tmp0 .tmp0 ?+1
+	.exp0 .z    ?+4
+	.tmp0 .b    ?+4
+	.tmp0 .a    ?+1
+	.exp0 .exp0 ?+1
+	.exp0 .tmp0 ?+1
+
+	0 ? test.measure .minops ?+7 0 ? int.min .ret0 .a .b
+	0 ? test.cmp .exp0 .ret0 1
+
+	# ----------------------- Maximum ------------------------
+	# [exp1]=max([a],[b]). Use max=[a]+[b]-min.
+	.exp0 .a    ?+1
+	.exp0 .b    ?+1
+	.exp1 .exp1 ?+1
+	.exp1 .exp0 ?+1
+
+	0 ? test.measure .maxops ?+7 0 ? int.max .ret0 .a .b
+	0 ? test.cmp .exp1 .ret0 2
+
+	# -------------------- Absolute Value --------------------
+	0 ? test.measure .absops ?+6 0 ? int.abs .ret0 .a
+	0 ? test.cmp .aabs .ret0 3
+
+	# -------------------- Multiplication --------------------
+	# Calculate A*B manually using unsigned values, then negate if needed.
+	.exp0 .exp0 ?+1
+	# [tmp1]=[a]
+	.tmp0 .tmp0 ?+1
+	.tmp0 .aabs ?+1
+	.tmp1 .tmp1 ?+1
+	.tmp1 .tmp0 ?+1
+	# [tmp2]=65
+	.tmp2 .tmp2 ?+1
+	.tmp2 .nbits-1 ?+1
+	.mulloop:
+	.tmp2 .z+1  .muldone
+	# exp<<=1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .exp1 ?+1
+	.exp1 .tmp0 ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .exp0 ?+1
+	.tmp0 .z+1  ?+1
+	.exp0 .tmp0 ?+4
+	# If [exp0] carries.
+	.exp1 .z-1  ?+1
+	.exp0 .z+1  ?+1
+	# [tmp1]<<=1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .tmp1 ?+1
+	.tmp0 .z+1  ?+1
+	.tmp1 .tmp0 .mulloop
+	# [exp0]+=[b]
+	.tmp0 .tmp0 ?+1
+	.tmp0 .babs ?+1
+	.tmp0 .z+1  ?+1
+	.exp0 .tmp0 ?+4
+	.exp1 .z-1  ?+1
+	.exp0 .z+1  ?+1
+	.tmp0 .tmp0 .mulloop
+	.muldone:
+	# If signed mismatch, negate.
+	.apos .bpos ?+1
+	.apos .z    .mulnoneg
+	.tmp0 .tmp0 ?+1
+	.tmp0 .z+1  ?+1
+	.tmp0 .exp1 ?+1
+	.tmp1 .tmp1 ?+1
+	.tmp1 .tmp0 ?+1
+	.exp1 .exp1 ?+1
+	.exp1 .tmp1 ?+1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .z+1  ?+1
+	.tmp0 .exp0 ?+1
+	.tmp1 .tmp1 ?+1
+	.tmp1 .tmp0 ?+1
+	.exp0 .z    ?+10
+	.exp0 .exp0 ?+1
+	.exp0 .tmp1 ?+1
+	.exp0 .z-1  .mulnoneg
+	.exp1 .z-1  .mulnoneg
+	.mulnoneg:
+	.apos .apos ?+1
+	.apos .z-1  ?+1
+	.apos .aneg ?+1
+
+	0 ? test.measure .mulops ?+8 0 ? int.mul .ret1 .ret0 .a .b
+	0 ? test.cmp .exp0 .ret0 4
+	0 ? test.cmp .exp1 .ret1 5
+
+	# ----------------------- Division -----------------------
+	# For B!=0, q=A/B, and r=A%B, we have A=q*B+r and |r|<|B|.
+	.b .z .div0
+	.divden .z-1 ?+1
+	0 ? test.measure .divops ?+8 0 ? int.div .ret0 .ret1 .a .b
+	0 ? int.abs .tmp0 .ret1
+	0 ? uint.cmp .tmp0 .babs .remlt ?+2 ?+1
+	0 ? test.cmp .z .b 6
+	.remlt:
+	0 ? int.mul .tmp0 .tmp1 .ret0 .b
+	.tmp2 .tmp2 ?+1
+	0 ? uint.cmp .aabs .babs ?+6 ?+2 ?+1
+	.tmp2 .aneg ?+1
+	0 ? test.cmp .tmp2 .tmp0 7
+	0 ? uint.add .tmp1 .ret1 .tmp1
+	0 ? test.cmp .a .tmp1 8
+	.div0:
+
+	# --------------------- Shift Right ----------------------
+	# Calculate A>>C manually.
+	.exp0 .exp0 ?+1
+	.exp0 .aneg ?+1
+	# [tmp1]=[a]
+	.tmp0 .tmp0 ?+1
+	.tmp0 .a    ?+1
+	.tmp1 .tmp1 ?+1
+	.tmp1 .tmp0 ?+1
+	# [tmp2]=-[c]-1
+	.tmp2 .tmp2 ?+1
+	.tmp2 .c    ?+1
+	.tmp2 .z+1  ?+1
+	.shrloop:
+	.tmp2 .nbits-1 .shrdone
+	.tmp2 .bits+2 ?+1
+	# [exp0]<<=1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .exp0 ?+1
+	.exp0 .tmp0 ?+1
+	# [tmp1]<<=1
+	.tmp0 .tmp0 ?+1
+	.tmp0 .tmp1 ?+1
+	.tmp0 .z+1  ?+1
+	.tmp1 .tmp0 .shrloop
+	.exp0 .z-1  .shrloop
+	.shrdone:
+
+	0 ? test.measure .shrops ?+7 0 ? int.shr .ret0 .a .c
+	0 ? test.cmp .exp0 .ret0 9
+
+	# Make sure parameters haven't been modified.
+	0 ? test.cmp .a0 .a 10
+	0 ? test.cmp .b0 .b 11
+	0 ? test.cmp .c0 .c 12
+
+	.trial .z-1 .loop
+
+.done:
+	# Print instruction counts.
+	0 ? uint.div .cmpops 0 .cmpops .trial
+	0 ? uint.div .minops 0 .minops .trial
+	0 ? uint.div .maxops 0 .maxops .trial
+	0 ? uint.div .absops 0 .absops .trial
+	0 ? uint.div .mulops 0 .mulops .trial
+	0 ? uint.div .divops 0 .divops .divden
+	0 ? uint.div .shrops 0 .shrops .trial
+	0 ? string.print 'a 'v 'e 'r 'a 'g 'e '  'i 'n 's 't 'r 'u 'c 't 'i 'o
+                      'n 's '  'p 'e 'r '  'f 'u 'n 'c 't 'i 'o 'n 10 0
+	0 ? string.print 'c 'm 'p ': '  string.uint .cmpops 10 0
+	0 ? string.print 'm 'i 'n ': '  string.uint .minops 10 0
+	0 ? string.print 'm 'a 'x ': '  string.uint .maxops 10 0
+	0 ? string.print 'a 'b 's ': '  string.uint .absops 10 0
+	0 ? string.print 'm 'u 'l ': '  string.uint .mulops 10 0
+	0 ? string.print 'd 'i 'v ': '  string.uint .divops 10 0
+	0 ? string.print 's 'h 'r ': '  string.uint .shrops 10 0
+	0 ? string.print 'p 'a 's 's 'e 'd 10 0
+
+
+	# ------------------------ Timing ------------------------
+	.tmp0 .tmp0 ?+1
+	.tmp0 0-5   ?+1
+	.time .tmp0 ?+1
+	0 ? uint.div .time .tmp0 .time 0-4
+	0 ? uint.mul 0 .tmp0 .tmp0 .timedec
+	0 ? uint.div .tmp0 0 .tmp0 0-4
+	0 ? string.print 't 'i 'm 'e ': '  string.uint .time '. string.uintinl .tmp0 10 6 '0 10 0
+
+	0 ? mem.alloc.verifyfree
+
+	# Exit
+	0-1 0 ?-2
+
+
+	# Variables
+	0-2 0-1 .z:0 1
+	.a:0
+	.aabs:0
+	.apos:0
+	.aneg:0
+	.b:0
+	.babs:0
+	.bpos:0
+	.bneg:0
+	.c:0
+	.eqprob:64
+	.hbit:0
+	0-1 .nbits:0
+	.bits:0 1 2
+	.shiftmax:0
+	.shiftsub:0
+	.time:0
+	.timedec:1000000
+	.cmpops:0
+	.minops:0
+	.maxops:0
+	.absops:0
+	.mulops:0
+	.divops:0
+	.divden:0
+	.shrops:0
+	.trial:0
+	.trials:2048
+	.exp0:0
+	.exp1:0
+	.ret0:0
+	.ret1:0
+	.tmp0:0
+	.tmp1:0
+	.tmp2:0
+	# Place these far away from .a, .b, and .c in order to minimize accidental use
+	# by functions.
+	.a0:0
+	.b0:0
+	.c0:0
+
+
+test.rand.uint:
+	# Call  : 0 ? test.rand ret
+	# Effect: [ret]=(rand)
+	# Generate a random integer such that the probability of any bitcount is uniform.
+	# Setup new stack.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .p0     ?+1
+	0       .z+2    ?+1
+	0       .tmp0   ?+1
+	.p0     0       ?+1
+	.addr   0       ?+1
+	0       0       ?+1
+	# Get [ret]
+	.tmp0   .tmp0   ?+1
+	.tmp0   .p0:0   ?+1
+	.p5     .p5     ?+1
+	.p5     .tmp0   ?+1
+	.p6     .p6     ?+1
+	.p6     .tmp0   ?+1
+	# Shuffle arr.
+	0 ? random.shuffle .arr0 test.main.bits
+	# Calculate how many bits we want to set.
+	0 ? random.mod .i test.main.bits
+	.tmp0   .tmp0   ?+1
+	.b0     .b0     ?+1
+	.b0     .narr   ?+1
+	.i      .z-1    ?+1
+.setbits:
+	.i      .z+1    .setdone
+	.tmp0   .b0:0   ?+1
+	.b0     .z-1    .setbits
+.setdone:
+	# Return
+	.tmp1   .tmp1   ?+1
+	.tmp1   .p5:0   ?+1
+	.tmp0   .tmp1   ?+1
+	.p6:0   .tmp0   ?+1  # [ret]=[rand]
+	0       0       .addr:1
+	# Variables
+	0-1 .z:0 1 2
+	.tmp0:0
+	.tmp1:0
+	.i:0
+	.arr:
+		0x1 0x2 0x4 0x8 0x10 0x20 0x40 0x80 0x100 0x200 0x400 0x800 0x1000 0x2000 0x4000
+		0x8000 0x10000 0x20000 0x40000 0x80000 0x100000 0x200000 0x400000 0x800000
+		0x1000000 0x2000000 0x4000000 0x8000000 0x10000000 0x20000000 0x40000000
+		0x80000000 0x100000000 0x200000000 0x400000000 0x800000000 0x1000000000
+		0x2000000000 0x4000000000 0x8000000000 0x10000000000 0x20000000000 0x40000000000
+		0x80000000000 0x100000000000 0x200000000000 0x400000000000 0x800000000000
+		0x1000000000000 0x2000000000000 0x4000000000000 0x8000000000000 0x10000000000000
+		0x20000000000000 0x40000000000000 0x80000000000000 0x100000000000000
+		0x200000000000000 0x400000000000000 0x800000000000000 0x1000000000000000
+		0x2000000000000000 0x4000000000000000 0x8000000000000000
+	.arr0:.arr
+	.narr:0-.arr
+
+
+test.cmp:
+	# Call  : 0 ? test.cmp exp val id
+	# Setup stack.
+	.tmp    .tmp    ?+1
+	.tmp    .p0     ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.p0     0       ?+1
+	.p2     0       ?+1
+	.id     0       ?+1
+	.ret    0       ?+1
+	0       0       ?+1
+	# Get [exp]
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p1:0   ?+1
+	.exp    .tmp    ?+1
+	# Get [val]
+	.tmp    .tmp    ?+1
+	.tmp    .p2:1   ?+1
+	.p3     .p3     ?+1
+	.p3     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p3:0   ?+1
+	.val    .val    ?+1
+	.val    .tmp    ?+1
+	# Compare [exp] and [val].
+	.exp    .val    ?+1
+	.exp    .z      .ret:3
+	.exp    .tmp    ?+1
+	# ERROR
+	0 ? string.print 69 82 82 79 82 10 0
+	# line
+	0 ? string.print 116 114 105 97 108 32 58 32 string.uint test.main.trial 10 0
+	# test
+	0 ? string.print 116 101 115 116 32 32 58 32 string.uint .id:2 10 0
+	# expect
+	0 ? string.print 101 120 112 101 99 116 58 32 string.uint .exp 10 0
+	# return
+	0 ? string.print 114 101 116 117 114 110 58 32 string.uint .val 10 0
+	0-1 0 ?-2
+	# Variables
+	.exp:0
+	.val:0
+	.z:0 1 2
+	.tmp:0
+
+
+test.measure:
+	# 0 ? test.measure counter return 0 ? func arg0 arg1 ...
+	# counter = the address for counting instructions.
+	# return  = address the function will return to when finished.
+	# Emulates the execution of a function and measures how many instructions it uses.
+	# Uses 24+20*n instructions for n emulated instructions.
+	.tmp    .a0     ?+1
+	.nret   .tmp    ?+1
+	.tmp    0       ?+1
+	.dif    .tmp    ?+1
+	.dif    .z+4    ?+1
+	# Setup counter.
+	0       .z+2    ?+1
+	.p0     .p0     ?+1
+	.p0     0       ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .p0:0   ?+1
+	.cnt    .cnt    ?+1
+	.cnt    .tmp    ?+1
+	# Get the negative return address. If [nret]+[dif0]+[dif1]+...=0, then return.
+	0       .z+1    ?+1
+	.p1     .p1     ?+1
+	.p1     0       ?+1
+	.nret   .p1:0   ?+1
+	# Reset stack address.
+	0       0       .loop
+.jmp:
+	# We jumped, set [dif]=[a0]-[c].
+	.tmp    .tmp    ?+1
+	.tmp    .a0     ?+1
+	.dif    .tmp    ?+1
+.loop:
+	# Update a, b, and c addresses.
+	.a0     .dif    ?+1
+	.b0     .dif    ?+1
+	.c0     .dif    ?+1
+	.nret   .dif    ?+1
+	.dif    .dif    ?+1
+	# Return if ip=[ret].
+	.nret   .z      .ret
+	# Increment the instruction counter.
+	.cnt:0  .z-1    ?+1
+	# Load [a]. a0 will hold the return address when we're done.
+	.tmp    .tmp    ?+2
+	.ret:   .tmp
+	.tmp    .a0:0   ?+1
+	.a      .a      ?+1
+	.a      .tmp    ?+1
+	# Load [b].
+	.tmp    .tmp    ?+1
+	.tmp    .b0:1   ?+1
+	.b      .b      ?+1
+	.b      .tmp    ?+1
+	# Set [dif]=-[c].
+	.dif    .c0:2   ?+1
+	# Execute instruction.
+	.a:0    .b:0    .jmp
+	# We failed to jump, set [dif]=-3.
+	.dif    .dif    ?+1
+	.dif    .z+3    .loop
+	# Variables
+	.tmp:0
+	.nret:0
+	.dif:0
+	0-2 0-1 .z:0 1 2 3 4
+

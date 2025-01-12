@@ -1,0 +1,1585 @@
+#|==============================================================================
+
+
+Memory Library - v1.02
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+Notes
+
+
+memory.sico handles common memory management functions. If it is concatenated
+with other files, it must be included last for memory allocation to work.
+
+
+--------------------------------------------------------------------------------
+Index
+
+
+Dereferencing
+mem.getargs [dst0] refs0 [dst1] refs1 ... 0
+mem.get     [val] [mem]
+mem.getidx  [val] [mem] [idx]
+mem.set     [mem] [val]
+mem.setidx  [mem] [idx] [val]
+
+Bulk Operations
+mem.zero    [dst] [len]
+mem.copy    [dst] [src] [len]
+mem.sort    [arr] [len] cmp
+
+Allocation
+mem.alloc   [mem] [len]
+mem.realloc [ret] [mem] [len]
+mem.free    [mem]
+mem.alloc.verifyfree
+
+
+--------------------------------------------------------------------------------
+Version History
+
+
+1.00
+     Initial version.
+     Supports referencing, zeroing, copying, and allocation.
+1.01
+     Fixed comments.
+     Renamed get/set functions.
+1.02
+     Added mem.sort.
+
+
+--------------------------------------------------------------------------------
+TODO
+
+
+Allow memory allocation to handle non 64-bit mods.
+Add mem.alloclen to return the allocated size of a block.
+Replace alloc hash table with AVL tree.
+	Find the smallest block that will fit an allocation.
+	If there are multiple matches, choose the one with the smallest address.
+Simplify mem.alloc.verify using mem.get and mem.cmp.
+mem.binsearch mem len val cmp
+	use fibonacci instead of powers of 2
+Optimize mem.realloc. Don't use mem.zero, just mem.copy.
+Optimize mem.sort to n*log(n).
+
+
+|#
+
+mem.debug: 1
+
+
+#---------------------------------------------------------------------------------
+# Dereferencing
+
+
+mem.getargs:
+	# Call  : mem.getargs.0 ? mem.getargs dst0 refs0 dst1 refs1 ... 0
+	# Effect:
+	#      Simplifies parsing arguments from the 0 stack.
+	#      For example, when calling "0 ? SomeFunc arg1 arg2".
+	#      Stops parsing arguments when dst=0.
+	#      Sets [0]=0.
+	#
+	#      refs=0: [dst]=[0]
+	#      refs=1: [dst]=[[0]]
+	#      refs=2: [dst]=[[[0]]]
+	#
+	# Time  : 12+(18+6*refs)*args
+	0       .z+2    ?+1
+	.0      .z+2    ?+1
+	.arg2   .arg2   ?+1
+	.arg2   .0      ?+1
+	.0      .z+1    ?+1
+	.arg3   .arg3   ?+1
+	.arg3   .0      ?+1
+.argloop:
+	.0      .0      ?+1
+	.tmp    .arg2:0 ?+1
+	# If dst=0, we're done.
+	.tmp    .z      .done
+	.arg2   .z-2    ?+1
+	# Setup the destination address.
+	.dst0   .dst0   ?+1
+	.dst0   .tmp    ?+1
+	.dst1   .dst1   ?+1
+	.dst1   .tmp    .done+4
+.done:
+	0       0       ?+1
+	.ref
+	# Get the dereferencing depth.
+	.ref    .arg3:0 ?+1
+	.arg3   .z-2    ?+1
+	# Get argument from original stack and dereference.
+	.val    .val    ?+1
+	.val    0       ?+1
+	0       .z+1    ?+1
+.refloop:
+	.ref    .z      .ref0
+	.tmp    .tmp    ?+1
+	.tmp    .val:0  ?+1
+	.val    .val    ?+1
+	.val    .tmp    ?+1
+	.ref    .z-1    .refloop
+.ref0:
+	# Write dereferenced argument to the destination address.
+	.val    .dst0:0 ?+1
+	.z      .val    ?+1
+	.dst1:0 .z      ?+1
+	.tmp    .tmp    .argloop
+	# Variables
+	0-2 0-1 .0:.z:0 1 2
+	.ref:0
+	.tmp:0
+
+
+mem.get:
+	# Call  : 0 ? mem.get0 val mem
+	# Effect: [val]=[[mem]]
+	# Time  : 27
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get val.
+	.val0   .arg2:2 ?+1
+	.val1   .val0   ?+1
+	.val2   .val0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .val1   ?+1
+	.val0   .val0   ?+1
+	.val0   .tmp    ?+1
+	# Get -[mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.m0     .m0     ?+1
+	.m0     .tmp    ?+1
+	# Set [val]=[[mem]]
+	.tmp    .tmp    ?+1
+	.tmp    .m0:0   ?+1
+	.m1     .m1     ?+1
+	.m1     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .m1:0   ?+1
+	.val0:0 .val1:0 ?+1
+	.val2:0 .tmp    ?+1
+	0       0       .arg4:4
+	# Variables
+	.off:2
+	.tmp:0
+
+
+mem.getidx:
+	# Call  : 0 ? mem.getidx val mem idx
+	# Effect: [val]=[[mem]+[idx]]
+	# Time  : 33
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get val.
+	.val0   .arg2:2 ?+1
+	.val1   .val0   ?+1
+	.val2   .val0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .val1   ?+1
+	.val0   .val0   ?+1
+	.val0   .tmp    ?+1
+	# Get -[mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.m0     .m0     ?+1
+	.m0     .tmp    ?+1
+	# Get -[idx].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.i0     .i0     ?+1
+	.i0     .tmp    ?+1
+	# Set [val]=[[mem]+[idx]]
+	.tmp    .tmp    ?+1
+	.tmp    .m0:0   ?+1
+	.tmp    .i0:0   ?+1
+	.mi     .mi     ?+1
+	.mi     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .mi:0   ?+1
+	.val0:0 .val1:0 ?+1
+	.val2:0 .tmp    ?+1
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+
+
+mem.set:
+	# Call  : 0 ? mem.set mem val
+	# Effect: [[mem]]=[val]
+	# Time  : 27
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get -[mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.m0     .m0     ?+1
+	.m0     .tmp    ?+1
+	.m1     .m0:0   ?+1
+	# Get val.
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.val0   .val0   ?+1
+	.val0   .tmp    ?+1
+	# Set [[mem]]=[val]
+	.m2     .m1     ?+1
+	.m3     .m1     ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .m2     ?+1
+	.m1     .m1     ?+1
+	.m1     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .val0:0 ?+1
+	.m1:0   .m2:0   ?+1
+	.m3:0   .tmp    ?+1
+	0       0       .arg4:4
+	# Variables
+	.off:2
+	.tmp:0
+
+
+mem.setidx:
+	# Call  : 0 ? mem.setidx mem idx val
+	# Effect: [[mem]+[idx]]=[val]
+	# Time  : 33
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .off    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get -[mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.m0     .m0     ?+1
+	.m0     .tmp    ?+1
+	.mi0    .m0:0   ?+1
+	# Get -[idx].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.i0     .i0     ?+1
+	.i0     .tmp    ?+1
+	.mi0    .i0:0   ?+1
+	# Get val.
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.val0   .val0   ?+1
+	.val0   .tmp    ?+1
+	# Set [[mem]+[idx]]=[val]
+	.mi1    .mi0    ?+1
+	.mi2    .mi0    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .mi1    ?+1
+	.mi0    .mi0    ?+1
+	.mi0    .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .val0:0 ?+1
+	.mi0:0  .mi1:0  ?+1
+	.mi2:0  .tmp    ?+1
+	0       0       .arg5:5
+	# Variables
+	.off:2
+	.tmp:0
+
+
+#---------------------------------------------------------------------------------
+# Bulk Operations
+
+
+mem.zero:
+	# Call  : 0 ? mem.zero mem len
+	# Effect: Zeroes out memory addresses in [[mem],[mem]+[len]).
+	# Time  : 24+4*len
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get [len]. Return if [len]=0.
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.len0   .len0   ?+1
+	.len0   .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .len0:0 ?+1
+	.tmp    .z      .done
+	.len    .tmp    ?+1
+	# Get [mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.mem0   .mem0   ?+1
+	.mem0   .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .mem0:0 ?+1
+	# Setup the initial memory pointers.
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	# Zero loop.
+.loop:
+	.p0:0   .p1:0   ?+1
+	.len    .z+1    .done
+	.p0     .z-1    ?+1
+	.p1     .z-1    .loop
+.done:
+	0       0       .arg4:4
+	# Variables
+	0-1 .len:.z:0 1 2
+	.tmp:0
+
+
+mem.copy:
+	# Call  : 0 ? mem.copy dst src len
+	# Effect: Copies data from [[src],[src]+[len]) onto [[dst],[dst]+[len]).
+	# Time  : 39+9*len
+	# Setup the stack.
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	# Get [len]. Return if [len]=0.
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.len0   .len0   ?+1
+	.len0   .tmp    ?+1
+	.nlen   .nlen   ?+1
+	.nlen   .len0:0 ?+1
+	.nlen   .z      .done
+	# Get [src].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.s0     .s0     ?+1
+	.s0     .tmp    ?+1
+	# Get [dst].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.d0     .d0     ?+1
+	.d0     .tmp    ?+1
+	.ndst   .ndst   ?+1
+	.ndst   .d0:0   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .ndst   ?+1
+	# Determine our copy direction.
+	.inc    .inc    ?+1
+	.tmp    .s0:0   .le
+	# Copy back to front.
+	.len    .nlen   ?+1
+	.ndst   .len    ?+1
+	.ndst   .z-1    ?+1
+	.inc    .z-1    .setup
+.le:
+	# Copy front to back. If [dst]=[src], return.
+	.tmp    .z      .done
+	.len    .nlen   ?+1
+	.inc    .z+1    .setup
+.setup:
+	# Setup the data pointers.
+	.src    .src    ?+1
+	.src    .tmp    ?+1
+	.src    .ndst   ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .dst0   ?+1
+	.ndst   .tmp    ?+1
+	.dst0   .ndst   ?+1
+	.dst1   .ndst   ?+1
+	.dst2   .ndst   ?+1
+	.tmp    .tmp    ?+1
+	# Copy the data.
+.loop:
+	.tmp    .src:0  ?+1
+	.dst0:0 .dst1:0 ?+1
+	.dst2:0 .tmp    ?+1
+	.len    .z+1    .done
+	.dst0   .inc    ?+1
+	.dst1   .inc    ?+1
+	.dst2   .inc    ?+1
+	.src    .inc    ?+1
+	.tmp    .tmp    .loop
+.done:
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.tmp:0
+	.ndst:0
+	.inc:0
+	.len:0
+	.nlen:0
+
+
+mem.sort:
+	# Call  : 0 ? mem.sort arr len cmp
+	# Effect: Stably sorts [arr] in ascending order.
+	# Time  : 12 + 20*len + (12+cmp)*len*(len-1)/2
+	.tmp    .tmp    ?+1
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	0       0       ?+1
+	# Get [len].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.p1     .p1     ?+1
+	.p1     .tmp    ?+1
+	.nlen   .nlen   ?+1
+	.nlen   .p1:0   ?+1
+	.len    .nlen   ?+1
+	.len    .z+1    .ret
+	# Get [arr].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp    ?+1
+	.narr   .narr   ?+1
+	.narr   .p0:0   ?+1
+	.i0     .i0     ?+1
+	.i0     .narr   ?+1
+	# Get cmp.
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.cmp    .cmp    ?+1
+	.cmp    .tmp    ?+1
+	.tmp    .tmp    .loop0+3
+.loop0:
+	.len    .z+1    .ret+3
+	# Reset [i] to our current index.
+	.i      .nlen   ?+1
+	.i      .len    ?+1
+	# Update array pointers to [arr]+[i].
+	.narr   .z+1    ?+1
+	.i0     .z-1    ?+1
+	.i1     .i1     ?+1
+	.i1     .narr   ?+1
+	.i2     .i2     ?+1
+	.i2     .narr   ?+1
+	# Record [ival]=[[arr]+[i]].
+	.tmp    .i0:0   ?+1
+	.ival   .ival   ?+1
+	.ival   .tmp    ?+1
+	.pval   .pval   ?+1
+	.pval   .tmp    .loop1+6
+	# Sort [ival].
+.loop1:
+	.i2     .z+1    ?+1
+	.i      .z+1    .done1+3
+	.i1     .z+1    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .i1:0   ?+1
+	.jval   .jval   ?+1
+	.jval   .tmp    ?+1
+	0 ? .cmp:0 .jval .ival .done1 .done1 ?+1
+	.pval   .jval   ?+1
+	.i2:0   .pval   ?+1
+	.pval   .pval   .iset:?+1
+	.pval   .tmp    .loop1
+.done1:
+	.i      .i      ?+1
+	# Set [[arr]+[i]]=[ival].
+	.pval   .ival   ?+1
+	.iset   .set0   .i2
+.iret:
+	.iset   .set1   ?+1
+	.tmp    .tmp    .loop0
+.ret:
+	.len    .len    ?+1
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.tmp:0
+	.narr:0
+	.len:0
+	.nlen:0
+	.i:0
+	.ival:0
+	.jval:0
+	.pval:0
+	.set0:.iset+1-.iret
+	.set1:.iret-.iset-1
+
+
+#|------------------------------------------------------------------------------
+Allocation
+
+The memory module must be included at the end of the program so that
+mem.alloc.start can mark the beginning of unused space.
+
+
+     +------------------+---------+---------+---------+---------+---------+
+     | mem.alloc.start: | Buckets | Block 0 | Block 1 | Block 2 |   ...   |
+     +------------------+---------+---------+---------+---------+---------+
+
+
+The layout after mem.alloc.start is:
+
+
+      0: [2^1, 2^2)
+      1: [2^2, 2^3)
+      2: [2^3, 2^4)
+     ....
+     62: [2^63, 2^64)
+     63: Pointer to start+64
+     64: Catch-all block
+     65: First actual block
+
+
+A free block with space for data will have links for the bucket it's in.
+
+
+     +--------------------------------------------------------------------+
+     |                             Free Block                             |
+     +-----------+-----------+------------+------------+------------------+
+     | blocknext | blockprev | bucketprev | bucketnext | unused cells ... |
+     +-----------+-----------+------------+------------+------------------+
+
+
+When a block becomes allocated, blockprev and blocknext will be swapped. The
+rest of the cells will be used for data.
+
+
+     +--------------------------------------------------------------------+
+     |                          Allocated Block                           |
+     +-----------+-----------+------------+------------+------------------+
+     | blockprev | blocknext |   data 0   |   data 1   |       ...        |
+     +-----------+-----------+------------+------------+------------------+
+
+
+If blockprev<blocknext, then the block is allocated. The last block will have
+blocknext=mem.alloc.end.
+|#
+
+
+mem.error:
+	# Call  : mem.error.z ? mem.error str
+	# Effect: Prints str and aborts.
+	# Get str.
+	.msg    .z      ?+1
+.loop:
+	.z      .z      ?+1
+	.z      .msg:2  ?+1
+	.char   .char   ?+1
+	.z      .char   .done
+	.char   .z      ?+1
+	0-2     .char   ?+1
+	.msg    .z-1    .loop
+.done:
+	# Variables/Abort
+	0-1 .z:0 .char:0
+
+
+mem.alloc.init:
+	# Call  : mem.alloc.init.z ? mem.alloc.init
+	# Effect: An internal function that initializes the memory allocator for use. Only
+	#         runs once.
+	# Setup return and original 0.
+	.ret    .z      ?+1
+	.z      .z      ?+1
+	.tmp0   0       ?+1
+	0       0       ?+1
+	# Modify allocation functions so mem.alloc.init only runs once.
+	mem.alloc+2        .z-3 ?+1
+	mem.free+2         .z-3 ?+1
+	mem.realloc+2      .z-3 ?+1
+	mem.alloc.verify+2 .z-3 ?+1
+	# If we're debugging, make sure the first 2048 cells after the starting address
+	# are 0.
+	mem.debug .z    .dbgzdone
+.dbgzloop:
+	.zcheck .z+1    .dbgzdone
+	.p0:mem.alloc.start .z .dbgzgood
+	# ERROR: Alloc memory not 0
+	mem.error.z ? mem.error 'E 'R 'R 'O 'R ': '  'A 'l 'l 'o 'c '  'm 'e 'm 'o 'r 'y '  'n 'o 't '  '0 10 0
+.dbgzgood:
+	.p0     .z-1    .dbgzloop
+.dbgzdone:
+	# len=end-start-65-2. Need len>=2, hence end-(start+69)>=0.
+	.minend mem.alloc.end .hasmem
+	# ERROR: Not enough memory
+	mem.error.z ? mem.error 'E 'R 'R 'O 'R ': '  'N 'o 't '  'e 'n 'o 'u 'g 'h '  'm 'e 'm 'o 'r 'y 10 0
+.hasmem:
+	# Setup the catch-all block.
+	mem.alloc.start+63 .s63 ?+1
+	mem.alloc.start+64 .s64 ?+1
+	# Setup a free block spanning all available memory.
+	# Block next
+	.z mem.alloc.end ?+1
+	mem.alloc.start+65 .z ?+1
+	.z      .z      ?+1
+	# Block prev, leave 0.
+	# Bucket pointer.
+	# len=-minend+2
+	.z      .minend ?+1
+	.z      .z-2    ?+1
+	0 ? mem.alloc.getbucket .bkt0 .z
+	.z      .z      ?+1
+	.bkt0:0 .bkt65  ?+1
+	# Bucket prev.
+	.z      .bkt0   ?+1
+	.z      .z-3    ?+1
+	mem.alloc.start+67 .z ?+1
+	# Bucket next, leave 0.
+	0       .tmp0   .ret:2
+	# Variables.
+	0-3 0-2 0-1 .z:0 1
+	.tmp0:0
+	.zcheck:2049
+	.s63:0-mem.alloc.start-64
+	.s64:0-1+mem.alloc.start+64+2
+	.bkt65:0-mem.alloc.start-65
+	.minend:mem.alloc.start+69
+
+
+mem.alloc.getbucket:
+	# Call  : 0 ? mem.alloc.getbucket ret len
+	# Effect: [ret]=log2([len])+mem.alloc.start-1
+	# This is used to figure out what bucket a given length falls in.
+	# Time  : 76
+	# Expect len>=2.
+	# Setup the stack.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2   ?+1
+	0       .tmp0   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	# Get ret.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp0   ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp0   ?+1
+	# Get [len].
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg3:3 ?+1
+	.l0     .l0     ?+1
+	.l0     .tmp0   ?+1
+	.nlen   .nlen   ?+1
+	.nlen   .l0:0   ?+1
+	# Setup the loop counter and tree pointer.
+	.i      .i0     ?+1
+	.t0     .t0     ?+1
+	.t0     .off+0  ?+4
+.loop:
+	# If len<=mem[tree+i], branch left (i*2+1).
+	# Otherwise, branch right (i*2+2).
+	.i      .z+1    .done
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nlen   ?+1
+	.tmp0   .t0:0   ?+4
+	.tmp1   .off+2  ?+4  # len>tree[i]
+	.tmp1   .off+1  ?+1  # len<=tree[i]
+	.tmp1   .t0     ?+1
+	.t0     .tmp1   ?+1
+	.tmp1   .tmp1   .loop
+.done:
+	.t0     .last   ?+1
+	.t0     .ret0:0 ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .t0     ?+1
+	.ret1:0 .tmp0   ?+1
+	0       0       .arg4:4
+	# Variables
+	0-1 .z:0 1 2
+	.tmp0:0
+	.tmp1:0
+	.nlen:0
+	.i:0
+	.i0:0-6
+	.off:0-.tree 1-.tree 2-.tree
+	.tree:
+		0xffffffff 0xffff 0xffffffffffff 0xff 0xffffff 0xffffffffff 0xffffffffffffff
+		0xf 0xfff 0xfffff 0xfffffff 0xfffffffff 0xfffffffffff 0xfffffffffffff
+		0xfffffffffffffff 0x3 0x3f 0x3ff 0x3fff 0x3ffff 0x3fffff 0x3ffffff 0x3fffffff
+		0x3ffffffff 0x3fffffffff 0x3ffffffffff 0x3fffffffffff 0x3ffffffffffff
+		0x3fffffffffffff 0x3ffffffffffffff 0x3fffffffffffffff 0x1 0x7 0x1f 0x7f 0x1ff
+		0x7ff 0x1fff 0x7fff 0x1ffff 0x7ffff 0x1fffff 0x7fffff 0x1ffffff 0x7ffffff
+		0x1fffffff 0x7fffffff 0x1ffffffff 0x7ffffffff 0x1fffffffff 0x7fffffffff
+		0x1ffffffffff 0x7ffffffffff 0x1fffffffffff 0x7fffffffffff 0x1ffffffffffff
+		0x7ffffffffffff 0x1fffffffffffff 0x7fffffffffffff 0x1ffffffffffffff
+		0x7ffffffffffffff 0x1fffffffffffffff 0x7fffffffffffffff
+	.last:.last-mem.alloc.start+1
+
+
+mem.alloc.verifyfree:
+	# Call  : 0 ? mem.alloc.verify
+	# Effect: Verifies that all blocks are free.
+	mem.alloc.verify.valc mem.alloc.verify.z-1 ?+1
+mem.alloc.verify:
+	# Call  : 0 ? mem.alloc.verify
+	# Effect: Verifies all blocks.
+	# Setup return.
+	.arg2 .arg2 ?+1
+	mem.alloc.init.z ? mem.alloc.init
+	0     .z+2  ?+1
+	.arg2 0     ?+1
+	0     0     ?+1
+	# Verify buckets. Want to show bucket head->bktprev+3=bkt.
+	.bkt0   .sbkt   ?+4
+.bktloop:
+	# Get the head of the current bucket.
+	.bkt0   .nbkt   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .bkt0:1 ?+1
+	.tmp0   .z      .nullblock
+	.tmp0   .z+2    ?+1
+	.blk0   .blk0   ?+1
+	.blk0   .tmp0   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .blk0:0 ?+1
+	# Want mem[blk+2]-bkt+3=0.
+	.tmp1   .tmp1   ?+1
+	.tmp1   .bkt0   ?+1
+	.tmp0   .tmp1   ?+1
+	.tmp0   .z+3    ?+1
+	.tmp0   .z      .nullblock
+	.z      .z      .errormeta
+.nullblock:
+	.bkt0   .lbkt   .bktloop
+	# Verify catch-all.
+	# Verify catch-all bucket. Want mem[start+63]=start+64.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .catch0 ?+1
+	.tmp0   mem.alloc.start+63 ?+1
+	.tmp0   .z      ?+4
+	.z      .z      .errormeta
+	# verify catch-all size. Want mem[start+64]=-1+(start+64+2).
+	.tmp0   .tmp0   ?+1
+	.tmp0   .catch1 ?+1
+	.tmp0   mem.alloc.start+64 ?+1
+	.tmp0   .z      ?+4
+	.z      .z      .errormeta
+	# Go through each block and verify it.
+	.blk1   .blk1   ?+1
+	.blk1   .sblk   ?+1
+	.lblk   .lblk   ?+1
+	.lblk   mem.alloc.end ?+1
+	.alloc  .alloc  ?+1
+.blkloop:
+	# If mem.alloc.end<=blk, we're done.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .lblk   ?+1
+	.tmp0   .blk1   .blkdone
+	0 ? mem.alloc.verifyblock .blk1
+	# Get prev=mem[blk+0].
+	.tmp0   .tmp0   ?+1
+	.tmp0   .blk1:0 ?+1
+	.prv    .prv    ?+1
+	.prv    .tmp0   ?+1
+	# Get next=mem[blk+1].
+	.tmp1   .tmp1   ?+1
+	.tmp1   .blk1   ?+1
+	.tmp1   .z+1    ?+1
+	.blk2   .blk2   ?+1
+	.blk2   .tmp1   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .blk2:0 ?+1
+	.blk1   .blk1   ?+1
+	.blk1   .tmp1   ?+1
+	# if prev>=blk
+	.alloc  .z-1    ?+1
+	.prv    .blk1   .blkloop
+	# The block is free. Set blk=prv.
+	.alloc  .z+1    ?+1
+	.blk1   .blk1   ?+1
+	.blk1   .tmp0   .blkloop
+.blkdone:
+	# Verify blk=mem.alloc.end.
+	.tmp0   .z      ?+4
+	.z      .z      .errormeta
+	# If we have any allocated memory. Use valc to toggle verifying that all blocks
+	# are free.
+	.valc   .z     .noalloc
+	.valc   .valc   ?+1
+	.alloc  .z      ?+4
+	.z      .z      .errorfree
+.noalloc:
+	# Return.
+	0       0       .arg2:2
+.errormeta:
+	# ERROR: Corrupt memory metadata
+	mem.error.z ? mem.error 'E 'R 'R 'O 'R ': '  'C 'o 'r 'r 'u 'p 't '  'm 'e 'm 'o 'r 'y '  'm 'e 't 'a 'd 'a 't 'a 10 0
+.errorfree:
+	# ERROR: Unfreed memory
+	mem.error.z ? mem.error 'E 'R 'R 'O 'R ': '  'U 'n 'f 'r 'e 'e 'd '  'm 'e 'm 'o 'r 'y 10 0
+	# Variables
+	0-1 .z:0 1 2 3
+	.tmp0:0
+	.tmp1:0
+	.sbkt:   1-mem.alloc.start # start bucket, sbkt=-1+start
+	.lbkt:  61+mem.alloc.start # last bucket,  lbkt=start+(bits-3)
+	.nbkt:0-62-mem.alloc.start # next bucket,  nbkt=-1-lbkt
+	.catch0:0-mem.alloc.start-64
+	.catch1:0-1+mem.alloc.start+64+2
+	.sblk:0-65-mem.alloc.start
+	.lblk:0
+	.prv:0
+	.alloc:0
+	.valc:0
+
+
+mem.alloc.verifyblock:
+	# Call  : 0 ? mem.alloc.verifyblock blk
+	# Effect: Verifies the metadata of [blk].
+	# Setup the stack.
+	.tmp0   .arg2   ?+1
+	0       .tmp0   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	0       0       ?+1
+	# Get [blk].
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2:2 ?+1
+	.blk0   .blk0   ?+1
+	.blk0   .tmp0   ?+1
+	.nblk   .nblk   ?+1
+	.nblk   .blk0:0 ?+1
+	.blk    .blk    ?+1
+	.blk    .nblk   ?+1
+	# Setup block pointers we'll use later.
+	.prv0   .blk    ?+1
+	.nxt0   .prv0   ?+1
+	.prv3   .prv0   ?+1
+	.nxt5   .prv0   ?+1
+	.prv0   .prv0   ?+1
+	.prv0   .nblk   ?+1
+	#
+	# Make sure we're not about to read out of bounds memory.
+	#
+	.tmp0   .tmp0   ?+1
+	.tmp0   mem.alloc.end ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1     # [tmp1]=[end]
+	.tmp1   .blk    .error  # if end<=blk
+	.tmp1   .z+2    .error  # if end-blk<=2
+	#
+	# Determine if the block is free and get the previous and next blocks.
+	#
+	.free   .free   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .prv0:0 ?+1
+	.prev   .prev   ?+1
+	.prev   .tmp0   ?+1     # [blkprv]=mem[blk+0]
+	.tmp1   .tmp1   ?+1
+	.tmp1   .nxt0:1 ?+1
+	.next   .next   ?+1
+	.next   .tmp1   ?+1     # [blknxt]=mem[blk+1]
+	# if prev<=next, the bucket is allocated
+	.prev   .next   .isallocated
+	# Swap prev and next.
+	.free   .z-1    ?+1
+	.next   .next   ?+1
+	.next   .tmp0   ?+1
+	.prev   .prev   ?+1
+.isallocated:
+	.prev   .tmp1   ?+1
+	#
+	# Verify previous block's properties.
+	#
+	# No block should come before mem.start.
+	# Only the first block should have prev=0.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nblk   ?+1
+	.tmp0   .strt65 .firstblock
+	# We're past the first block. Verify blkprev!=0.
+	.prev   .z      .error
+	.z      .z      .firstdone
+.firstblock:
+	# This is the first block. Verify blk-start-65=0 and blkprev=0.
+	.z+1    .tmp0   .error
+	.z+1    .prev   .error
+.firstdone:
+	# The previous block should be at least 4 cells behind the current one.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nblk   ?+1
+	.tmp0   .prev   .error  # if [blk]<=[blkprv]
+	.tmp0   .z+3    .error  # if [blk]-[blkprv]<=3
+	# If this block is free, the previous block should be allocated. Thus
+	# mem[prev+1]=block. Otherwise, either of the previous pointers could point to
+	# this block.
+	.prev   .z      .blkprvdone
+	# Get the previous block's pointers.
+	.prv1   .prev   ?+1
+	.prv2   .prv1   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .prev   ?+1
+	.prv1   .prv1   ?+1
+	.prv1   .tmp0   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .prv2:1 ?+1
+	.tmp1   .nblk   ?+1          # [tmp1]=-mem[prev+1]+blk
+	.tmp1   .z      .blkprvdone  # if mem[prev+1]=blk, done
+	# Previous block is free, error if this block is free too.
+	.z+1    .free   .error
+	# This block is allocated. Verify mem[prev]=blk.
+	.tmp1   .tmp1   ?+1
+	.tmp1   .prv1:0 ?+1
+	.tmp1   .nblk   ?+1     # [tmp1]=-mem[prev+0]+blk
+	.z+1    .tmp1   .error
+.blkprvdone:
+	#
+	# Verify the next block's properties.
+	#
+	# The next block should be at least 4 cells ahead of the current one.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .next   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1
+	.tmp1   .blk    .error  # if [blknxt]<=[blk]
+	.tmp1   .z+3    .error  # if [blknxt]-[blk]<=3
+	# Get the bucket for later.
+	.tmp1   .z-1    ?+1
+	0 ? mem.alloc.getbucket .bkt .tmp1
+	# If this block is free, the next block should be allocated. Thus
+	# mem[prev]=block. Otherwise, either of the next pointers could point to this
+	# block.
+	.tmp0   .tmp0   ?+1
+	.tmp0   mem.alloc.end ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1
+	.tmp1   .next   .lastblock  # if [end]<=[next]
+	# Get the next block's pointers.
+	.nxt1   .next   ?+1
+	.nxt2   .nxt1   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .next   ?+1
+	.nxt1   .nxt1   ?+1
+	.nxt1   .tmp0   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .nxt1:0 ?+1
+	.tmp1   .nblk   ?+1          # [tmp1]=-mem[next]+blk
+	.tmp1   .z      .blknxtdone  # if mem[next]=blk, done
+	# Next block is free, error if this block is free too.
+	.z+1    .free   .error
+	# This block is allocated. Verify mem[next+1]=blk.
+	.tmp1   .tmp1   ?+1
+	.tmp1   .nxt2:1 ?+1
+	.tmp1   .nblk   ?+1     # [tmp1]=-mem[prev+0]+blk
+	.z+1    .tmp1   .error
+	.z      .z      .blknxtdone
+.lastblock:
+	# If the next block is past the end of memory.
+	.z+1    .tmp1   .error
+.blknxtdone:
+	#
+	# Verify the block's previous bucket block.
+	#
+	.free   .z      .bktdone
+	# Since the block will point to another block or a header, bktprv will never be
+	# 0. Verify bktprv->bktnxt=blk. Also verify both blocks are assigned to the same
+	# bucket by length.
+	.nprev  .nprev  ?+1
+	.nprev  .prv3:2 ?+1
+	.prev   .prev   ?+1
+	.prev   .nprev  ?+1     # bktprv=mem[blk+2]
+	.nxt3   .nxt3   ?+1
+	.nxt3   .nprev  ?+1
+	.nxt3   .z-3    ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nxt3:0 ?+1
+	.tmp0   .nblk   ?+1     # [tmp0]=-mem[bktprv+3]+[blk]
+	.z+1    .tmp0   .error  # if bktprv->bktnxt!=block
+	# Verify bucket head or previous block's bucket size.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nprev  ?+1
+	.tmp0   .strt62 .bktprvhead
+	.nxt4   .nxt4   ?+1
+	.nxt4   .nprev  ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nxt4:0 ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1
+	.tmp1   .prev   ?+1
+	.tmp1   .z+2    ?+1     # [tmp1]=mem[bktprv]-bktprv-2
+	0 ? mem.alloc.getbucket .tmp0 .tmp1
+	.bkt    .tmp0   ?+1
+	.z+1    .bkt    .error  # if bucket(blk)!=bucket(prev)
+	.z      .z      .bktprvdone
+.bktprvhead:
+	# The previous pointer is to a bucket. Verify bktprv+3=bkt.
+	.bkt    .prev   ?+1
+	.bkt    .z+3    ?+1
+	.z+1    .bkt    .error  # if bktprv+3!=bkt
+.bktprvdone:
+	#
+	# Verify the block's next bucket block.
+	#
+	# Verify bktnxt->bktprv=blk.
+	.nnext  .nnext  ?+1
+	.nnext  .nxt5:3 ?+1
+	.nnext  .z      .bktnxtdone
+	.next   .next   ?+1
+	.next   .nnext  ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   mem.alloc.end ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1
+	.tmp1   .next   .error  # if [end]<=[bktnxt]
+	.tmp1   .z+3    .error  # if [end]-[bktnxt]<=3
+	.prv4   .prv4   ?+1
+	.prv4   .nnext  ?+1
+	.prv4   .z-2    ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .prv4:0 ?+1
+	.tmp0   .nblk   ?+1     # [tmp0]=-mem[bktnxt+2]+blk
+	.z+1    .tmp0   .error  # if mem[bktnxt+2]!=blk
+.bktnxtdone:
+.bktdone:
+	# We're done verifying.
+	.tmp0   .tmp0   .arg3:3
+.error:
+	0       0       mem.alloc.verify.errormeta
+	# Variables
+	0-3 0-2 0-1 .z:0 1 2 3
+	.tmp0:0
+	.tmp1:0
+	.blk:0
+	.nblk:0
+	.free:0
+	.nprev:0
+	.prev:0
+	.nnext:0
+	.next:0
+	.strt62:mem.alloc.start+62
+	.strt65:mem.alloc.start+65
+	.bkt:0
+
+
+mem.alloc:
+	# Call  : 0 ? mem.alloc mem len
+	# Effect: Sets [mem] to a memory address with [len] free cells. Cells are
+	# initialized to 0.
+	# Time  : 1041+4*len
+	.tmp0   .tmp0   ?+1
+	mem.alloc.init.z ? mem.alloc.init
+	.tmp0   .arg2   ?+1
+	0       .tmp0   ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	0       0       ?+1
+	# Get mem.
+	.ret0   .arg2:2 ?+1
+	.ret1   .ret0   ?+1
+	.ret2   .ret0   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .ret1   ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp0   ?+1
+	# Get [len]. If [len]=0, set [mem]=0 and return.
+	.nblk   .nblk   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg3:3 ?+1
+	.p0     .p0     ?+1
+	.p0     .tmp0   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .p0:0   ?+1
+	.tmp0   .z      .ret
+	.len    .len    ?+1
+	.len    .tmp0   ?+1
+	# [len] must be at least 2.
+	.len    .z+1    ?+4
+	.p1     .p1     ?+7
+	.len    .z-1    ?+1
+	.p1     .p1     ?+1
+	# Search through the buckets until we find a block such that len<=blocklen.
+	.p1     .nstart ?+4
+.loop:
+	.p1     .z-1    ?+1
+	.nblk   .nblk   ?+1
+	.nblk   .p1:0   ?+1
+	.nblk   .z      .loop
+	.blk    .blk    ?+1
+	.blk    .nblk   ?+1
+	# [nbln]=-next+blk+2=-block.len
+	.tmp1   .tmp1   ?+1
+	.tmp1   .blk:0  ?+1
+	.tmp1   .nblk   ?+1
+	.tmp1   .z-2    ?+1
+	.slen   .slen   ?+1
+	.slen   .tmp1   ?+1
+	.slen   .len    .loop
+	# If this is the catch-all bucket, abort.
+	.p1     .catch  ?+4
+	0-1     0       ?-2
+	# If there's enough slack space, split the block.
+	# split=blk+2+len, want next-split>=4
+	# slen=next-blk-2-(len-1)=next-split+1
+	# Need slen-1>=4 or tmp0>=5
+	.slen   .z+4    .nosplit0
+	.len    .z-3    ?+1
+	.s0     .blk    ?+1
+	.s0     .len    ?+1
+	.len    .z-4    ?+1
+	.slen   .z-1    .didsplit0
+.nosplit0:
+	# We're not splitting, so we want len=next-blk.
+	# tmp1=-next+blk+2
+	.len    .len    ?+1
+	.len    .tmp1   ?+1
+	.len    .z-2    ?+1
+	.slen   .slen   ?+1
+.didsplit0:
+	.b00    .blk    ?+1
+	.b01    .b00    ?+1
+	.b10    .b00    ?+1
+	.b11    .b00    ?+1
+	.b2     .b00    ?+1
+	.b3     .b00    ?+1
+	.b00    .b00    ?+1
+	.b00    .nblk   ?+1
+	# Get the block neighbors.
+	.nnext  .nnext  ?+1
+	.nnext  .b00:0  ?+1
+	.nprev  .nprev  ?+1
+	.nprev  .b10:1  ?+1
+	# Remove from bucket. We already know bktprev.next=bktnext.prev=blk.
+	# Get bktprev
+	.tmp0   .tmp0   ?+1
+	.tmp0   .b2:2   ?+1
+	.n1     .tmp0   ?+1
+	# Get bktnext
+	.tmp1   .tmp1   ?+1
+	.tmp1   .b3:3   ?+1
+	.n2     .tmp1   ?+1
+	# Set bktprev.next
+	.n1     .z-3    ?+1
+	.tmp1   .nblk   ?+1
+	.n1:0   .tmp1   ?+1
+	.n1     .n1     ?+1
+	# Set bktnext.prev
+	.n2     .z      .nonext0
+	.n2     .z-2    ?+1
+	.tmp0   .nblk   ?+1
+	.n2:0   .tmp0   ?+1
+	.n2     .n2     ?+1
+.nonext0:
+	0 ? mem.zero .blk .len
+	# Setup the split block.
+	.slen   .z      .nosplit1
+	.s1     .s0     ?+1
+	.s2     .s0     ?+1
+	.s3     .s0     ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .s1     ?+1
+	.tmp0   .z-1    ?+1
+	.s0     .s0     ?+1
+	.s0     .tmp0   ?+1
+	# Set the split block's neighbors.
+	.s0:0   .nnext  ?+1
+	.s1:1   .nblk   ?+1
+	# Add split block to a free bucket.
+	0 ? mem.alloc.getbucket .bkt .slen
+	.tmp0   .tmp0   ?+1
+	.tmp0   .bkt:0  ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .bkt    ?+1
+	# mem[blk+3]=next
+	.s3:3   .tmp0   ?+1
+	# next=mem[bkt]
+	# if next: mem[next+2]=blk. Note mem[next+2]=bkt-3.
+	.nxt2   .nxt2   ?+1
+	.nxt2   .z-2    ?+1
+	.tmp0   .z      .nonext1
+	.bkt    .s3     ?+1
+	.nxt2   .tmp0   ?+1
+	.nxt2:0 .bkt    ?+1
+.nonext1:
+	# mem[bkt]=split
+	.n4     .n4     ?+1
+	.n4     .tmp1   ?+1
+	.nxt2   .s2     ?+1
+	.n4:0   .nxt2   ?+1
+	# mem[split+2]=bkt-3
+	.tmp1   .z-3    ?+1
+	.s2:2   .tmp1   ?+1
+	# Change the next block's prev pointer to split.
+	.n3     .nnext  ?+1
+	.n3     mem.alloc.end ?+1
+	.n3     .z      .nonext2
+	.n3     .n3     ?+1
+	.n3     .nnext  ?+1
+	.blk    .s0     ?+1
+	.n3:0   .blk    ?+1
+	.n3     .n3     ?+1
+.nonext2:
+	# Change the block's next pointer to split.
+	.nnext  .nnext  ?+1
+	.nnext  .s0     ?+1
+.nosplit1:
+	# Swap block next and prev.
+	.b01:0  .nprev  ?+1
+	.b11:1  .nnext  ?+1
+	# Shift -blk to the data section.
+	.nblk   .z+2    ?+1
+.ret:
+	.ret0:0 .ret1:0 ?+1
+	.ret2:0 .nblk   ?+1
+	0       0       .arg4:4
+	# Variables
+	0-4 0-3 0-2 0-1 .z:0 1 2 3 4
+	.tmp0:0
+	.tmp1:0
+	.nblk:0
+	.len:0
+	.nstart:0-mem.alloc.start
+	.catch:mem.alloc.start+62
+	.slen:0
+	.nnext:0
+	.nprev:0
+
+
+mem.realloc:
+	# Call  : 0 ? mem.alloc ret mem len
+	# Effect: Sets [ret] to a memory address with [len] free cells. Copies contents
+	# of [mem] and frees it. Set uninitialized cells to 0.
+	.tmp    .tmp    ?+1
+	mem.alloc.init.z ? mem.alloc.init
+	.tmp    .arg2   ?+1
+	0       .tmp    ?+1
+	0       .z+2    ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	.arg4   0       ?+1
+	.arg5   0       ?+1
+	0       0       ?+1
+	# Get [ret].
+	.tmp    .tmp    ?+1
+	.tmp    .arg2:2 ?+1
+	.ret0   .ret0   ?+1
+	.ret0   .tmp    ?+1
+	.ret1   .ret1   ?+1
+	.ret1   .tmp    ?+1
+	# Get [len].
+	.tmp    .tmp    ?+1
+	.tmp    .arg4:4 ?+1
+	.l0     .l0     ?+1
+	.l0     .tmp    ?+1
+	.nlen   .nlen   ?+1
+	.nlen   .l0:0   ?+1
+	.len    .len    ?+1
+	.len    .nlen   ?+1
+	# Get [mem].
+	.tmp    .tmp    ?+1
+	.tmp    .arg3:3 ?+1
+	.m0     .m0     ?+1
+	.m0     .tmp    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .m0:0   ?+1
+	.mem    .mem    ?+1
+	.mlen   .mlen   ?+1
+	# Get the length of mem's block.
+	.tmp    .z      .memnull
+	.mem    .tmp    ?+1
+	.mem    .z+1    ?+1
+	.tmp    .tmp    ?+1
+	.tmp    .mem:0  ?+1
+	.mlen   .tmp    ?+1
+	.mem    .z-1    ?+1
+	.mlen   .mem    ?+1
+	# Set mlen to min(mlen,len).
+	.mlen   .len    ?+4
+	.mlen   .mlen   ?+1
+	.mlen   .nlen   ?+1
+.memnull:
+	# Allocate the new block and copy data.
+	0 ? mem.alloc .ret .len
+	0 ? mem.copy .ret .mem .mlen
+	0 ? mem.free .mem
+	# Set ret.
+	.tmp    .tmp    ?+1
+	.ret    .ret0:0 ?+1
+	.tmp    .ret    ?+1
+	.ret1:0 .tmp    ?+1
+	0       0       .arg5:5
+	# Variables
+	0-1 .z:0 1 2
+	.tmp:0
+	.mlen:0
+	.nlen:0
+	.len:0
+	.ret:0
+
+
+mem.free:
+	# Call  : 0 ? mem.free mem
+	# Effect: Frees the memory block at [mem] that was allocated by mem.alloc. If
+	# [mem]=0, do nothing.
+	# Time  : 387+6*len, no debug: 210
+	.tmp0   .arg2   ?+1
+	mem.alloc.init.z ? mem.alloc.init
+	.tmp0   .z-2    ?+1
+	0       .tmp0   ?+1
+	.arg2   0       ?+1
+	.arg3   0       ?+1
+	0       0       ?+1
+	# Get [blk]. Note [mem]=[blk]+2. If [mem]=0, we're done.
+	.tmp0   .tmp0   ?+1
+	.tmp0   .arg2:2 ?+1
+	.b0     .b0     ?+1
+	.b0     .tmp0   ?+1
+	.nblk   .nblk   ?+1
+	.nblk   .b0:0   ?+1
+	.nblk   .z      .done
+	.nblk   .z-2    ?+1
+	.blk    .blk    ?+1
+	.blk    .nblk   ?+1
+	# Verify [blk] is a valid block and we're not double freeing. Randomize the data
+	# section to help prevent using the memory after freeing.
+	mem.debug .z .dbgdone0
+	0 ? mem.alloc.verifyblock .blk
+	mem.alloc.verifyblock.free .z .dbgdone0
+	# ERROR: Double free
+	mem.error.z ? mem.error 'E 'R 'R 'O 'R ': '  'D 'o 'u 'b 'l 'e '  'f 'r 'e 'e 10 0
+.dbgdone0:
+	# prev=mem[blk+0]
+	.nprev  .nprev  ?+1
+	.nprev  .blk:0  ?+1
+	.prev   .prev   ?+1
+	.prev   .nprev  ?+1
+	# next=mem[blk+1]
+	.p1     .p1     ?+1
+	.p1     .nblk   ?+1
+	.p1     .z-1    ?+1
+	.nnext  .nnext  ?+1
+	.nnext  .p1:0   ?+1
+	.next   .next   ?+1
+	.next   .nnext  ?+1
+	# Randomize the entire block to prevent using after freeing.
+	mem.debug .z .dbgdone1
+	.rand   0-5     ?+1
+	# Get the block start and length.
+	.dbg0   .dbg0   ?+1
+	.dbg0   .nblk   ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .nnext  ?+1
+	.tmp0   .dbg0   ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .blk    ?+4
+.dbgrandloop:
+	.tmp0   .z+1    .dbgdone1
+	.dbg0:0 .rand   ?+1
+	.tmp1   .rand   ?+1
+	.rand   .tmp1   ?+7
+	.rand   .rcon0  ?+1
+	.dbg0   .z-1    .dbgrandloop
+	.rand   .rcon1  ?+1
+	.dbg0   .z-1    .dbgrandloop
+	# Random variables.
+	.rand: 0xdb38ab4d4d3b3ece
+	.rcon0:0x1e8352fef1e4be80
+	.rcon1:0xf5819f19ab244199
+.dbgdone1:
+	# If the next block is free, unlink and merge it. This needs to occur before prev.
+	# if next<end
+	.tmp0   .tmp0   ?+1
+	.tmp0   mem.alloc.end ?+1
+	.tmp1   .tmp1   ?+1
+	.tmp1   .tmp0   ?+1
+	.tmp1   .next   .nextdone
+	# Setup next block pointers.
+	.n0     .next   ?+1
+	.n1     .n0     ?+1
+	.n2     .n0     ?+1
+	.n3     .n0     ?+1
+	.n0     .n0     ?+1
+	.n0     .nnext  ?+1
+	# if mem[next]==blk, skip
+	.tmp0   .tmp0   ?+1
+	.tmp0   .n1:0   ?+1
+	.tmp0   .nblk   ?+1
+	.tmp0   .z      .nextdone
+	# next.prev=mem[next+2]
+	.tmp0   .tmp0   ?+1
+	.tmp0   .n2:2   ?+1
+	.prv0   .prv0   ?+1
+	.prv0   .tmp0   ?+1
+	# next.next=mem[next+3]
+	.tmp1   .tmp1   ?+1
+	.tmp1   .n3:3   ?+1
+	.nxt0   .nxt0   ?+1
+	.nxt0   .tmp1   ?+1
+	# mem[next.prev+3]=next.next. Note mem[next.prev+3]=next.
+	.prv0   .z-3    ?+1
+	.tmp1   .nnext  ?+1
+	.prv0:0 .tmp1   ?+1
+	# if next.next: mem[next.next+2]=next.prev. Note mem[next.next+2]=next.
+	.nxt0   .z      ?+10
+	.nxt0   .z-2    ?+1
+	.tmp0   .nnext  ?+1
+	.nxt0:0 .tmp0   ?+1
+	# next=mem[next]
+	.nnext  .nnext  ?+1
+	.nnext  .n0:0   ?+1
+	.next   .next   ?+1
+	.next   .nnext  ?+1
+.nextdone:
+	# If the previous block is free, unlink and merge it.
+	# if prev!=0
+	.prev   .z      .prevdone
+	# Setup previous block pointers.
+	.r0     .prev   ?+1
+	.r1     .r0     ?+1
+	.r2     .r0     ?+1
+	.r3     .r0     ?+1
+	.r0     .r0     ?+1
+	.r0     .nprev  ?+1
+	# if mem[prev]==blk
+	.tmp0   .tmp0   ?+1
+	.tmp0   .r0:0   ?+1
+	.tmp0   .nblk   ?+1
+	.tmp0   .z      ?+4
+	.tmp0   .tmp0   .prevdone
+	# blk=prev
+	.nblk   .nblk   ?+1
+	.nblk   .prev   ?+1
+	.blk    .blk    ?+1
+	.blk    .nblk   ?+1
+	# prev.prev=mem[prev+2]
+	.tmp0   .tmp0   ?+1
+	.tmp0   .r2:2   ?+1
+	.prv1   .prv1   ?+1
+	.prv1   .tmp0   ?+1
+	# prev.next=mem[prev+3]
+	.tmp1   .tmp1   ?+1
+	.tmp1   .r3:3   ?+1
+	.nxt1   .nxt1   ?+1
+	.nxt1   .tmp1   ?+1
+	# mem[prev.prev+3]=prev.next. Note mem[prev.prev+3]=prev.
+	.prv1   .z-3    ?+1
+	.tmp1   .nprev  ?+1
+	.prv1:0 .tmp1   ?+1
+	# if prev.next: mem[prev.next+2]=prev.prev. Note mem[prev.next+2]=prev.
+	.nxt1   .z      ?+10
+	.nxt1   .z-2    ?+1
+	.tmp0   .nprev  ?+1
+	.nxt1:0 .tmp0   ?+1
+	# prev=mem[prev+1]
+	.nprev  .nprev  ?+1
+	.nprev  .r1:1   ?+1
+.prevdone:
+	# If next<end, set mem[next]=blk.
+	mem.alloc.end .next .nonext0
+	.p22    .next   ?+1
+	.p23    .p22    ?+1
+	.p24    .p22    ?+1
+	.p22    .p22    ?+1
+	.p22    .nnext  ?+1
+	.p22:0  .p23:0  ?+1
+	.p24:0  .nblk   ?+1
+.nonext0:
+	mem.alloc.end .nnext ?+1
+	# Setup block pointers.
+	.b1     .blk    ?+1
+	.b2     .b1     ?+1
+	.b3     .b1     ?+1
+	.b4     .b1     ?+1
+	.b5     .b1     ?+1
+	.b6     .b1     ?+1
+	.b7     .b1     ?+1
+	.b8     .b1     ?+1
+	.b9     .b1     ?+1
+	.b10    .b1     ?+1
+	.b11    .b1     ?+1
+	.b12    .b1     ?+1
+	.b1     .b1     ?+1
+	.b1     .nblk   ?+1
+	# mem[blk+0]=next
+	.b1:0   .b2:0   ?+1
+	.b3:0   .nnext  ?+1
+	# mem[blk+1]=prev
+	.b4:1   .b5:1   ?+1
+	.b6:1   .nprev  ?+1
+	# Add block to a free bucket.
+	# len=next-blk-2
+	# bkt=self.getbucket(len)
+	.next   .blk    ?+1
+	.next   .z+2    ?+1
+	0 ? mem.alloc.getbucket .bkt .next
+	.nnext  .nnext  ?+1
+	.nnext  .bkt:0  ?+1
+	.tmp0   .tmp0   ?+1
+	.tmp0   .bkt    ?+1
+	# mem[blk+3]=next
+	.b7:3   .b8:3   ?+1
+	.b9:3   .nnext  ?+1
+	# next=mem[bkt]
+	# if next: mem[next+2]=blk. Note mem[next+2]=bkt-3.
+	.nxt2   .nxt2   ?+1
+	.nxt2   .z-2    ?+1
+	.nnext  .z      .nonext1
+	.bkt    .b7     ?+1
+	.nxt2   .nnext  ?+1
+	.nxt2:0 .bkt    ?+1
+.nonext1:
+	# mem[bkt]=blk
+	.p31    .p31    ?+1
+	.p31    .tmp0   ?+1
+	.nxt2   .b10    ?+1
+	.p31:0  .nxt2   ?+1
+	# mem[blk+2]=bkt-3
+	.tmp0   .z-3    ?+1
+	.b10:2  .b11:2  ?+1
+	.b12:2  .tmp0   ?+1
+.done:
+	.tmp0   .tmp0   .arg3:3
+	# Variables
+	0-3 0-2 0-1 .z:0 1 2
+	.tmp0:0
+	.tmp1:0
+	.nblk:0
+	.nprev:0
+	.prev:0
+	.nnext:0
+	.next:0
+
+
+mem.alloc.end: 0-32
+mem.alloc.start:
+
+# The end of the universe and the start of unused memory. Nothing should come
+# after this label.
+
+

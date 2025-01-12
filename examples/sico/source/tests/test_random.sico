@@ -1,0 +1,287 @@
+#|==============================================================================
+
+
+Random Number Generator Testing - v2.01
+
+Copyright 2022 Alec Dee - MIT license - SPDX: MIT
+deegen1.github.io - akdee144@gmail.com
+
+
+--------------------------------------------------------------------------------
+About
+
+
+To compile, run
+cat random_test.sico master.sico > test.sico ; ./sico test.sico
+
+
+|#
+
+
+0 0 random.test
+
+
+random.test:
+	# ------------------------ Timing ------------------------
+	.time .time ?+1
+	.time 0-5   ?+1
+
+	# ------------------------ Tests -------------------------
+	0 ? random.output.test
+	0 ? random.jump.test
+	0 ? random.mod.test
+	0 ? random.shuffle.test
+
+	# ------------------------ Timing ------------------------
+	.tmp  .tmp  ?+1
+	.tmp  0-5   ?+1
+	.time .tmp  ?+1
+	0 ? uint.div .time .tmp .time 0-4
+	0 ? uint.mul 0 .tmp .tmp .timedec
+	0 ? uint.div .tmp 0 .tmp 0-4
+	0 ? string.print 't 'i 'm 'e ': '  string.uint .time '. string.uintinl .tmp 10 6 '0 10 0
+
+	0 ? mem.alloc.verifyfree
+	0-1 0 ?-2
+
+	.tmp:0
+	.time:0
+	.timedec:1000000
+
+
+random.output.test:
+	# Get the return address.
+	.ret    .ret    ?+1
+	.ret    .z-2    ?+1
+	.ret    0       ?+1
+	0       0       ?+1
+	# Setup our main loop.
+	.i      .i0     ?+1
+	0 ? string.print 'h 'a 's 'h 'i 'n 'g '  string.uint .i '  'o 'u 't 'p 'u 't 's 10 0
+	0 ? random.seed .seed
+	.hash   .hash   .loop+3
+.loop:
+	.i      .z+1    .done
+	# Get a random number and hash it.
+	0 ? random.get .get
+	.hash   .get    ?+1
+	.tmp    .z+1    ?+1
+	.tmp    .hash   ?+1
+	.hash   .tmp    ?+7
+	.hash   .inc0   ?+1
+	.tmp    .tmp    .loop
+	.hash   .inc1   ?+1
+	.tmp    .tmp    .loop
+.done:
+	# Compare the hashed result with the precomputed result.
+	0 ? string.print 'c 'a 'l 'c 'u 'l 'a 't 'e 'd ': '  '0 'x string.uintinl .hash 16 16 '0 10 0
+	0 ? string.print 'e 'x 'p 'e 'c 't 'e 'd '  '  ': '  '0 'x string.uintinl .expect 16 16 '0 10 0
+	.hash   .expect ?+1
+	.hash   .z      .passed
+	0 ? string.print 'f 'a 'i 'l 'e 'd 10 0
+	0-1     0       ?-2
+.passed:
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0 0 .ret:0
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.i:0
+	.i0:0-1000000
+	.hash:0
+	.get:0
+	.seed:99
+	.inc0:0x30d1f2bd3a4cc8ae
+	.inc1:0xa377912103273f8b
+	.expect:0xff55643a4bf4ed69
+
+
+random.jump.test:
+	# Get the return address.
+	.ret    .ret    ?+1
+	.ret    .z-2    ?+1
+	.ret    0       ?+1
+	0       0       ?+1
+	# Setup our main loop.
+	.i      .i0     ?+1
+	0 ? string.print 'h 'a 's 'h 'i 'n 'g '  string.uint .i '  'j 'u 'm 'p 's 10 0
+	0 ? random.seed .seed
+	.hash   .hash   .loop+3
+.loop:
+	.i      .z+1 .done
+	0 ? random.get .seed
+	0 ? random.get .jump
+	0 ? random.seed .seed
+	0 ? random.jump .jump
+	0 ? random.get .seed
+	.hash   .seed   ?+1
+	.tmp    .z+1    ?+1
+	.tmp    .hash   ?+1
+	.hash   .tmp    ?+7
+	.hash   .inc0   ?+1
+	.tmp    .tmp    .loop
+	.hash   .inc1   ?+1
+	.tmp    .tmp    .loop
+.done:
+	0 ? string.print 'c 'a 'l 'c 'u 'l 'a 't 'e 'd ': '  '0 'x string.uintinl .hash 16 16 '0 10 0
+	0 ? string.print 'e 'x 'p 'e 'c 't 'e 'd '  '  ': '  '0 'x string.uintinl .expect 16 16 '0 10 0
+	.hash   .expect ?+1
+	.hash   .z      .passed
+	0 ? string.print 'f 'a 'i 'l 'e 'd 10 0
+	0-1     0       0
+.passed:
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0 0 .ret:0
+	# Variables
+	0-2 0-1 .z:0 1
+	.tmp:0
+	.i:0
+	.i0:0-10000
+	.hash:0
+	.jump:0
+	.seed:100
+	.inc0:0x30d1f2bd3a4cc8ae
+	.inc1:0xa377912103273f8b
+	.expect:0xbe491772272432d3
+
+
+random.mod.test:
+	# Get the return address.
+	.ret    .ret    ?+1
+	.ret    .z-2    ?+1
+	.ret    0       ?+1
+	0       0       ?+1
+	# Setup our main loop.
+	.i      .i0     ?+1
+	0 ? string.print 'h 'a 's 'h 'i 'n 'g '  string.uint .i '  'r 'a 'n 'd 'o 'm '  'm 'o 'd 's 10 0
+	0 ? random.seed .seed
+	.mod    .mod    ?+1
+	.hash   .hash   .loop+3
+.loop:
+	.i      .z+1    .done
+	# If [mod]=0, set [mod]=-1.
+	.mod    .z      ?+4
+	.tmp    .tmp    ?+4
+	.mod    .z+1    ?+1
+	# Recursively call mod=rand%mod.
+	0 ? random.mod .mod .mod
+	.hash   .mod    ?+1
+	.tmp    .z+1    ?+1
+	.tmp    .hash   ?+1
+	.hash   .tmp    ?+7
+	.hash   .inc0   ?+1
+	.tmp    .tmp    .loop
+	.hash   .inc1   ?+1
+	.tmp    .tmp    .loop
+.done:
+	# Compare the hashed result with the precomputed result.
+	0 ? string.print 'c 'a 'l 'c 'u 'l 'a 't 'e 'd ': '  '0 'x string.uintinl .hash 16 16 '0 10 0
+	0 ? string.print 'e 'x 'p 'e 'c 't 'e 'd '  '  ': '  '0 'x string.uintinl .expect 16 16 '0 10 0
+	.hash   .expect ?+1
+	.hash   .z      .passed
+	0 ? string.print 'f 'a 'i 'l 'e 'd 10 0
+	0-1     0       ?-2
+.passed:
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0       0       .ret:0
+	# Variables
+	0-2 0-1 .z:0 1
+	.i:0
+	.i0:0-100000
+	.mod:0
+	.tmp:0
+	.hash:0
+	.seed:101
+	.inc0:0x30d1f2bd3a4cc8ae
+	.inc1:0xa377912103273f8b
+	.expect:0xafec775a4176e312
+
+
+random.shuffle.test:
+	# Get the return address.
+	.ret    .ret    ?+1
+	.ret    .z-2    ?+1
+	.ret    0       ?+1
+	0       0       ?+1
+	# Setup our main loop.
+	.i      .i0     ?+1
+	0 ? string.print 'h 'a 's 'h 'i 'n 'g '  string.uint .i '  's 'h 'u 'f 'f 'l 'e 's 10 0
+	0 ? random.seed .seed
+	.tmp    .tmp    ?+1
+	.hash   .hash   .loop+3
+.loop:
+	.i      .z+1    .done
+	# Shuffle the array.
+	0 ? random.mod .len .maxlen
+	# pos=arr0+rand%(maxlen-len+1)
+	.pos    .pos    ?+1
+	.pos    .nmax   ?+1
+	.pos    .len    ?+1
+	0 ? random.mod .pos .pos
+	.pos    .narr0  ?+1
+	0 ? random.shuffle .pos .len
+	# Hash the entire array.
+	.p0     .maxlen ?+1
+	.j      .j0     ?+7
+.hashloop:
+	.j      .z+1    .loop
+	.p0     .z-1    ?+1
+	.hash   .p0:.maxlen-1 ?+1
+	.tmp    .z+1    ?+1
+	.tmp    .hash   ?+1
+	.hash   .tmp    ?+7
+	.hash   .inc0   ?+1
+	.tmp    .tmp    .hashloop
+	.hash   .inc1   ?+1
+	.tmp    .tmp    .hashloop
+.done:
+	# Compare the hashed result with the precomputed result.
+	0 ? string.print 'c 'a 'l 'c 'u 'l 'a 't 'e 'd ': '  '0 'x string.uintinl .hash 16 16 '0 10 0
+	0 ? string.print 'e 'x 'p 'e 'c 't 'e 'd '  '  ': '  '0 'x string.uintinl .expect 16 16 '0 10 0
+	.hash   .expect ?+1
+	.hash   .z      .passed
+	0 ? string.print 'f 'a 'i 'l 'e 'd 10 0
+	0-1     0       0
+.passed:
+	0 ? string.print 'p 'a 's 's 'e 'd 10 10 0
+	0       0       .ret:0
+	# Variables
+	0-2 0-1 .z:0 1
+	.i:0
+	.i0:0-10000
+	.j:0
+	.j0:.arr-.maxlen
+	.tmp:0
+	.hash:0
+	.len:0
+	.pos:0
+	.seed:102
+	.inc0:0x30d1f2bd3a4cc8ae
+	.inc1:0xa377912103273f8b
+	.expect:0x8848c521d39b8564
+	# The array we're going to shuffle. The first and last elements are canaries and
+	# shouldn't be shuffled.
+	.arr:
+		0x0231e15c693a8166 0xf8db9491e71791cf 0xc6af1cd349c1f63c 0x54097e6f80e77f61
+		0x7b2655f9cf4e643c 0xb8626decbb92b68f 0xd317312529ddc8d7 0x0880b7960673ed65
+		0x4d8f610b02666d7d 0x1b62e94c6510d1ea 0xa8bd4ae89c365b0f 0x6b8132f5aff208c0
+		0x3dea3e06e30a11fb 0x7353c477bfa03689 0xe5f962db887aad68 0xb08fdc6aabe488de
+		0x50cc6fbd41a6f684 0x2b080c50846d2d84 0x82f8e77bdefc921d 0xf59e85dfa7d708fc
+		0x897304e05d7da40f 0xe936718dc7bb366d 0x1e9ff7fea4515afb 0x914596626d2bd1da
+		0xce81ae555970242d 0x377020a264890027 0x74ac389550cd527a 0x59f7755ce2824036
+		0x02069a3187f2dba1 0xaa15bf062d63770c 0x6cd9a713411f24bd 0x471543a683e55bbd
+		0xb9bae20a4cbfd29c 0x84515b997029ae12 0xe2bc5429493a2499 0x929e0a7ffe58edc9
+		0xc80790f0daef1257 0xc3fe34982767bed4 0x8e94ae274ad19a4a 0x285724156212f602
+		0xf2ed9da4857cd178 0x8047ff40bca25a9d 0xb5b185b199387f2b 0x1574f25f03761189
+		0x70a2dc3c9d45ff19 0xe3487aa0662075f8 0x40a6fe5a7389a8ac 0x812024ff9f0e83f6
+		0x2b13e468f2928c81 0x054f80fc3558c381 0x77f51f5ffe333a60 0xb5313752ea778cb3
+		0xe2c82c41b75f837c 0xad5ea5d0dac95ef2 0x3ab9076d11eee817 0x70228dddee850ca5
+		0xcfe5fa8b58c29f03 0x49d203fa1464f25e 0x14687d8937cecdd4 0x274aaf3f966bb257
+		0x01864bd2d931e957 0x742bea36a20c6036 0xb16802298e50b289 0xdefef7185b38a952
+		0xa99570a77ea284c8 0x36efd243b5c80ded
+	.maxlen:.maxlen-.arr-1
+	.nmax:1+.arr-.maxlen
+	.arr0:.arr+1
+	.narr0:0-1-.arr
+
+
