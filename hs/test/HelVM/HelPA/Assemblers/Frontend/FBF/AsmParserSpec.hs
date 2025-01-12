@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParserSpec (spec) where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser
 import           HelVM.HelPA.Assemblers.Frontend.FBF.FileExtra
-import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
+--import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
 import           HelVM.HelPA.Assembler.Value
 
@@ -14,7 +14,7 @@ import           HelVM.GoldenExpectations
 
 import           System.FilePath.Posix
 
-import           Test.Hspec                                      (Spec, describe, it)
+import           Test.Hspec                                    (Spec, describe, it)
 
 spec :: Spec
 spec = do

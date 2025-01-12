@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assemblers.Frontend.EIR.FileExtra (
+module HelVM.HelPA.Assemblers.Frontend.FBF.FileExtra (
   buildAbsolutePathToBfFile,
   buildAbsolutePathToIlFile,
   libDir,
