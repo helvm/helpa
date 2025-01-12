@@ -1,6 +1,7 @@
 # 📅 Revision history for HelPA
 
 ## 0.4.6.2 -- 2025-01-12
+* Add `hapyli` parser
 * Add `te` examples
 * Add `bbj` examples
 * Add `fbf` examples

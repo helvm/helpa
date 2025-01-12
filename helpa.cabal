@@ -164,6 +164,9 @@ library
     HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
     HelVM.HelPA.Assemblers.Frontend.EIR.Reducer
 
+    HelVM.HelPA.Assemblers.Frontend.HPL.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.HPL.Instruction
+
     HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser
     HelVM.HelPA.Assemblers.Frontend.WSA.Assembler
     HelVM.HelPA.Assemblers.Frontend.WSA.CodeGenerator
