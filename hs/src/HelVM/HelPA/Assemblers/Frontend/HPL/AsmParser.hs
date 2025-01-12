@@ -24,21 +24,20 @@ sectionParser = do
   title <- takeTill (== '=')
   skipWhile (== '=')
   endOfLine
-  return $ Section (T.strip title)
+  pure $ Section (T.strip title)
 
 asmOrDefParser :: Parser Element
 asmOrDefParser = do
-  _ <- choice [string "asm" >> return True, string "def" >> return False] --defType
+  _ <- choice [string "asm" >> pure True, string "def" >> pure False]
   skipSpace
-  inlineFlag <- option False (string "inline" >> skipSpace >> return True)
+  inlineFlag <- option  False (string "inline" >> skipSpace >> pure True)
   name <- takeTill isSpace
   skipSpace
   args <- argumentListParser
   skipSpace
-  _ <-string "="
+  _ <- string "="
   skipSpace
-  body <- bodyParser
-  return $ Asm inlineFlag name args body
+  Asm inlineFlag name args <$> bodyParser
 
 argumentListParser :: Parser [Text]
 argumentListParser = between (char '(') (char ')') (sepBy (takeTill (`elem` [',', ')', ' '])) skipSpace)
@@ -48,8 +47,4 @@ bodyParser = do
   _ <- char '('
   body <- takeTill (== ')')
   _ <- char ')'
-  return $ T.strip body
-
-
-
-
+  pure $ T.strip body
