@@ -4,7 +4,9 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
-import           Text.Megaparsec             hiding (many)
+import           Text.Megaparsec             hiding (many, some)
+import           Text.Megaparsec.Char
+import           Text.Megaparsec.Char.Lexer
 
 import           Data.Char
 import qualified Data.Text                   as Text
@@ -128,8 +130,8 @@ skipAllToEndOfLine = skipWhile isNotEndOfLine
 
 ----
 
-asciiCIChoices :: [Text] -> Parser Text
-asciiCIChoices = choice . map asciiCI
+chunkChoices :: [Text] -> Parser Text
+chunkChoices = choice . map chunk
 
 isNotEndOfLine :: Char -> Bool
 isNotEndOfLine = not . isEndOfLine
@@ -156,3 +158,21 @@ isHorizontalSpace c = c == ' ' || c == '\t'
 
 isEndOfLine :: Char -> Bool
 isEndOfLine c = c == '\n' || c == '\r'
+
+skipWhile :: (Char -> Bool) -> Parser ()
+skipWhile predicate = void $ takeWhileP Nothing predicate
+
+letter :: Parser Char
+letter = satisfy isLetter <?> "letter"
+
+notChar :: Char -> Parser Char
+notChar c = satisfy (/= c) <?> "any character except " <> show c
+
+anyChar :: Parser Char
+anyChar = satisfy (const True) <?> "any character"
+
+digit :: Parser Char
+digit = digitChar
+
+many1 :: Parser a -> Parser [a]
+many1 = some
