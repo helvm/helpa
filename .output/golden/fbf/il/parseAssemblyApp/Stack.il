@@ -13,70 +13,78 @@
 , Compiler
     ( Table 256 "stack" )
 , Code
-    ( UnEq
-        ( Literal 1 ) "stop"
-        [ Code
-            ( CopySize "stack" "a" )
-        , Code
-            ( Byte2Ascii
-                ( Variable "a" ) "a" "b" "c"
-            )
-        , Code
-            ( Print
-                [ "a"
-                , "b"
-                , "c"
-                ]
-            )
-        , Code
-            ( Read "temp" )
-        , Code
-            ( Msg
-                [ "clear"
-                , "3"
-                ]
-            )
-        , Code
-            ( Set 0 "found" )
-        , Code
-            ( IfEq
-                ( Literal 10 ) "temp"
-                [ Code
-                    ( Inc 1 "stop" )
-                , Code End
-                , Code
-                    ( IfEq
-                        ( Literal 32 ) "temp"
-                        [ Code
-                            ( Inc 1 "found" )
-                        , Code
-                            ( Pop "stack" "temp" )
-                        , Code
-                            ( Print [ "temp" ] )
-                        , Code
-                            ( Read "temp" )
-                        , Code
-                            ( Msg
-                                [ "clear"
-                                , "1"
-                                ]
-                            )
-                        , Code End
-                        , Code
-                            ( IfEq
-                                ( Literal 0 ) "found"
-                                [ Code
-                                    ( Push
-                                        ( Variable "stack" ) "temp"
-                                    )
-                                , Code End
-                                , Code End
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
+    ( Call "uneq"
+        [ Variable "stop"
+        , Literal 1
         ]
     )
+, Code
+    ( CopySize "stack" "a" )
+, Code
+    ( Byte2Ascii
+        ( Variable "a" ) "a" "b" "c"
+    )
+, Code
+    ( Print
+        [ "a"
+        , "b"
+        , "c"
+        ]
+    )
+, Code
+    ( Read "temp" )
+, Code
+    ( Msg
+        [ "clear"
+        , "3"
+        ]
+    )
+, Code
+    ( Set 0 "found" )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 10
+        ]
+    )
+, Code
+    ( Inc 1 "stop" )
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 32
+        ]
+    )
+, Code
+    ( Inc 1 "found" )
+, Code
+    ( Pop "stack" "temp" )
+, Code
+    ( Print [ "temp" ] )
+, Code
+    ( Read "temp" )
+, Code
+    ( Msg
+        [ "clear"
+        , "1"
+        ]
+    )
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "ifeq"
+        [ Variable "found"
+        , Literal 0
+        ]
+    )
+, Code
+    ( Push
+        ( Variable "stack" ) "temp"
+    )
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
 ]

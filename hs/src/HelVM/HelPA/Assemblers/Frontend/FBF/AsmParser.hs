@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParserExtra.Atto
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
@@ -60,7 +60,7 @@ zeroOperandCompilerParser :: Parser CompilerInstruction
 zeroOperandCompilerParser =
       parser Echo "#echo"
   <|> parser ByteCells "#bytecells"
-  <|> parser EndBlock "#endblock"
+--  <|> parser EndBlock "#endblock"
     where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
@@ -82,8 +82,7 @@ blockCompilerParser :: Parser CompilerInstruction
 blockCompilerParser = liftA3 Block a b c where
   a = asciiCI "#block" *> skipHorizontalSpace *> identifierParser
   b = skipHorizontalSpace *> identifiersParser
-  c = instructionListParser
-    -- <* skipSpace <* asciiCI "#endblock"
+  c = instructionListParser <* skipHorizontalSpace <* asciiCI "#endblock" <* endWordParser
 
 --
 
@@ -93,7 +92,7 @@ zeroOperandCodeParser =
   <|> parser Line "line"
   <|> parser Space "space"
   <|> parser Tab "tab"
-  <|> parser End "end"
+--  <|> parser End "end"
   <|> parser Rem "rem"
     where parser i t = i <$ (asciiCI t *> endWordParser)
 
@@ -170,8 +169,7 @@ eqCodeParser =
       parser f t = liftA3 (flip f) (a t) b c
       a t = asciiCI t *> skip1HorizontalSpace *> identifierParser
       b = skip1HorizontalSpace *> integerValueParser2
-      c = instructionListParser
-       -- <* skipSpace <* asciiCI "end"
+      c = instructionListParser <* skipHorizontalSpace <* asciiCI "end" <* endWordParser
 
 byte2AsciiCodeParser :: Parser CodeInstruction
 byte2AsciiCodeParser =

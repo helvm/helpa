@@ -105,12 +105,14 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.HelPA.Assembler.AsmParserExtra
     HelVM.HelPA.Assembler.Extra
     HelVM.HelPA.Assembler.Value
 
     HelVM.HelPA.Assembler.API.Separator
     HelVM.HelPA.Assembler.API.SourcePath
+
+    HelVM.HelPA.Assembler.AsmParserExtra.Atto
+    HelVM.HelPA.Assembler.AsmParserExtra.Mega
 
     HelVM.HelPA.Assembler.IO.BusinessIO
 
@@ -181,6 +183,7 @@ library
     , containers
     , filepath
     , ListLike
+    , megaparsec
     , mtl
     , split
     , type-operators

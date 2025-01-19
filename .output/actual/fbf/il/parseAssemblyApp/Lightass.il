@@ -52,59 +52,67 @@
 , Code
     ( Copy "seed" "temp" )
 , Code
-    ( UnEq
-        ( Literal 1 ) "exit"
-        [ Code
-            ( Read "char" )
-        , Code
-            ( Add
-                ( Variable "temp" )
-                ( Variable "char" ) "temp"
-            )
-        , Code
-            ( IfEq
-                ( Literal 10 ) "char"
-                [ Code
-                    ( Mod
-                        ( Variable "temp" )
-                        ( Literal 10 ) "temp"
-                    )
-                , Code
-                    ( Comp
-                        ( Variable "temp" )
-                        ( Literal 3 ) "temp"
-                    )
-                , Code
-                    ( IfEq
-                        ( Literal 2 ) "temp"
-                        [ Code
-                            ( Msg [ "Yes." ] )
-                        , Code End
-                        , Code
-                            ( IfNotEq
-                                ( Literal 2 ) "temp"
-                                [ Code
-                                    ( Msg [ "No." ] )
-                                , Code End
-                                , Code Line
-                                , Code
-                                    ( Copy "seed" "temp" )
-                                , Code
-                                    ( Msg
-                                        [ "Give"
-                                        , "me"
-                                        , "question."
-                                        ]
-                                    )
-                                , Code Line
-                                , Code End
-                                , Code End
-                                ]
-                            )
-                        ]
-                    )
-                ]
-            )
+    ( Call "uneq"
+        [ Variable "exit"
+        , Literal 1
         ]
     )
+, Code
+    ( Read "char" )
+, Code
+    ( Add
+        ( Variable "temp" )
+        ( Variable "char" ) "temp"
+    )
+, Code
+    ( Call "ifeq"
+        [ Variable "char"
+        , Literal 10
+        ]
+    )
+, Code
+    ( Mod
+        ( Variable "temp" )
+        ( Literal 10 ) "temp"
+    )
+, Code
+    ( Comp
+        ( Variable "temp" )
+        ( Literal 3 ) "temp"
+    )
+, Code
+    ( Call "ifeq"
+        [ Variable "temp"
+        , Literal 2
+        ]
+    )
+, Code
+    ( Msg [ "Yes." ] )
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "ifnoteq"
+        [ Variable "temp"
+        , Literal 2
+        ]
+    )
+, Code
+    ( Msg [ "No." ] )
+, Code
+    ( Call "end" [] )
+, Code Line
+, Code
+    ( Copy "seed" "temp" )
+, Code
+    ( Msg
+        [ "Give"
+        , "me"
+        , "question."
+        ]
+    )
+, Code Line
+, Code
+    ( Call "end" [] )
+, Code
+    ( Call "end" [] )
 ]
