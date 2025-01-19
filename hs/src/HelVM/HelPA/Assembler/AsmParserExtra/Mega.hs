@@ -6,7 +6,7 @@ import           HelVM.HelIO.ReadText
 
 import           Text.Megaparsec             hiding (many, some)
 import           Text.Megaparsec.Char
-import           Text.Megaparsec.Char.Lexer
+import           Text.Megaparsec.Char.Lexer  hiding (space)
 
 import           Data.Char
 import qualified Data.Text                   as Text
@@ -62,7 +62,7 @@ signedOptIntegerLiteralParser :: Parser Integer
 signedOptIntegerLiteralParser = signedIntegerLiteralParser <|> integerLiteralParser
 
 signedIntegerLiteralParser :: Parser Integer
-signedIntegerLiteralParser = signed integerLiteralParser
+signedIntegerLiteralParser = signed space integerLiteralParser
 
 integerLiteralParser :: Parser Integer
 integerLiteralParser = readUnsafe <$> many1 digit
