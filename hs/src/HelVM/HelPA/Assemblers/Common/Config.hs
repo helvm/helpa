@@ -18,10 +18,7 @@ changeIntegerValue (Literal value) = pure $ Literal value
 changeIntegerValue (Variable name) = changeIdentifier name
 
 changeIdentifier :: MonadReader Config m => Text -> m IntegerValue
-changeIdentifier name = check <$> labelAddressOpt name where
-  check :: Maybe Int -> IntegerValue
-  check (Just address) = Literal $ fromIntegral address
-  check Nothing        = Variable name
+changeIdentifier name = maybe (Variable name) (Literal . fromIntegral) <$> labelAddressOpt name
 
 labelAddressOpt :: MonadReader Config m => Text -> m $ Maybe Int
 labelAddressOpt name = List.elemIndex name <$> asks labels

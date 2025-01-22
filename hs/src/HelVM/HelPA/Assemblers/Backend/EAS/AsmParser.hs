@@ -20,7 +20,7 @@ instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instruct
 
 instructionParser :: Parser Instruction
 instructionParser =
-  try zeroOperandInstructionParser
+      zeroOperandInstructionParser
   <|> naturalNumberParser
   <|> unescapedStringParser
   <|> labelDefinitionParser
@@ -31,15 +31,15 @@ instructionParser =
 ----
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser =
-      zeroOperandInstruction E ["E", "dividE"]
-  <|> zeroOperandInstruction T ["T", "Transfer"]
-  <|> zeroOperandInstruction A ["A", "Address"]
-  <|> zeroOperandInstruction O ["O", "Output"]
-  <|> zeroOperandInstruction I ["I", "Input"]
-  <|> zeroOperandInstruction S ["S", "Subtract"]
-  <|> zeroOperandInstruction H ["H", "Halibut"]
-    where zeroOperandInstruction i ts = i <$ (asciiCIChoices ts *> endWordParser)
+zeroOperandInstructionParser = choiceMap (zeroOperandInstruction endWordParser)
+  [ (E , ["E", "dividE"]  )
+  , (T , ["T", "Transfer"])
+  , (A , ["A", "Address"] )
+  , (O , ["O", "Output"]  )
+  , (I , ["I", "Input"]   )
+  , (S , ["S", "Subtract"])
+  , (H , ["H", "Halibut"] )
+  ]
 
 naturalNumberParser :: Parser Instruction
 naturalNumberParser = N <$> (

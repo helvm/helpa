@@ -27,7 +27,7 @@ maybeInstructionParser =
 
 instructionParser :: Parser Instruction
 instructionParser =
-  try pushSParser
+      pushSParser
   <|> maybeOperandInstructionParser
   <|> identifierOperandInstructionParser
   <|> zeroOperandInstructionParser
@@ -35,43 +35,43 @@ instructionParser =
   <|> testParser
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser =
-      parser Pop        "pop"
-  <|> parser Dup        "doub"
-  <|> parser Swap       "swap"
-  <|> parser Return     "ret"
-  <|> parser End        "exit"
-  <|> parser OutputNum  "outn"
-  <|> parser OutputChar "outc"
-  <|> parser InputNum   "inn"
-  <|> parser InputChar  "inc"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandInstructionParser = choiceMap (zeroOperandParser endWordParser)
+  [ (Pop        , "pop" )
+  , (Dup        , "doub")
+  , (Swap       , "swap")
+  , (Return     , "ret" )
+  , (End        , "exit")
+  , (OutputNum  , "outn")
+  , (OutputChar , "outc")
+  , (InputNum   , "inn" )
+  , (InputChar  , "inc" )
+  ]
 
 maybeOperandInstructionParser :: Parser Instruction
-maybeOperandInstructionParser =
-      parser Add   "add"
-  <|> parser Sub   "sub"
-  <|> parser Mul   "mul"
-  <|> parser Div   "div"
-  <|> parser Mod   "mod"
-  <|> parser Store "store"
-  <|> parser Load  "retrive"
-    where parser f t = f <$> (asciiCI t *> optional (skip1HorizontalSpace *> integerParser))
+maybeOperandInstructionParser = choiceMap maybeOperandParser
+  [ (Add   , "add"    )
+  , (Sub   , "sub"    )
+  , (Mul   , "mul"    )
+  , (Div   , "div"    )
+  , (Mod   , "mod"    )
+  , (Store , "store"  )
+  , (Load  , "retrive")
+  ]
 
 identifierOperandInstructionParser :: Parser Instruction
-identifierOperandInstructionParser =
-      parser Mark     "label"
-  <|> parser Call     "call"
-  <|> parser Branch   "jump"
-  <|> parser BranchZ  "jumpZ"
-  <|> parser BranchM  "jumpN"
-  <|> parser BranchP  "jumpP"
-  <|> parser BranchNP "jumpNZ"
-  <|> parser BranchNM "jumpPZ"
-  <|> parser BranchNZ "jumpNP"
-  <|> parser BranchNZ "jumpPN"
-  <|> parser Include  "include"
-    where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+identifierOperandInstructionParser = choiceMap identifierOperandParser
+  [ ( Mark     , "label"  )
+  , ( Call     , "call"   )
+  , ( Branch   , "jump"   )
+  , ( BranchZ  , "jumpZ"  )
+  , ( BranchM  , "jumpN"  )
+  , ( BranchP  , "jumpP"  )
+  , ( BranchNP , "jumpNZ" )
+  , ( BranchNM , "jumpPZ" )
+  , ( BranchNZ , "jumpNP" )
+  , ( BranchNZ , "jumpPN" )
+  , ( Include  , "include")
+  ]
 
 testParser :: Parser Instruction
 testParser = Test <$> (asciiCI "test" *> skipHorizontalSpace *> integerParser)

@@ -49,8 +49,7 @@ reduceTest v = do
   reduceSub v
 
 reduceAddOpt :: MonadASM m => Maybe Integer -> m ()
-reduceAddOpt Nothing  = add
-reduceAddOpt (Just v) = reduceAdd v
+reduceAddOpt  = maybe add reduceAdd
 
 reduceAdd :: MonadASM m => Integer -> m ()
 reduceAdd v = do
@@ -61,8 +60,7 @@ add :: MonadASM0 m
 add = dsl Add
 
 reduceSubOpt :: MonadASM m => Maybe Integer -> m ()
-reduceSubOpt Nothing  = sub
-reduceSubOpt (Just v) = reduceSub v
+reduceSubOpt = maybe sub reduceSub
 
 reduceSub :: MonadASM m => Integer -> m ()
 reduceSub v = do
@@ -73,8 +71,7 @@ sub :: MonadASM0 m
 sub = dsl Sub
 
 reduceMulOpt :: MonadASM m => Maybe Integer -> m ()
-reduceMulOpt Nothing  = mul
-reduceMulOpt (Just v) = reduceMul v
+reduceMulOpt = maybe mul reduceMul
 
 reduceMul :: MonadASM m => Integer -> m ()
 reduceMul v = do
@@ -85,8 +82,7 @@ mul :: MonadASM0 m
 mul = dsl Mul
 
 reduceDivOpt :: MonadASM m => Maybe Integer -> m ()
-reduceDivOpt Nothing  = div
-reduceDivOpt (Just v) = reduceDiv v
+reduceDivOpt = maybe div reduceDiv
 
 reduceDiv :: MonadASM m => Integer -> m ()
 reduceDiv v = do
@@ -97,8 +93,7 @@ div :: MonadASM0 m
 div = dsl Div
 
 reduceModOpt :: MonadASM m => Maybe Integer -> m ()
-reduceModOpt Nothing  = mod
-reduceModOpt (Just v) = reduceMod v
+reduceModOpt = maybe mod reduceMod
 
 reduceMod :: MonadASM m => Integer -> m ()
 reduceMod v = do
@@ -109,8 +104,7 @@ mod :: MonadASM0 m
 mod = dsl Mod
 
 reduceLoadOpt :: MonadASM m => Maybe Integer -> m ()
-reduceLoadOpt Nothing  = load
-reduceLoadOpt (Just v) = reduceLoad v
+reduceLoadOpt = maybe load reduceLoad
 
 reduceLoad :: MonadASM m => Integer -> m ()
 reduceLoad v = do
@@ -121,8 +115,7 @@ load :: MonadASM0 m
 load = dsl Load
 
 reduceStoreOpt :: MonadASM m => Maybe Integer -> m ()
-reduceStoreOpt Nothing  = store
-reduceStoreOpt (Just v) = reduceStore v
+reduceStoreOpt = maybe store reduceStore
 
 reduceStore :: MonadASM m => Integer -> m ()
 reduceStore v = do

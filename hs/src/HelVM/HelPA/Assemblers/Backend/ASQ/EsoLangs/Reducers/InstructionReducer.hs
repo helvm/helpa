@@ -36,11 +36,13 @@ changeItem (ItemExpression e) = ItemExpression $ changeExpression e
 changeItem                 i  = i
 
 changeExpression :: Expression -> Expression
-changeExpression (Expression  Nothing  t) = makeExpressionWithoutPM $ changeTerm t
-changeExpression (Expression (Just pm) t) = makeExpressionWithPM (changePMExpression pm) $ changeTerm t
+changeExpression (Expression pm t) = makeExpressionMaybe pm $ changeTerm t
+
+makeExpressionMaybe :: Maybe PMExpression -> Term -> Expression
+makeExpressionMaybe = maybe makeExpressionWithoutPM (makeExpressionWithPM . changePMExpression)
 
 changeTerm :: Term -> Term
-changeTerm TermQuestionMark   = TermExpression makePrevAddress
+changeTerm  TermQuestionMark  = TermExpression makePrevAddress
 changeTerm (TermExpression e) = TermExpression $ changeExpression e
 changeTerm t                  = t
 

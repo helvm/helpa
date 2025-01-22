@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.6 -- 2025-01-24
+* Implement `piet` assembler
+
 ## 0.4.6.5 -- 2025-01-23
 * Use `utility-ht`
 

@@ -4,4 +4,4 @@ source-repository-package
   type: git
   location: https://github.com/helvm/helio.git
   branch: master
-  tag: 0.1.2.5
+  tag: 0.2.0.0

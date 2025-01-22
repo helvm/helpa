@@ -4,12 +4,32 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
-import           Control.Applicative.HT
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 
 import           Data.Char
 import qualified Data.Text                   as Text
+
+identifierOperandParser :: (Identifier -> a , Text) -> Parser a
+identifierOperandParser = operandParser (skip1HorizontalSpace *> identifierParser)
+
+maybeOperandParser :: (Maybe Integer -> a , Text) -> Parser a
+maybeOperandParser = operandParser (optional (skip1HorizontalSpace *> integerParser))
+
+zeroOperandParser :: Parser Text -> (a , Text) -> Parser a
+zeroOperandParser endWordParser (f , t) = operandParser endWordParser (const f , t)
+
+zeroOperandInstruction :: Parser Text -> (a, [Text]) -> Parser a
+zeroOperandInstruction endWordParser (f , ts) = f <$ (asciiCIChoices ts *> endWordParser)
+
+operandParser :: Parser a -> (a -> b , Text) -> Parser b
+operandParser p (f, t) = operandsParser p (f , one t)
+
+operandsParser :: Parser a -> (a -> b , [Text]) -> Parser b
+operandsParser p (f, t) = f <$> (asciiCIChoices t *> p)
+
+
+----
 
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
@@ -72,17 +92,18 @@ ordCharLiteralParser2 :: Integral a => Parser a
 ordCharLiteralParser2 = fromIntegral . ord <$> (escapedCharLiteralParser2 <|> charLiteralParser2)
 
 escapedCharLiteralParser2 :: Parser Char
-escapedCharLiteralParser2 =
-      escape '\'' '\''
-  <|> escape '\\' '\\'
-  <|> escape '\0' '0'
-  <|> escape '\a' 'a'
-  <|> escape '\b' 'b'
-  <|> escape '\f' 'f'
-  <|> escape '\n' 'n'
-  <|> escape '\r' 'r'
-  <|> escape '\t' 't'
-  <|> escape '\v' 'v'
+escapedCharLiteralParser2 = choiceMap (uncurry escape)
+  [ ('\'' , '\'')
+  , ('\\' , '\\')
+  , ('\0' , '0' )
+  , ('\a' , 'a' )
+  , ('\b' , 'b' )
+  , ('\f' , 'f' )
+  , ('\n' , 'n' )
+  , ('\r' , 'r' )
+  , ('\t' , 't' )
+  , ('\v' , 'v' )
+  ]
 
 escape :: Char -> Char -> Parser Char
 escape a b = a <$ char '\'' *> char '\\' *> char b <* char '\'' <* skipHorizontalSpace
@@ -109,10 +130,10 @@ dotIdentifierParser :: Parser Identifier
 dotIdentifierParser = char '.' *> identifierParser <* skipHorizontalSpace
 
 identifierParser :: Parser Identifier
-identifierParser = toIdentifier <$> lift2 (:) letter_ (many alphaNum_)
+identifierParser = toIdentifier <$> ((:) <$> letter_ <*> many alphaNum_)
 
 fileNameParser :: Parser Identifier
-fileNameParser = toIdentifier <$> lift2 (:) letter (many alphaNumDot_)
+fileNameParser = toIdentifier <$> ((:) <$> letter <*> many alphaNumDot_)
 
 letter_ :: Parser Char
 letter_ = satisfy isAlpha_ <?> "letter_"
@@ -129,7 +150,10 @@ skipAllToEndOfLine = skipWhile isNotEndOfLine
 ----
 
 asciiCIChoices :: [Text] -> Parser Text
-asciiCIChoices = choice . map asciiCI
+asciiCIChoices = choiceMap asciiCI
+
+choiceMap :: Alternative f => (a -> f b) -> [a] -> f b
+choiceMap f = choice . fmap f
 
 isNotEndOfLine :: Char -> Bool
 isNotEndOfLine = not . isEndOfLine

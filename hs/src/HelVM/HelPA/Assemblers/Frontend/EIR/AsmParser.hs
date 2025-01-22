@@ -6,7 +6,6 @@ import           HelVM.HelPA.Assembler.AsmParserExtra
 
 import           HelVM.HelIO.Control.Safe
 
-import           Control.Applicative.HT
 import           Control.Type.Operator
 import           Data.Attoparsec.Text
 import           Data.Char
@@ -101,7 +100,7 @@ integerValueAndIdentifierInstructionParser =
   <|> parser (L CLE) "le"
   <|> parser (L CGE) "ge"
     where
-      parser f t = lift2 f d s where
+      parser f t = f <$> d <*> s where
         d = asciiCI t *> (skip1HorizontalSpace *> identifierParser)
         s = asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerDotOptValueParser
 
@@ -114,18 +113,18 @@ integerValueAndNaturalValueAndIdentifierInstructionParser =
   <|> parser (J CLE) "jle"
   <|> parser (J CGE) "jge"
     where
-      parser f t = lift3 f j d s where
+      parser f t = f <$> j <*> d <*> s where
         j = asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser)
         d = asciiCI "," *> skip1HorizontalSpace *> identifierParser
         s = asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerValueParser
 
 pFileInstructionParser :: Parser Instruction
-pFileInstructionParser = lift2 PFile op1 op2 where
+pFileInstructionParser = PFile <$> op1 <*> op2 where
   op1 = asciiCI ".file" *> (skip1HorizontalSpace *> naturalParser)
   op2 = skip1HorizontalSpace *> textParser
 
 pLocInstructionParser :: Parser Instruction
-pLocInstructionParser = lift3 PLoc op1 op2 op3 where
+pLocInstructionParser = PLoc <$> op1 <*> op2 <*> op3 where
   op1 = asciiCI ".loc" *> (skip1HorizontalSpace *> naturalParser)
   op2 = skip1HorizontalSpace *> naturalParser
   op3 = skip1HorizontalSpace *> naturalParser
