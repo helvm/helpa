@@ -11,6 +11,7 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 
+import           Control.Applicative.HT
 import           Control.Type.Operator
 
 import           Data.Attoparsec.Text
@@ -22,7 +23,7 @@ instructionListParser :: Parser InstructionList
 instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace <* skipManyComment)
 
 instructionParser :: Parser Instruction
-instructionParser = liftA2 Instruction labelMaybeParser commandMaybeParser <* endLineParser
+instructionParser = lift2 Instruction labelMaybeParser commandMaybeParser <* endLineParser
 
 labelMaybeParser :: Parser $ Maybe Label
 labelMaybeParser = optional labelParser
@@ -37,7 +38,7 @@ dataParser :: Parser Command
 dataParser = stringWithSpaceParser "data" *> (Data <$> signedIntegerValueWithSpaceParser)
 
 codeParser :: Parser Command
-codeParser = stringWithSpaceParser "subleq" *> liftA3 Code signedIntegerValueWithSpaceParser signedIntegerValueWithSpaceParser (optional signedIntegerValueWithSpaceParser)
+codeParser = stringWithSpaceParser "subleq" *> lift3 Code signedIntegerValueWithSpaceParser signedIntegerValueWithSpaceParser (optional signedIntegerValueWithSpaceParser)
 
 stringWithSpaceParser :: Text -> Parser Text
 stringWithSpaceParser s = string s <* skipHorizontalSpace

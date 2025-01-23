@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.5 -- 2025-01-23
+* Use `utility-ht`
+
 ## 0.4.6.4 -- 2025-01-21
 * Refactor tests
 

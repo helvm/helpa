@@ -12,6 +12,7 @@ import           HelVM.HelIO.Containers.Extra
 
 import           HelVM.HelIO.Control.Safe
 
+import           Control.Applicative.HT
 import           Control.Type.Operator
 
 import qualified Data.Map                                                as Map
@@ -30,7 +31,7 @@ reduceForTEList :: MonadSafe m => LabelSymbols -> ExpressionList -> m Expression
 reduceForTEList addresses = traverse (reduceForTE addresses)
 
 reduceForTE :: MonadSafe m => LabelSymbols -> Expression -> m Expression
-reduceForTE addresses (Expression pm t) = liftA2 makeExpression pm' t' where
+reduceForTE addresses (Expression pm t) = lift2 makeExpression pm' t' where
   pm' = reduceForPmMaybe addresses pm
   t'  = reduceForTerm    addresses t
 
