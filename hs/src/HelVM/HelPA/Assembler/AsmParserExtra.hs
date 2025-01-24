@@ -33,6 +33,9 @@ charParser (f , t) = f <$ char t
 
 ----
 
+skipMany1EndLine :: Parser String
+skipMany1EndLine = many1 (char '\n')
+
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
 
