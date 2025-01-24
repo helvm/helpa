@@ -106,12 +106,12 @@ integerValueAndIdentifierInstructionParser =
 
 integerValueAndNaturalValueAndIdentifierInstructionParser :: Parser Instruction
 integerValueAndNaturalValueAndIdentifierInstructionParser = choiceMap parser
-  [ ((J CEQ) , "jeq")
-  , ((J CNE) , "jne")
-  , ((J CLT) , "jlt")
-  , ((J CGT)  ,"jgt")
-  , ((J CLE) , "jle")
-  , ((J CGE) , "jge")
+  [ (J CEQ , "jeq")
+  , (J CNE , "jne")
+  , (J CLT , "jlt")
+  , (J CGT  ,"jgt")
+  , (J CLE , "jle")
+  , (J CGE , "jge")
   ] where
       parser (f , t) = f <$> j <*> d <*> s where
         j = asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser)
