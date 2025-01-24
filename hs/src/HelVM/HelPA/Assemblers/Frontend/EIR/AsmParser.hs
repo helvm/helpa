@@ -40,11 +40,11 @@ instructionParser =
   <|> markInstructionParser
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser =
-      parser Exit     "exit"
-  <|> parser Dump     "dump"
-  <|> parser PText    ".text"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandInstructionParser = choiceMap (zeroOperandParser endWordParser)
+  [ (Exit  , "exit" )
+  , (Dump  , "dump" )
+  , (PText , ".text")
+  ]
 
 naturalOptInstructionParser :: Parser Instruction
 naturalOptInstructionParser =
