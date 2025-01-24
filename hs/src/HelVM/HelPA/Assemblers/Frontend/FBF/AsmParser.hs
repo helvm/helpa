@@ -5,6 +5,7 @@ import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 import           HelVM.HelPA.Assembler.Value
 
+import           HelVM.HelIO.CartesianProduct
 import           HelVM.HelIO.Control.Safe
 
 import           Control.Type.Operator
@@ -58,17 +59,17 @@ codeParser =
 --
 
 zeroOperandCompilerParser :: Parser CompilerInstruction
-zeroOperandCompilerParser =
-      parser Echo "#echo"
-  <|> parser ByteCells "#bytecells"
-  <|> parser EndBlock "#endblock"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandCompilerParser = choiceMap (zeroOperandParser endWordParser)
+  [ Echo      >< "#echo"
+  , ByteCells >< "#bytecells"
+  , EndBlock  >< "#endblock"
+  ] where
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
-naturalOperandCompilerParser =
-      parser LineBreaks "#linebreaks"
-  <|> parser Custom "#custom"
-    where parser f t = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
+naturalOperandCompilerParser = choiceMap parser
+  [ LineBreaks >< "#linebreaks"
+  , Custom     >< "#custom"
+  ] where parser (f , t) = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
 
 lineBreaksParser :: Parser CompilerInstruction
 lineBreaksParser = LineBreaks <$> (asciiCI "#linebreaks" *> skipHorizontalSpace *> naturalParser)
@@ -92,14 +93,14 @@ block a b = Block a b []
 --
 
 zeroOperandCodeParser :: Parser CodeInstruction
-zeroOperandCodeParser = choiceMap parser
+zeroOperandCodeParser = choiceMap (zeroOperandParser endWordParser)
   [ Bell  >< "bell"
   , Line  >< "line"
   , Space >< "space"
   , Tab   >< "tab"
   , End   >< "end"
   , Rem   >< "rem"
-  ] where parser i t = i <$ (asciiCI t *> endWordParser)
+  ]
 
 wordOperandCodeParser :: Parser CodeInstruction
 wordOperandCodeParser =
