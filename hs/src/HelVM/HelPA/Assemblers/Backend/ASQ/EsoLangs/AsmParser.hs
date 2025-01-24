@@ -49,13 +49,10 @@ pmExpressionParser :: Parser PMExpression
 pmExpressionParser = PMExpression <$> pmParser <*> expressionParser
 
 pmParser :: Parser PM
-pmParser = choiceMap aa
+pmParser = choiceMap charParser
   [ (Plus  , '+')
   , (Minus , '-')
   ]
-
-aa :: (a , Char) -> Parser a
-aa (f , t) = f <$ char t
 
 termParser :: Parser Term
 termParser =

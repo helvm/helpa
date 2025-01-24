@@ -28,6 +28,8 @@ operandParser p (f, t) = operandsParser p (f , one t)
 operandsParser :: Parser a -> (a -> b , [Text]) -> Parser b
 operandsParser p (f, t) = f <$> (asciiCIChoices t *> p)
 
+charParser :: (a , Char) -> Parser a
+charParser (f , t) = f <$ char t
 
 ----
 
