@@ -88,11 +88,11 @@ labelInstructionParser =
 
 integerValueAndIdentifierInstructionParser :: Parser Instruction
 integerValueAndIdentifierInstructionParser =
-      parser Mov  "mov"
-  <|> parser Add  "add"
-  <|> parser Sub  "sub"
-  <|> parser Load "load"
-  <|> parser Store "store"
+      parser Mov     "mov"
+  <|> parser Add     "add"
+  <|> parser Sub     "sub"
+  <|> parser Load    "load"
+  <|> parser Store   "store"
   <|> parser (L CEQ) "eq"
   <|> parser (L CNE) "ne"
   <|> parser (L CLT) "lt"
@@ -105,15 +105,15 @@ integerValueAndIdentifierInstructionParser =
         s = asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerDotOptValueParser
 
 integerValueAndNaturalValueAndIdentifierInstructionParser :: Parser Instruction
-integerValueAndNaturalValueAndIdentifierInstructionParser =
-      parser (J CEQ) "jeq"
-  <|> parser (J CNE) "jne"
-  <|> parser (J CLT) "jlt"
-  <|> parser (J CGT) "jgt"
-  <|> parser (J CLE) "jle"
-  <|> parser (J CGE) "jge"
-    where
-      parser f t = f <$> j <*> d <*> s where
+integerValueAndNaturalValueAndIdentifierInstructionParser = choiceMap parser
+  [ ((J CEQ) , "jeq")
+  , ((J CNE) , "jne")
+  , ((J CLT) , "jlt")
+  , ((J CGT)  ,"jgt")
+  , ((J CLE) , "jle")
+  , ((J CGE) , "jge")
+  ] where
+      parser (f , t) = f <$> j <*> d <*> s where
         j = asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser)
         d = asciiCI "," *> skip1HorizontalSpace *> identifierParser
         s = asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerValueParser
