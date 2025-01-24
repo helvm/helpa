@@ -6,11 +6,11 @@ import           HelVM.HelPA.Assemblers.Backend.WSA.Token
 import           HelVM.HelPA.Assemblers.Frontend.WSA.FileExtra
 import           HelVM.HelPA.Assemblers.Frontend.WSA.TestDataReduced
 
+import           HelVM.HelIO.CartesianProduct
 import           HelVM.HelIO.NamedValue
 
 import           HelVM.Expectations
 import           HelVM.GoldenExpectations
-import           HelVM.HelIO.ZipA
 
 import           System.FilePath.Posix
 
@@ -22,7 +22,7 @@ spec = do
     forM_ ([ ("io"     , ioILReduced)
            , ("memory" , memoryILReduced)
            , ("prim"   , primILReduced <> ioILReduced)
-           ] >><| manyOptionsWithName) $ \(fileName , il , namedOptions) ->
+           ] >>*< manyOptionsWithName) $ \(fileName , il , namedOptions) ->
       it (name namedOptions </> fileName) $
         generateCode2 (value namedOptions) il `goldenShouldSafe` buildAbsolutePathToWsFile ("codeGenerator" </> name namedOptions </> fileName)
 
