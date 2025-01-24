@@ -92,14 +92,14 @@ block a b = Block a b []
 --
 
 zeroOperandCodeParser :: Parser CodeInstruction
-zeroOperandCodeParser =
-      parser Bell "bell"
-  <|> parser Line "line"
-  <|> parser Space "space"
-  <|> parser Tab "tab"
-  <|> parser End "end"
-  <|> parser Rem "rem"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandCodeParser = choiceMap parser
+  [ Bell  >< "bell"
+  , Line  >< "line"
+  , Space >< "space"
+  , Tab   >< "tab"
+  , End   >< "end"
+  , Rem   >< "rem"
+  ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 wordOperandCodeParser :: Parser CodeInstruction
 wordOperandCodeParser =
