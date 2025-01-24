@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.Frontend.EIR.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParser.Atto
 
 import           HelVM.HelIO.Control.Safe
 
