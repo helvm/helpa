@@ -3,6 +3,7 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser where
 import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
 import           HelVM.HelPA.Assembler.AsmParser.Atto
+import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
@@ -26,7 +27,14 @@ maybeInstructionParser =
   <|> (Nothing <$ (skipSpace *> skipComment))
 
 instructionParser :: Parser $ Instruction
-instructionParser = (Compiler <$> compilerParser) <|> (Code <$> codeParser)
+instructionParser = choice
+  [ Micro <$> microInstructionParser
+  , blockCompilerParser
+  , callParser
+  ]
+
+microInstructionParser :: Parser $ MicroInstruction
+microInstructionParser = (Compiler <$> compilerParser) <|> (Code <$> codeParser)
 
 compilerParser :: Parser CompilerInstruction
 compilerParser =
@@ -57,6 +65,21 @@ codeParser =
 
 --
 
+blockCompilerParser :: Parser $ Macro Instruction
+blockCompilerParser = lift2 block a b where
+  a = asciiCI "#block" *> skipHorizontalSpace *> identifierParser
+  b = skipHorizontalSpace *> identifiersParser
+--  c = instructionListParser
+    -- <* skipSpace <* asciiCI "#endblock"
+
+block :: Identifier ->  [Identifier] -> Macro Instruction
+block a b = Def b a []
+
+callParser :: Parser CodeInstruction
+callParser = lift2 (flip Call) identifierParser (skipHorizontalSpace *> integerValuesParser)
+
+--
+
 zeroOperandCompilerParser :: Parser CompilerInstruction
 zeroOperandCompilerParser =
       parser Echo "#echo"
@@ -78,16 +101,6 @@ tableParser = lift2 (flip Table) (asciiCI "#table" *> skipHorizontalSpace *> ide
 
 dimParser :: Parser CompilerInstruction
 dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser)
-
-blockCompilerParser :: Parser CompilerInstruction
-blockCompilerParser = lift2 block a b where
-  a = asciiCI "#block" *> skipHorizontalSpace *> identifierParser
-  b = skipHorizontalSpace *> identifiersParser
---  c = instructionListParser
-    -- <* skipSpace <* asciiCI "#endblock"
-
-block :: Identifier ->  [Identifier] -> CompilerInstruction
-block a b = Block a b []
 
 --
 
@@ -207,10 +220,6 @@ msgParser = Msg <$> (asciiCI "msg" *> skipHorizontalSpace *> wordsParser)
 
 printParser :: Parser CodeInstruction
 printParser = Print <$> (asciiCI "print" *> skipHorizontalSpace *> identifiers1Parser)
-
-
-callParser :: Parser CodeInstruction
-callParser = lift2 Call identifierParser (skipHorizontalSpace *> integerValuesParser)
 
 --
 
