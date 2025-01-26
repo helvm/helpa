@@ -1,10 +1,13 @@
 module HelVM.HelPA.Assemblers.Frontend.FBF.Instruction where
 
+import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
 
 type InstructionList = [Instruction]
 
-data Instruction
+type Instruction = Macro MicroInstruction
+
+data MicroInstruction
     = Compiler CompilerInstruction
     | Code CodeInstruction
     deriving stock (Show, Eq)
@@ -18,7 +21,6 @@ data CompilerInstruction
     | LineMode LineMode
     | Table Natural Text
     | Dim [Identifier]
-    | Block Identifier [Identifier] InstructionList
     deriving stock (Show, Eq)
 
 data LineMode = Linux | Mac | Dos
@@ -66,6 +68,5 @@ data CodeInstruction
     | Ascii2Byte IntegerValue IntegerValue IntegerValue Identifier
     | Print [Identifier]
     | Msg [Text]
-    | Call Identifier [IntegerValue]
 
     deriving stock (Show, Eq)
