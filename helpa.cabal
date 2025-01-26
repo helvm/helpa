@@ -105,9 +105,11 @@ library
   import:              common-options
   hs-source-dirs:      hs/src
   exposed-modules:
-    HelVM.HelPA.Assembler.AsmParser.Atto
     HelVM.HelPA.Assembler.Extra
+    HelVM.HelPA.Assembler.Macro
     HelVM.HelPA.Assembler.Value
+
+    HelVM.HelPA.Assembler.AsmParser.Atto
 
     HelVM.HelPA.Assembler.API.Separator
     HelVM.HelPA.Assembler.API.SourcePath
