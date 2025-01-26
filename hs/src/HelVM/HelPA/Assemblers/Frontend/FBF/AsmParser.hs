@@ -2,7 +2,7 @@ module HelVM.HelPA.Assemblers.Frontend.FBF.AsmParser where
 
 import           HelVM.HelPA.Assemblers.Frontend.FBF.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParser.Atto
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe

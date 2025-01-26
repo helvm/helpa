@@ -4,7 +4,7 @@ module HelVM.HelPA.Assemblers.Backend.EAS.AsmParser (
 
 import           HelVM.HelPA.Assemblers.Backend.EAS.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParser.Atto
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe

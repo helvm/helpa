@@ -4,7 +4,7 @@ module HelVM.HelPA.Assemblers.Frontend.WSA.AsmParser (
 
 import           HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
 
-import           HelVM.HelPA.Assembler.AsmParserExtra
+import           HelVM.HelPA.Assembler.AsmParser.Atto
 
 import           HelVM.HelIO.Control.Safe
 

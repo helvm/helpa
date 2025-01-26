@@ -1,6 +1,7 @@
 # 📅 Revision history for HelPA
 
 ## 0.4.6.6 -- 2025-01-26
+* Refactor `AsmParserExtra`
 * Update `helio`
 
 ## 0.4.6.5 -- 2025-01-23

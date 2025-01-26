@@ -1,4 +1,4 @@
-module HelVM.HelPA.Assembler.AsmParserExtra where
+module HelVM.HelPA.Assembler.AsmParser.Atto where
 
 import           HelVM.HelPA.Assembler.Value
 
