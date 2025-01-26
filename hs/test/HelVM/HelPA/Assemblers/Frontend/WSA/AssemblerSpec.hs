@@ -8,7 +8,7 @@ import           HelVM.HelIO.NamedValue
 import           HelVM.HelPA.Assembler.API.SourcePath
 
 import           HelVM.GoldenExpectations
-import           HelVM.HelIO.ZipA
+import           HelVM.HelIO.CartesianProduct
 
 import           System.FilePath.Posix
 
@@ -22,7 +22,7 @@ spec = do
   describe "assembleLib" $
     forM_ ([ "io"
            , "memory"
-           ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+           ] >*< manyOptionsWithName) $ \(fileName , namedOptions) -> do
       let options = value namedOptions
       let path = pathLib fileName
       let assembleLib = assembleFile options path
@@ -33,7 +33,7 @@ spec = do
   describe "assembleApp" $ do
     describe "original" $
       forM_ ([ "prim"
-             ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+             ] >*< manyOptionsWithName) $ \(fileName , namedOptions) -> do
         let options = value namedOptions
         let path = pathApp fileName
         let assembleApp = assembleFile options path
@@ -59,7 +59,7 @@ spec = do
   --           , "fact"
              , "bottles"
   --           , "euclid"
-              ] |><| manyOptionsWithName) $ \(fileName , namedOptions) -> do
+              ] >*< manyOptionsWithName) $ \(fileName , namedOptions) -> do
         let path = SourcePath {dirPath = libDir , filePath = wsaDir </> "from-eas" </> fileName <.> lang}
         let options = value namedOptions
         let assemble = assembleFile options path
