@@ -1,173 +1,241 @@
-[ Compiler
-    ( LineBreaks 80 )
-, Compiler
-    ( Dim
-        [ "low"
-        , "high"
-        , "guess"
-        , "temp"
-        , "temp2"
-        , "temp3"
-        ]
+[ Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Code
-    ( Msg
-        [ "Think"
-        , "of"
-        , "a"
-        , "number"
-        , "between"
-        , "1"
-        , "and"
-        , "100."
-        , "And"
-        , "press"
-        , "any"
-        , "key"
-        , "when"
-        , "ready."
-        ]
+, Micro
+    ( Compiler
+        ( Dim
+            [ "low"
+            , "high"
+            , "guess"
+            , "temp"
+            , "temp2"
+            , "temp3"
+            ]
+        )
     )
-, Code
-    ( Set 1 "low" )
-, Code
-    ( Set 100 "high" )
-, Code
-    ( Read "temp" )
-, Code
-    ( UnEq
-        ( Variable "high" ) "low" []
+, Micro
+    ( Code
+        ( Msg
+            [ "Think"
+            , "of"
+            , "a"
+            , "number"
+            , "between"
+            , "1"
+            , "and"
+            , "100."
+            , "And"
+            , "press"
+            , "any"
+            , "key"
+            , "when"
+            , "ready."
+            ]
+        )
     )
-, Code
-    ( Sub
-        ( Variable "high" )
-        ( Variable "low" ) "guess"
+, Micro
+    ( Code
+        ( Set 1 "low" )
     )
-, Code
-    ( Div
-        ( Variable "guess" )
-        ( Literal 2 ) "guess"
+, Micro
+    ( Code
+        ( Set 100 "high" )
     )
-, Code
-    ( Add
-        ( Variable "low" )
-        ( Variable "guess" ) "guess"
+, Micro
+    ( Code
+        ( Read "temp" )
     )
-, Code
-    ( Byte2Ascii
-        ( Variable "guess" ) "temp" "temp2" "temp3"
+, Micro
+    ( Code
+        ( UnEq
+            ( Variable "high" ) "low" []
+        )
     )
-, Code
-    ( Msg
-        [ "My"
-        , "guess"
-        , "is"
-        ]
+, Micro
+    ( Code
+        ( Sub
+            ( Variable "high" )
+            ( Variable "low" ) "guess"
+        )
     )
-, Code Space
-, Code
-    ( Print
-        [ "temp"
-        , "temp2"
-        , "temp3"
-        ]
+, Micro
+    ( Code
+        ( Div
+            ( Variable "guess" )
+            ( Literal 2 ) "guess"
+        )
     )
-, Code
-    ( Msg [ "." ] )
-, Code Line
-, Code
-    ( Msg
-        [ "1."
-        , "Correct!"
-        ]
+, Micro
+    ( Code
+        ( Add
+            ( Variable "low" )
+            ( Variable "guess" ) "guess"
+        )
     )
-, Code Line
-, Code
-    ( Msg
-        [ "2."
-        , "Smaller"
-        , "than"
-        , "the"
-        , "hidden"
-        , "number."
-        ]
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "guess" ) "temp" "temp2" "temp3"
+        )
     )
-, Code Line
-, Code
-    ( Msg
-        [ "3."
-        , "Bigger"
-        , "than"
-        , "the"
-        , "hidden"
-        , "number."
-        ]
+, Micro
+    ( Code
+        ( Msg
+            [ "My"
+            , "guess"
+            , "is"
+            ]
+        )
     )
-, Code Line
-, Code
-    ( Read "temp" )
-, Code
-    ( Read "temp2" )
-, Code
-    ( IfEq
-        ( Literal 49 ) "temp" []
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Print
+            [ "temp"
+            , "temp2"
+            , "temp3"
+            ]
+        )
     )
-, Code
-    ( Copy "guess" "low" )
-, Code
-    ( Copy "low" "high" )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 50 ) "temp" []
+, Micro
+    ( Code
+        ( Msg [ "." ] )
     )
-, Code
-    ( Copy "guess" "high" )
-, Code
-    ( Dec 1 "high" )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 51 ) "temp" []
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "1."
+            , "Correct!"
+            ]
+        )
     )
-, Code
-    ( Copy "guess" "low" )
-, Code
-    ( Inc 1 "low" )
-, Code End
-, Code
-    ( Comp
-        ( Variable "low" )
-        ( Variable "high" ) "temp"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "2."
+            , "Smaller"
+            , "than"
+            , "the"
+            , "hidden"
+            , "number."
+            ]
+        )
     )
-, Code
-    ( IfEq
-        ( Literal 1 ) "temp" []
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "3."
+            , "Bigger"
+            , "than"
+            , "the"
+            , "hidden"
+            , "number."
+            ]
+        )
     )
-, Code
-    ( Msg
-        [ "I"
-        , "found"
-        , "it!"
-        , "It's"
-        ]
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "temp" )
     )
-, Code Space
-, Code
-    ( Byte2Ascii
-        ( Variable "low" ) "temp" "temp2" "temp3"
+, Micro
+    ( Code
+        ( Read "temp2" )
     )
-, Code
-    ( Print
-        [ "temp"
-        , "temp2"
-        , "temp3"
-        ]
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 49 ) "temp" []
+        )
     )
-, Code
-    ( Msg [ "." ] )
-, Code Line
-, Code End
-, Code Line
-, Code End
+, Micro
+    ( Code
+        ( Copy "guess" "low" )
+    )
+, Micro
+    ( Code
+        ( Copy "low" "high" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 50 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Copy "guess" "high" )
+    )
+, Micro
+    ( Code
+        ( Dec 1 "high" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 51 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Copy "guess" "low" )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "low" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Comp
+            ( Variable "low" )
+            ( Variable "high" ) "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 1 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "I"
+            , "found"
+            , "it!"
+            , "It's"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "low" ) "temp" "temp2" "temp3"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "temp"
+            , "temp2"
+            , "temp3"
+            ]
+        )
+    )
+, Micro
+    ( Code
+        ( Msg [ "." ] )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro ( Code End )
 ]

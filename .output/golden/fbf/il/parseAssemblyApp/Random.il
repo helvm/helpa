@@ -1,225 +1,310 @@
-[ Compiler
-    ( Dim
-        [ "i"
-        , "j"
-        , "temp"
-        , "run"
-        ]
+[ Micro
+    ( Compiler
+        ( Dim
+            [ "i"
+            , "j"
+            , "temp"
+            , "run"
+            ]
+        )
     )
-, Compiler
-    ( Dim
-        [ "random"
-        , "curplace"
-        ]
+, Micro
+    ( Compiler
+        ( Dim
+            [ "random"
+            , "curplace"
+            ]
+        )
     )
-, Compiler
-    ( Dim
-        [ "fliptemp"
-        , "fliptemp2"
-        ]
+, Micro
+    ( Compiler
+        ( Dim
+            [ "fliptemp"
+            , "fliptemp2"
+            ]
+        )
     )
-, Compiler
-    ( LineBreaks 80 )
-, Compiler ByteCells
-, Compiler
-    ( Table 256 "pairs" )
-, Compiler
-    ( Table 256 "totals" )
-, Compiler
-    ( Block "createtable" [] [] )
-, Code
-    ( Set 255 "i" )
-, Code
-    ( UnEq
-        ( Literal 0 ) "i" []
+, Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Code
-    ( WTable
-        ( Variable "i" )
-        ( Variable "i" ) "pairs"
+, Micro ( Compiler ByteCells )
+, Micro
+    ( Compiler
+        ( Table 256 "pairs" )
     )
-, Code
-    ( Dec 1 "i" )
-, Code End
-, Code
-    ( WTable
-        ( Variable "i" )
-        ( Variable "i" ) "pairs"
+, Micro
+    ( Compiler
+        ( Table 256 "totals" )
     )
-, Compiler EndBlock
-, Compiler
-    ( Block "advancerandom" [] [] )
-, Code
-    ( Multi
-        ( Variable "random" )
-        ( Variable "random" ) "temp"
+, Def [] "createtable" []
+, Micro
+    ( Code
+        ( Set 255 "i" )
     )
-, Code
-    ( Inc 7 "random" )
-, Code
-    ( Multi
-        ( Variable "temp" )
-        ( Variable "random" ) "temp"
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 0 ) "i" []
+        )
     )
-, Code
-    ( Inc 1 "temp" )
-, Code
-    ( Multi
-        ( Variable "random" )
-        ( Variable "temp" ) "random"
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "i" )
+            ( Variable "i" ) "pairs"
+        )
     )
-, Code
-    ( Add
-        ( Variable "random" )
-        ( Variable "curplace" ) "random"
+, Micro
+    ( Code
+        ( Dec 1 "i" )
     )
-, Code
-    ( RTable
-        ( Variable "random" ) "pairs" "random"
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "i" )
+            ( Variable "i" ) "pairs"
+        )
     )
-, Compiler EndBlock
-, Compiler
-    ( Block "flip"
-        [ "flip_initial"
-        , "flip_final"
-        ] []
+, Micro ( Compiler EndBlock )
+, Def [] "advancerandom" []
+, Micro
+    ( Code
+        ( Multi
+            ( Variable "random" )
+            ( Variable "random" ) "temp"
+        )
     )
-, Code
-    ( RTable
-        ( Variable "flip_initial" ) "pairs" "fliptemp"
+, Micro
+    ( Code
+        ( Inc 7 "random" )
     )
-, Code
-    ( RTable
-        ( Variable "flip_final" ) "pairs" "fliptemp2"
+, Micro
+    ( Code
+        ( Multi
+            ( Variable "temp" )
+            ( Variable "random" ) "temp"
+        )
     )
-, Code
-    ( WTable
-        ( Variable "fliptemp2" )
-        ( Variable "flip_initial" ) "pairs"
+, Micro
+    ( Code
+        ( Inc 1 "temp" )
     )
-, Code
-    ( WTable
-        ( Variable "fliptemp" )
-        ( Variable "flip_final" ) "pairs"
+, Micro
+    ( Code
+        ( Multi
+            ( Variable "random" )
+            ( Variable "temp" ) "random"
+        )
     )
-, Compiler EndBlock
-, Code
-    ( Call "createtable" [] )
-, Code
-    ( Read "random" )
-, Code
-    ( Set 1 "run" )
-, Code
-    ( UnEq
-        ( Literal 0 ) "run" []
+, Micro
+    ( Code
+        ( Add
+            ( Variable "random" )
+            ( Variable "curplace" ) "random"
+        )
     )
-, Code
-    ( Add
-        ( Variable "temp" )
-        ( Variable "random" ) "temp"
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "random" ) "pairs" "random"
+        )
     )
-, Code
-    ( Call "advancerandom" [] )
-, Code
-    ( Call "flip"
-        [ Variable "random"
-        , Variable "curplace"
-        ]
+, Micro ( Compiler EndBlock )
+, Def
+    [ "flip_initial"
+    , "flip_final"
+    ] "flip" []
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "flip_initial" ) "pairs" "fliptemp"
+        )
     )
-, Code
-    ( Inc 1 "curplace" )
-, Code
-    ( Call "advancerandom" [] )
-, Code
-    ( Add
-        ( Variable "temp" )
-        ( Variable "random" ) "temp"
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "flip_final" ) "pairs" "fliptemp2"
+        )
     )
-, Code
-    ( RTable
-        ( Variable "random" ) "totals" "temp"
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "fliptemp2" )
+            ( Variable "flip_initial" ) "pairs"
+        )
     )
-, Code
-    ( Inc 1 "temp" )
-, Code
-    ( WTable
-        ( Variable "temp" )
-        ( Variable "random" ) "totals"
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "fliptemp" )
+            ( Variable "flip_final" ) "pairs"
+        )
     )
-, Code
-    ( IfEq
-        ( Literal 100 ) "temp" []
+, Micro ( Compiler EndBlock )
+, Call [] "createtable"
+, Micro
+    ( Code
+        ( Read "random" )
     )
-, Code
-    ( Set 0 "run" )
-, Code End
-, Code
-    ( Msg [ "." ] )
-, Code End
-, Code Line
-, Code
-    ( Set 0 "run" )
-, Code
-    ( Byte2Ascii
-        ( Variable "run" ) "i" "j" "temp"
+, Micro
+    ( Code
+        ( Set 1 "run" )
     )
-, Code
-    ( Print
-        [ "i"
-        , "j"
-        , "temp"
-        ]
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 0 ) "run" []
+        )
     )
-, Code Space
-, Code
-    ( RTable
-        ( Variable "i" ) "totals" "temp"
+, Micro
+    ( Code
+        ( Add
+            ( Variable "temp" )
+            ( Variable "random" ) "temp"
+        )
     )
-, Code
-    ( Byte2Ascii
-        ( Variable "temp" ) "i" "j" "temp"
+, Call [] "advancerandom"
+, Call
+    [ Variable "random"
+    , Variable "curplace"
+    ] "flip"
+, Micro
+    ( Code
+        ( Inc 1 "curplace" )
     )
-, Code
-    ( Print
-        [ "i"
-        , "j"
-        , "temp"
-        ]
+, Call [] "advancerandom"
+, Micro
+    ( Code
+        ( Add
+            ( Variable "temp" )
+            ( Variable "random" ) "temp"
+        )
     )
-, Code Line
-, Code
-    ( UnEq
-        ( Literal 255 ) "run" []
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "random" ) "totals" "temp"
+        )
     )
-, Code
-    ( Byte2Ascii
-        ( Variable "run" ) "i" "j" "temp"
+, Micro
+    ( Code
+        ( Inc 1 "temp" )
     )
-, Code
-    ( Print
-        [ "i"
-        , "j"
-        , "temp"
-        ]
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "temp" )
+            ( Variable "random" ) "totals"
+        )
     )
-, Code Space
-, Code
-    ( RTable
-        ( Variable "run" ) "totals" "temp"
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 100 ) "temp" []
+        )
     )
-, Code
-    ( Byte2Ascii
-        ( Variable "temp" ) "i" "j" "temp"
+, Micro
+    ( Code
+        ( Set 0 "run" )
     )
-, Code
-    ( Print
-        [ "i"
-        , "j"
-        , "temp"
-        ]
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Msg [ "." ] )
     )
-, Code Line
-, Code
-    ( Inc 1 "run" )
-, Code End
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Set 0 "run" )
+    )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "run" ) "i" "j" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "i"
+            , "j"
+            , "temp"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "i" ) "totals" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "temp" ) "i" "j" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "i"
+            , "j"
+            , "temp"
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 255 ) "run" []
+        )
+    )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "run" ) "i" "j" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "i"
+            , "j"
+            , "temp"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "run" ) "totals" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "temp" ) "i" "j" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "i"
+            , "j"
+            , "temp"
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Inc 1 "run" )
+    )
+, Micro ( Code End )
 ]

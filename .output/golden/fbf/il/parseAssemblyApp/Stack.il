@@ -1,78 +1,118 @@
-[ Compiler
-    ( LineBreaks 80 )
-, Compiler
-    ( Dim
-        [ "stop"
-        , "temp"
-        , "found"
-        , "a"
-        , "b"
-        , "c"
-        ]
+[ Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Compiler
-    ( Table 256 "stack" )
-, Code
-    ( UnEq
-        ( Literal 1 ) "stop" []
+, Micro
+    ( Compiler
+        ( Dim
+            [ "stop"
+            , "temp"
+            , "found"
+            , "a"
+            , "b"
+            , "c"
+            ]
+        )
     )
-, Code
-    ( CopySize "stack" "a" )
-, Code
-    ( Byte2Ascii
-        ( Variable "a" ) "a" "b" "c"
+, Micro
+    ( Compiler
+        ( Table 256 "stack" )
     )
-, Code
-    ( Print
-        [ "a"
-        , "b"
-        , "c"
-        ]
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 1 ) "stop" []
+        )
     )
-, Code
-    ( Read "temp" )
-, Code
-    ( Msg
-        [ "clear"
-        , "3"
-        ]
+, Micro
+    ( Code
+        ( CopySize "stack" "a" )
     )
-, Code
-    ( Set 0 "found" )
-, Code
-    ( IfEq
-        ( Literal 10 ) "temp" []
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "a" ) "a" "b" "c"
+        )
     )
-, Code
-    ( Inc 1 "stop" )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 32 ) "temp" []
+, Micro
+    ( Code
+        ( Print
+            [ "a"
+            , "b"
+            , "c"
+            ]
+        )
     )
-, Code
-    ( Inc 1 "found" )
-, Code
-    ( Pop "stack" "temp" )
-, Code
-    ( Print [ "temp" ] )
-, Code
-    ( Read "temp" )
-, Code
-    ( Msg
-        [ "clear"
-        , "1"
-        ]
+, Micro
+    ( Code
+        ( Read "temp" )
     )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 0 ) "found" []
+, Micro
+    ( Code
+        ( Msg
+            [ "clear"
+            , "3"
+            ]
+        )
     )
-, Code
-    ( Push
-        ( Variable "stack" ) "temp"
+, Micro
+    ( Code
+        ( Set 0 "found" )
     )
-, Code End
-, Code End
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 10 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "stop" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 32 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "found" )
+    )
+, Micro
+    ( Code
+        ( Pop "stack" "temp" )
+    )
+, Micro
+    ( Code
+        ( Print [ "temp" ] )
+    )
+, Micro
+    ( Code
+        ( Read "temp" )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "clear"
+            , "1"
+            ]
+        )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "found" []
+        )
+    )
+, Micro
+    ( Code
+        ( Push
+            ( Variable "stack" ) "temp"
+        )
+    )
+, Micro ( Code End )
+, Micro ( Code End )
 ]

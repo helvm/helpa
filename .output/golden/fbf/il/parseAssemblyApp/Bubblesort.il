@@ -1,203 +1,293 @@
-[ Compiler
-    ( LineBreaks 80 )
-, Compiler
-    ( Dim
-        [ "tot"
-        , "cur"
-        , "subcur"
-        , "temp"
-        , "lastchange"
-        , "templastchange"
-        , "temp2"
-        , "compres"
-        , "times"
-        , "temp3"
-        ]
+[ Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Compiler
-    ( Table 256 "mem" )
-, Code Line
-, Code
-    ( Msg
-        [ "OK"
-        , "give"
-        , "me"
-        , "a"
-        , "sentence"
-        , "and"
-        , "then"
-        , "press"
-        , "enter."
-        , "I"
-        , "cannot"
-        , "hold"
-        , "more"
-        , "than"
-        , "256"
-        , "letters"
-        ]
+, Micro
+    ( Compiler
+        ( Dim
+            [ "tot"
+            , "cur"
+            , "subcur"
+            , "temp"
+            , "lastchange"
+            , "templastchange"
+            , "temp2"
+            , "compres"
+            , "times"
+            , "temp3"
+            ]
+        )
     )
-, Code Line
-, Code
-    ( Read "temp" )
-, Code
-    ( UnEq
-        ( Literal 10 ) "temp" []
+, Micro
+    ( Compiler
+        ( Table 256 "mem" )
     )
-, Code
-    ( Inc 1 "tot" )
-, Code
-    ( WTable
-        ( Variable "temp" )
-        ( Variable "tot" ) "mem"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "OK"
+            , "give"
+            , "me"
+            , "a"
+            , "sentence"
+            , "and"
+            , "then"
+            , "press"
+            , "enter."
+            , "I"
+            , "cannot"
+            , "hold"
+            , "more"
+            , "than"
+            , "256"
+            , "letters"
+            ]
+        )
     )
-, Code
-    ( Read "temp" )
-, Code End
-, Code
-    ( Msg
-        [ "Wait"
-        , "while"
-        , "I"
-        , "bubble-sort"
-        , "the"
-        , "characters..."
-        ]
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "temp" )
     )
-, Code Line
-, Code
-    ( Inc 1 "cur" )
-, Code
-    ( Copy "tot" "lastchange" )
-, Code
-    ( UnEq
-        ( Literal 0 ) "lastchange" []
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 10 ) "temp" []
+        )
     )
-, Code
-    ( Inc 1 "times" )
-, Code Line
-, Code
-    ( Set 1 "subcur" )
-, Code
-    ( Inc 1 "tot" )
-, Code
-    ( UnEq
-        ( Variable "tot" ) "subcur" []
+, Micro
+    ( Code
+        ( Inc 1 "tot" )
     )
-, Code
-    ( RTable
-        ( Variable "subcur" ) "mem" "temp"
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "temp" )
+            ( Variable "tot" ) "mem"
+        )
     )
-, Code
-    ( Print [ "temp" ] )
-, Code
-    ( Inc 1 "subcur" )
-, Code End
-, Code
-    ( Dec 1 "tot" )
-, Code
-    ( Set 1 "cur" )
-, Code
-    ( Copy "lastchange" "templastchange" )
-, Code
-    ( Set 0 "lastchange" )
-, Code
-    ( UnEq
-        ( Variable "templastchange" ) "cur" []
+, Micro
+    ( Code
+        ( Read "temp" )
     )
-, Code
-    ( RTable
-        ( Variable "cur" ) "mem" "temp"
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Msg
+            [ "Wait"
+            , "while"
+            , "I"
+            , "bubble-sort"
+            , "the"
+            , "characters..."
+            ]
+        )
     )
-, Code
-    ( Inc 1 "cur" )
-, Code
-    ( RTable
-        ( Variable "cur" ) "mem" "temp2"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Inc 1 "cur" )
     )
-, Code
-    ( Comp
-        ( Variable "temp" )
-        ( Variable "temp2" ) "compres"
+, Micro
+    ( Code
+        ( Copy "tot" "lastchange" )
     )
-, Code
-    ( IfEq
-        ( Literal 0 ) "compres" []
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 0 ) "lastchange" []
+        )
     )
-, Code
-    ( Copy "cur" "lastchange" )
-, Code
-    ( WTable
-        ( Variable "temp" )
-        ( Variable "cur" ) "mem"
+, Micro
+    ( Code
+        ( Inc 1 "times" )
     )
-, Code
-    ( Dec 1 "cur" )
-, Code
-    ( WTable
-        ( Variable "temp2" )
-        ( Variable "cur" ) "mem"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Set 1 "subcur" )
     )
-, Code
-    ( Inc 1 "cur" )
-, Code End
-, Code End
-, Code End
-, Code
-    ( Set 1 "cur" )
-, Code
-    ( Inc 1 "tot" )
-, Code Line
-, Code
-    ( Msg
-        [ "Finished!"
-        , "It"
-        , "took"
-        , "me"
-        ]
+, Micro
+    ( Code
+        ( Inc 1 "tot" )
     )
-, Code Space
-, Code
-    ( Byte2Ascii
-        ( Variable "times" ) "temp" "temp2" "temp3"
+, Micro
+    ( Code
+        ( UnEq
+            ( Variable "tot" ) "subcur" []
+        )
     )
-, Code
-    ( Print
-        [ "temp"
-        , "temp2"
-        , "temp3"
-        ]
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "subcur" ) "mem" "temp"
+        )
     )
-, Code Space
-, Code
-    ( Msg
-        [ "itterations."
-        , "While"
-        , "the"
-        , "sentence"
-        , "was"
-        ]
+, Micro
+    ( Code
+        ( Print [ "temp" ] )
     )
-, Code Space
-, Code
-    ( Dec 1 "tot" )
-, Code
-    ( Byte2Ascii
-        ( Variable "tot" ) "temp" "temp2" "temp3"
+, Micro
+    ( Code
+        ( Inc 1 "subcur" )
     )
-, Code
-    ( Print
-        [ "temp"
-        , "temp2"
-        , "temp3"
-        ]
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Dec 1 "tot" )
     )
-, Code Space
-, Code
-    ( Msg
-        [ "characters"
-        , "long."
-        ]
+, Micro
+    ( Code
+        ( Set 1 "cur" )
     )
-, Code Line
+, Micro
+    ( Code
+        ( Copy "lastchange" "templastchange" )
+    )
+, Micro
+    ( Code
+        ( Set 0 "lastchange" )
+    )
+, Micro
+    ( Code
+        ( UnEq
+            ( Variable "templastchange" ) "cur" []
+        )
+    )
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "cur" ) "mem" "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "cur" )
+    )
+, Micro
+    ( Code
+        ( RTable
+            ( Variable "cur" ) "mem" "temp2"
+        )
+    )
+, Micro
+    ( Code
+        ( Comp
+            ( Variable "temp" )
+            ( Variable "temp2" ) "compres"
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "compres" []
+        )
+    )
+, Micro
+    ( Code
+        ( Copy "cur" "lastchange" )
+    )
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "temp" )
+            ( Variable "cur" ) "mem"
+        )
+    )
+, Micro
+    ( Code
+        ( Dec 1 "cur" )
+    )
+, Micro
+    ( Code
+        ( WTable
+            ( Variable "temp2" )
+            ( Variable "cur" ) "mem"
+        )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "cur" )
+    )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Set 1 "cur" )
+    )
+, Micro
+    ( Code
+        ( Inc 1 "tot" )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "Finished!"
+            , "It"
+            , "took"
+            , "me"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "times" ) "temp" "temp2" "temp3"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "temp"
+            , "temp2"
+            , "temp3"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Msg
+            [ "itterations."
+            , "While"
+            , "the"
+            , "sentence"
+            , "was"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Dec 1 "tot" )
+    )
+, Micro
+    ( Code
+        ( Byte2Ascii
+            ( Variable "tot" ) "temp" "temp2" "temp3"
+        )
+    )
+, Micro
+    ( Code
+        ( Print
+            [ "temp"
+            , "temp2"
+            , "temp3"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Msg
+            [ "characters"
+            , "long."
+            ]
+        )
+    )
+, Micro ( Code Line )
 ]

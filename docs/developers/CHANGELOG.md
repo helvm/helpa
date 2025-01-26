@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.7 -- 2025-01-28
+* Use common `Macro`
+
 ## 0.4.6.6 -- 2025-01-26
 * Add common Macro
 * Refactor `AsmParserExtra`

@@ -1,106 +1,146 @@
-[ Compiler
-    ( Dim
-        [ "exit"
-        , "char"
-        , "seed"
-        , "temp"
-        ]
+[ Micro
+    ( Compiler
+        ( Dim
+            [ "exit"
+            , "char"
+            , "seed"
+            , "temp"
+            ]
+        )
     )
-, Compiler
-    ( LineBreaks 80 )
-, Code
-    ( Msg
-        [ "Welcome"
-        , "to"
-        , "Brainfuck"
-        , "Lightass!"
-        ]
+, Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Code Line
-, Code
-    ( Msg
-        [ "To"
-        , "download"
-        , "the"
-        , "original"
-        , "Lightass"
-        , "visit:"
-        , "http://students.ceid.upatras.gr"
-        ]
+, Micro
+    ( Code
+        ( Msg
+            [ "Welcome"
+            , "to"
+            , "Brainfuck"
+            , "Lightass!"
+            ]
+        )
     )
-, Code Line
-, Code Line
-, Code
-    ( Msg
-        [ "Give"
-        , "the"
-        , "plot"
-        , "character:"
-        ]
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "To"
+            , "download"
+            , "the"
+            , "original"
+            , "Lightass"
+            , "visit:"
+            , "http://students.ceid.upatras.gr"
+            ]
+        )
     )
-, Code
-    ( Read "seed" )
-, Code Line
-, Code
-    ( Msg
-        [ "Give"
-        , "me"
-        , "question."
-        ]
+, Micro ( Code Line )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "Give"
+            , "the"
+            , "plot"
+            , "character:"
+            ]
+        )
     )
-, Code Line
-, Code
-    ( Copy "seed" "temp" )
-, Code
-    ( UnEq
-        ( Literal 1 ) "exit" []
+, Micro
+    ( Code
+        ( Read "seed" )
     )
-, Code
-    ( Read "char" )
-, Code
-    ( Add
-        ( Variable "temp" )
-        ( Variable "char" ) "temp"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "Give"
+            , "me"
+            , "question."
+            ]
+        )
     )
-, Code
-    ( IfEq
-        ( Literal 10 ) "char" []
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Copy "seed" "temp" )
     )
-, Code
-    ( Mod
-        ( Variable "temp" )
-        ( Literal 10 ) "temp"
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 1 ) "exit" []
+        )
     )
-, Code
-    ( Comp
-        ( Variable "temp" )
-        ( Literal 3 ) "temp"
+, Micro
+    ( Code
+        ( Read "char" )
     )
-, Code
-    ( IfEq
-        ( Literal 2 ) "temp" []
+, Micro
+    ( Code
+        ( Add
+            ( Variable "temp" )
+            ( Variable "char" ) "temp"
+        )
     )
-, Code
-    ( Msg [ "Yes." ] )
-, Code End
-, Code
-    ( IfNotEq
-        ( Literal 2 ) "temp" []
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 10 ) "char" []
+        )
     )
-, Code
-    ( Msg [ "No." ] )
-, Code End
-, Code Line
-, Code
-    ( Copy "seed" "temp" )
-, Code
-    ( Msg
-        [ "Give"
-        , "me"
-        , "question."
-        ]
+, Micro
+    ( Code
+        ( Mod
+            ( Variable "temp" )
+            ( Literal 10 ) "temp"
+        )
     )
-, Code Line
-, Code End
-, Code End
+, Micro
+    ( Code
+        ( Comp
+            ( Variable "temp" )
+            ( Literal 3 ) "temp"
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 2 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg [ "Yes." ] )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 2 ) "temp" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg [ "No." ] )
+    )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Copy "seed" "temp" )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "Give"
+            , "me"
+            , "question."
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro ( Code End )
 ]

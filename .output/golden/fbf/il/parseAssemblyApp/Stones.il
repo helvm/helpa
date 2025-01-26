@@ -1,426 +1,608 @@
-[ Compiler
-    ( LineBreaks 80 )
-, Compiler
-    ( Dim [ "stones" ] )
-, Compiler
-    ( Dim [ "humanturn" ] )
-, Compiler
-    ( Dim [ "a" ] )
-, Compiler
-    ( Dim [ "b" ] )
-, Compiler
-    ( Dim [ "c" ] )
-, Compiler
-    ( Dim [ "max" ] )
-, Compiler
-    ( Dim [ "maxplusone" ] )
-, Compiler
-    ( Dim [ "drawstone" ] )
-, Code Line
-, Code
-    ( Msg
-        [ "How"
-        , "many"
-        , "stones"
-        , "will"
-        , "we"
-        , "have"
-        , "initially?"
-        , "Write"
-        , "a"
-        , "number"
-        , "smaller"
-        , "than"
-        , "256"
-        , "and"
-        , "then"
-        , "press"
-        , "enter."
-        ]
+[ Micro
+    ( Compiler
+        ( LineBreaks 80 )
     )
-, Code Line
-, Code
-    ( Read "stones" )
-, Code
-    ( Dec 48 "stones" )
-, Code
-    ( Read "a" )
-, Code
-    ( IfNotEq
-        ( Literal 10 ) "a" []
+, Micro
+    ( Compiler
+        ( Dim [ "stones" ] )
     )
-, Code
-    ( Multi
-        ( Variable "stones" )
-        ( Literal 10 ) "stones"
+, Micro
+    ( Compiler
+        ( Dim [ "humanturn" ] )
     )
-, Code
-    ( Dec 48 "a" )
-, Code
-    ( Add
-        ( Variable "stones" )
-        ( Variable "a" ) "stones"
+, Micro
+    ( Compiler
+        ( Dim [ "a" ] )
     )
-, Code
-    ( Read "a" )
-, Code
-    ( IfNotEq
-        ( Literal 10 ) "a" []
+, Micro
+    ( Compiler
+        ( Dim [ "b" ] )
     )
-, Code
-    ( Multi
-        ( Variable "stones" )
-        ( Literal 10 ) "stones"
+, Micro
+    ( Compiler
+        ( Dim [ "c" ] )
     )
-, Code
-    ( Dec 48 "a" )
-, Code
-    ( Add
-        ( Variable "stones" )
-        ( Variable "a" ) "stones"
+, Micro
+    ( Compiler
+        ( Dim [ "max" ] )
     )
-, Code
-    ( Read "a" )
-, Code End
-, Code End
-, Code Line
-, Code
-    ( Msg
-        [ "How"
-        , "many"
-        , "stones"
-        , "will"
-        , "we"
-        , "be"
-        , "allowed"
-        , "to"
-        , "draw"
-        , "per"
-        , "turn?"
-        , "Write"
-        , "a"
-        , "number"
-        , "between"
-        , "1"
-        , "and"
-        , "9."
-        ]
+, Micro
+    ( Compiler
+        ( Dim [ "maxplusone" ] )
     )
-, Code Line
-, Code
-    ( Read "max" )
-, Code
-    ( Dec 48 "max" )
-, Code
-    ( Add
-        ( Variable "max" )
-        ( Literal 1 ) "maxplusone"
+, Micro
+    ( Compiler
+        ( Dim [ "drawstone" ] )
     )
-, Code Line
-, Code Line
-, Code
-    ( Msg
-        [ "Shall"
-        , "I"
-        , "go"
-        , "first?"
-        , "(y/n)"
-        ]
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "How"
+            , "many"
+            , "stones"
+            , "will"
+            , "we"
+            , "have"
+            , "initially?"
+            , "Write"
+            , "a"
+            , "number"
+            , "smaller"
+            , "than"
+            , "256"
+            , "and"
+            , "then"
+            , "press"
+            , "enter."
+            ]
+        )
     )
-, Code Line
-, Code
-    ( Read "a" )
-, Code
-    ( IfEq
-        ( Literal 110 ) "a" []
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "stones" )
     )
-, Code
-    ( Set 1 "humanturn" )
-, Code End
-, Code Line
-, Code Line
-, Code
-    ( UnEq
-        ( Literal 0 ) "stones" []
+, Micro
+    ( Code
+        ( Dec 48 "stones" )
     )
-, Code
-    ( Msg [ "Stones:" ] )
-, Code Space
-, Code
-    ( Copy "stones" "drawstone" )
-, Code
-    ( UnEq
-        ( Literal 0 ) "drawstone" []
+, Micro
+    ( Code
+        ( Read "a" )
     )
-, Code
-    ( Msg [ "O" ] )
-, Code
-    ( Dec 1 "drawstone" )
-, Code End
-, Code Space
-, Code
-    ( Msg [ "=" ] )
-, Code Space
-, Code
-    ( Div
-        ( Variable "stones" )
-        ( Literal 100 ) "a"
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 10 ) "a" []
+        )
     )
-, Code
-    ( Mod
-        ( Variable "stones" )
-        ( Literal 100 ) "b"
+, Micro
+    ( Code
+        ( Multi
+            ( Variable "stones" )
+            ( Literal 10 ) "stones"
+        )
     )
-, Code
-    ( Mod
-        ( Variable "b" )
-        ( Literal 10 ) "c"
+, Micro
+    ( Code
+        ( Dec 48 "a" )
     )
-, Code
-    ( Div
-        ( Variable "b" )
-        ( Literal 10 ) "b"
+, Micro
+    ( Code
+        ( Add
+            ( Variable "stones" )
+            ( Variable "a" ) "stones"
+        )
     )
-, Code
-    ( Inc 48 "a" )
-, Code
-    ( Inc 48 "b" )
-, Code
-    ( Inc 48 "c" )
-, Code
-    ( IfNotEq
-        ( Literal 48 ) "a" []
+, Micro
+    ( Code
+        ( Read "a" )
     )
-, Code
-    ( Print [ "a" ] )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 48 ) "b" []
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 10 ) "a" []
+        )
     )
-, Code
-    ( IfNotEq
-        ( Literal 48 ) "a" []
+, Micro
+    ( Code
+        ( Multi
+            ( Variable "stones" )
+            ( Literal 10 ) "stones"
+        )
     )
-, Code
-    ( Print [ "b" ] )
-, Code End
-, Code End
-, Code
-    ( IfNotEq
-        ( Literal 48 ) "b" []
+, Micro
+    ( Code
+        ( Dec 48 "a" )
     )
-, Code
-    ( Print [ "b" ] )
-, Code End
-, Code
-    ( Print [ "c" ] )
-, Code Line
-, Code
-    ( IfEq
-        ( Literal 0 ) "humanturn" []
+, Micro
+    ( Code
+        ( Add
+            ( Variable "stones" )
+            ( Variable "a" ) "stones"
+        )
     )
-, Code
-    ( Mod
-        ( Variable "stones" )
-        ( Variable "maxplusone" ) "a"
+, Micro
+    ( Code
+        ( Read "a" )
     )
-, Code
-    ( IfEq
-        ( Literal 0 ) "a" []
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "How"
+            , "many"
+            , "stones"
+            , "will"
+            , "we"
+            , "be"
+            , "allowed"
+            , "to"
+            , "draw"
+            , "per"
+            , "turn?"
+            , "Write"
+            , "a"
+            , "number"
+            , "between"
+            , "1"
+            , "and"
+            , "9."
+            ]
+        )
     )
-, Code
-    ( Set 1 "a" )
-, Code End
-, Code
-    ( Sub
-        ( Variable "stones" )
-        ( Variable "a" ) "stones"
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "max" )
     )
-, Code
-    ( Msg
-        [ "I"
-        , "will"
-        , "draw"
-        ]
+, Micro
+    ( Code
+        ( Dec 48 "max" )
     )
-, Code Space
-, Code
-    ( Inc 48 "a" )
-, Code
-    ( Print [ "a" ] )
-, Code Space
-, Code
-    ( Dec 48 "a" )
-, Code
-    ( IfEq
-        ( Literal 1 ) "a" []
+, Micro
+    ( Code
+        ( Add
+            ( Variable "max" )
+            ( Literal 1 ) "maxplusone"
+        )
     )
-, Code
-    ( Msg [ "stone." ] )
-, Code End
-, Code
-    ( IfNotEq
-        ( Literal 1 ) "a" []
+, Micro ( Code Line )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "Shall"
+            , "I"
+            , "go"
+            , "first?"
+            , "(y/n)"
+            ]
+        )
     )
-, Code
-    ( Msg [ "stones." ] )
-, Code End
-, Code Line
-, Code Line
-, Code
-    ( IfEq
-        ( Literal 0 ) "stones" []
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "a" )
     )
-, Code
-    ( Msg
-        [ "HAHAHAHAHAHAHAHAHA!!!"
-        , "I"
-        , "WON!"
-        , "LOOOOOOOSSSEEEEERRRRRRRRRRRRRRRRR.........."
-        ]
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 110 ) "a" []
+        )
     )
-, Code Line
-, Code End
-, Code
-    ( Set 2 "humanturn" )
-, Code End
-, Code
-    ( IfEq
-        ( Literal 1 ) "humanturn" []
+, Micro
+    ( Code
+        ( Set 1 "humanturn" )
     )
-, Code
-    ( Msg
-        [ "How"
-        , "many"
-        , "stones"
-        , "will"
-        , "you"
-        , "draw?"
-        ]
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 0 ) "stones" []
+        )
     )
-, Code Line
-, Code
-    ( Read "a" )
-, Code Line
-, Code
-    ( Dec 48 "a" )
-, Code
-    ( Comp
-        ( Variable "stones" )
-        ( Variable "a" ) "b"
+, Micro
+    ( Code
+        ( Msg [ "Stones:" ] )
     )
-, Code
-    ( Comp
-        ( Variable "a" )
-        ( Variable "max" ) "c"
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Copy "stones" "drawstone" )
     )
-, Code
-    ( IfEq
-        ( Literal 0 ) "a" []
+, Micro
+    ( Code
+        ( UnEq
+            ( Literal 0 ) "drawstone" []
+        )
     )
-, Code
-    ( Msg
-        [ "You"
-        , "must"
-        , "take"
-        , "at"
-        , "least"
-        , "one"
-        , "stone!"
-        ]
+, Micro
+    ( Code
+        ( Msg [ "O" ] )
     )
-, Code Line
-, Code End
-, Code
-    ( IfNotEq
-        ( Literal 0 ) "a" []
+, Micro
+    ( Code
+        ( Dec 1 "drawstone" )
     )
-, Code
-    ( IfNotEq
-        ( Literal 2 ) "b" []
+, Micro ( Code End )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Msg [ "=" ] )
     )
-, Code
-    ( IfEq
-        ( Literal 0 ) "c" []
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Div
+            ( Variable "stones" )
+            ( Literal 100 ) "a"
+        )
     )
-, Code
-    ( Msg
-        [ "You"
-        , "cannot"
-        , "take"
-        , "that"
-        , "many"
-        , "stones!"
-        ]
+, Micro
+    ( Code
+        ( Mod
+            ( Variable "stones" )
+            ( Literal 100 ) "b"
+        )
     )
-, Code Line
-, Code End
-, Code
-    ( IfNotEq
-        ( Literal 0 ) "c" []
+, Micro
+    ( Code
+        ( Mod
+            ( Variable "b" )
+            ( Literal 10 ) "c"
+        )
     )
-, Code
-    ( Sub
-        ( Variable "stones" )
-        ( Variable "a" ) "stones"
+, Micro
+    ( Code
+        ( Div
+            ( Variable "b" )
+            ( Literal 10 ) "b"
+        )
     )
-, Code
-    ( Set 0 "humanturn" )
-, Code End
-, Code End
-, Code End
-, Code
-    ( IfEq
-        ( Literal 2 ) "b" []
+, Micro
+    ( Code
+        ( Inc 48 "a" )
     )
-, Code
-    ( Msg
-        [ "Yeah"
-        , "sure..."
-        ]
+, Micro
+    ( Code
+        ( Inc 48 "b" )
     )
-, Code Line
-, Code End
-, Code
-    ( IfEq
-        ( Literal 0 ) "stones" []
+, Micro
+    ( Code
+        ( Inc 48 "c" )
     )
-, Code
-    ( Msg
-        [ "Oh"
-        , "shit..."
-        , "You"
-        , "won..."
-        , "Stupid"
-        , "cheater..."
-        ]
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 48 ) "a" []
+        )
     )
-, Code Line
-, Code End
-, Code Line
-, Code End
-, Code
-    ( IfEq
-        ( Literal 2 ) "humanturn" []
+, Micro
+    ( Code
+        ( Print [ "a" ] )
     )
-, Code
-    ( Set 1 "humanturn" )
-, Code End
-, Code End
-, Code Line
-, Code
-    ( Msg
-        [ "This"
-        , "program"
-        , "was"
-        , "written"
-        , "in"
-        , "FBF"
-        , "by"
-        , "Tritonio."
-        , "http://students.ceid.upatras.gr/~asimakis/FBF.html"
-        ]
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 48 ) "b" []
+        )
     )
-, Code Line
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 48 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( Print [ "b" ] )
+    )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 48 ) "b" []
+        )
+    )
+, Micro
+    ( Code
+        ( Print [ "b" ] )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Print [ "c" ] )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "humanturn" []
+        )
+    )
+, Micro
+    ( Code
+        ( Mod
+            ( Variable "stones" )
+            ( Variable "maxplusone" ) "a"
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( Set 1 "a" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Sub
+            ( Variable "stones" )
+            ( Variable "a" ) "stones"
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "I"
+            , "will"
+            , "draw"
+            ]
+        )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Inc 48 "a" )
+    )
+, Micro
+    ( Code
+        ( Print [ "a" ] )
+    )
+, Micro ( Code Space )
+, Micro
+    ( Code
+        ( Dec 48 "a" )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 1 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg [ "stone." ] )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 1 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg [ "stones." ] )
+    )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "stones" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "HAHAHAHAHAHAHAHAHA!!!"
+            , "I"
+            , "WON!"
+            , "LOOOOOOOSSSEEEEERRRRRRRRRRRRRRRRR.........."
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( Set 2 "humanturn" )
+    )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 1 ) "humanturn" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "How"
+            , "many"
+            , "stones"
+            , "will"
+            , "you"
+            , "draw?"
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Read "a" )
+    )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Dec 48 "a" )
+    )
+, Micro
+    ( Code
+        ( Comp
+            ( Variable "stones" )
+            ( Variable "a" ) "b"
+        )
+    )
+, Micro
+    ( Code
+        ( Comp
+            ( Variable "a" )
+            ( Variable "max" ) "c"
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "You"
+            , "must"
+            , "take"
+            , "at"
+            , "least"
+            , "one"
+            , "stone!"
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 0 ) "a" []
+        )
+    )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 2 ) "b" []
+        )
+    )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "c" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "You"
+            , "cannot"
+            , "take"
+            , "that"
+            , "many"
+            , "stones!"
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfNotEq
+            ( Literal 0 ) "c" []
+        )
+    )
+, Micro
+    ( Code
+        ( Sub
+            ( Variable "stones" )
+            ( Variable "a" ) "stones"
+        )
+    )
+, Micro
+    ( Code
+        ( Set 0 "humanturn" )
+    )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 2 ) "b" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "Yeah"
+            , "sure..."
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 0 ) "stones" []
+        )
+    )
+, Micro
+    ( Code
+        ( Msg
+            [ "Oh"
+            , "shit..."
+            , "You"
+            , "won..."
+            , "Stupid"
+            , "cheater..."
+            ]
+        )
+    )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro ( Code End )
+, Micro
+    ( Code
+        ( IfEq
+            ( Literal 2 ) "humanturn" []
+        )
+    )
+, Micro
+    ( Code
+        ( Set 1 "humanturn" )
+    )
+, Micro ( Code End )
+, Micro ( Code End )
+, Micro ( Code Line )
+, Micro
+    ( Code
+        ( Msg
+            [ "This"
+            , "program"
+            , "was"
+            , "written"
+            , "in"
+            , "FBF"
+            , "by"
+            , "Tritonio."
+            , "http://students.ceid.upatras.gr/~asimakis/FBF.html"
+            ]
+        )
+    )
+, Micro ( Code Line )
 ]
