@@ -11,7 +11,6 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 
-import           Control.Applicative.HT
 import           Control.Type.Operator
 
 reduceQuestionMarks :: MonadSafe m => QuestionMark -> ExpressionList -> m ExpressionList
@@ -25,9 +24,9 @@ makeAddress CurrentAddress currentAddress = currentAddress
 makeAddress NextAddress    currentAddress = currentAddress + 1
 
 reduceForTE :: MonadSafe m => Symbol -> Expression -> m Expression
-reduceForTE address (Expression pm t) = lift2 makeExpression pm' t' where
-  pm' = reduceForPmMaybe address pm
-  t'  = reduceForTerm    address t
+reduceForTE address (Expression pm t) = makeExpression
+  <$> reduceForPmMaybe address pm
+  <*> reduceForTerm address t
 
 reduceForPmMaybe :: MonadSafe m => Symbol -> Maybe PMExpression -> m $ Maybe PMExpression
 reduceForPmMaybe _        Nothing                   = pure Nothing

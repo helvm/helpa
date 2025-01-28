@@ -8,7 +8,6 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.Control.Safe
 
-import           Control.Applicative.HT
 import           Control.Type.Operator
 import           Data.Attoparsec.Text
 import           Data.Char                                       hiding (Space)
@@ -64,17 +63,16 @@ codeParser =
 --
 
 blockCompilerParser :: Parser $ Instruction
-blockCompilerParser = lift2 block a b where
-  a = asciiCI "#block" *> skipHorizontalSpace *> identifierParser
-  b = skipHorizontalSpace *> identifiersParser
---  c = instructionListParser
-    -- <* skipSpace <* asciiCI "#endblock"
+blockCompilerParser = block
+  <$> (asciiCI "#block" *> skipHorizontalSpace *> identifierParser)
+  <*> (skipHorizontalSpace *> identifiersParser)
+--  <*> (instructionListParser <* skipSpace <* asciiCI "#endblock")
 
 block :: Identifier ->  [Identifier] -> Instruction
 block n ps = Def ps n []
 
 callParser :: Parser $ Instruction
-callParser = lift2 call identifierParser (skipHorizontalSpace *> integerValuesParser)
+callParser = call <$> identifierParser <*> (skipHorizontalSpace *> integerValuesParser)
 
 call :: Identifier -> [IntegerValue] -> Instruction
 call n ps = Call ps n
@@ -98,7 +96,9 @@ lineBreaksParser :: Parser CompilerInstruction
 lineBreaksParser = LineBreaks <$> (asciiCI "#linebreaks" *> skipHorizontalSpace *> naturalParser)
 
 tableParser :: Parser CompilerInstruction
-tableParser = lift2 (flip Table) (asciiCI "#table" *> skipHorizontalSpace *> identifierParser) (skipHorizontalSpace *> naturalParser)
+tableParser = flip Table
+  <$> (asciiCI "#table" *> skipHorizontalSpace *> identifierParser)
+  <*> (skipHorizontalSpace *> naturalParser)
 
 dimParser :: Parser CompilerInstruction
 dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser)
@@ -136,12 +136,18 @@ identifier2CodeParser =
       parser Copy "copy"
   <|> parser CopySize "copysize"
   <|> parser Pop "pop"
-    where parser f t = lift2 f (asciiCI t *> skip1HorizontalSpace *> identifierParser) (skip1HorizontalSpace *> identifierParser)
+    where
+      parser f t = f
+        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+        <*> (skip1HorizontalSpace *> identifierParser)
 
 integerValueIdentifierCodeParser :: Parser CodeInstruction
 integerValueIdentifierCodeParser =
       parser Push "push"
-    where parser f t = lift2 f (asciiCI t *> skip1HorizontalSpace *> integerValueParser2) (skip1HorizontalSpace *> identifierParser)
+    where
+      parser f t = f
+        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> identifierParser)
 
 integerIdentifierCodeParser :: Parser CodeInstruction
 integerIdentifierCodeParser =
@@ -149,9 +155,9 @@ integerIdentifierCodeParser =
   <|> parser Dec "dec"
   <|> parser Set "set"
     where
-      parser f t = lift2 (flip f) (a t) b
-      a t = asciiCI t *> skip1HorizontalSpace *> identifierParser
-      b = skip1HorizontalSpace *> integerParser2
+      parser f t = flip f
+        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+        <*> (skip1HorizontalSpace *> integerParser2)
 
 rTableCodeParser :: Parser CodeInstruction
 rTableCodeParser = flip RTable
@@ -185,11 +191,10 @@ eqCodeParser =
   <|> parser IfEq "ifeq"
   <|> parser IfNotEq "ifnoteq"
     where
-      parser f t = lift2 (flip (eqBlock f)) (a t) b
-      a t = asciiCI t *> skip1HorizontalSpace *> identifierParser
-      b = skip1HorizontalSpace *> integerValueParser2
---      c = instructionListParser
-       -- <* skipSpace <* asciiCI "end"
+      parser f t = flip (eqBlock f)
+        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+        <*> (skip1HorizontalSpace *> integerValueParser2)
+--        <*> (instructionListParser <* skipSpace <* asciiCI "end")
 
 eqBlock :: (IntegerValue -> Identifier -> InstructionList -> CodeInstruction) -> IntegerValue ->  Identifier -> CodeInstruction
 eqBlock f a b = f a b []

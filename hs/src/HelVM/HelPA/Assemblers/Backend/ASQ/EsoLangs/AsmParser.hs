@@ -10,7 +10,6 @@ import           HelVM.HelPA.Assembler.AsmParser.Atto
 
 import           HelVM.HelIO.Control.Safe
 
-import           Control.Applicative.HT
 import           Data.Attoparsec.Text
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
@@ -44,10 +43,10 @@ termWithoutPMExpressionParser :: Parser Expression
 termWithoutPMExpressionParser = makeExpressionWithoutPM <$> termParser
 
 termWithPMExpressionParser :: Parser Expression
-termWithPMExpressionParser = lift2 (flip makeExpressionWithPM) termParser pmExpressionParser
+termWithPMExpressionParser = flip makeExpressionWithPM <$> termParser <*> pmExpressionParser
 
 pmExpressionParser :: Parser PMExpression
-pmExpressionParser = lift2 PMExpression pmParser expressionParser
+pmExpressionParser = PMExpression <$> pmParser <*> expressionParser
 
 pmParser :: Parser PM
 pmParser = (Plus <$ char '+') <|> (Minus <$ char '-')

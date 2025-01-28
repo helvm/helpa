@@ -4,7 +4,6 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
-import           Control.Applicative.HT
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 
@@ -109,10 +108,10 @@ dotIdentifierParser :: Parser Identifier
 dotIdentifierParser = char '.' *> identifierParser <* skipHorizontalSpace
 
 identifierParser :: Parser Identifier
-identifierParser = toIdentifier <$> lift2 (:) letter_ (many alphaNum_)
+identifierParser = toIdentifier <$> ((:) <$> letter_ <*> many alphaNum_)
 
 fileNameParser :: Parser Identifier
-fileNameParser = toIdentifier <$> lift2 (:) letter (many alphaNumDot_)
+fileNameParser = toIdentifier <$> ((:) <$> letter <*> many alphaNumDot_)
 
 letter_ :: Parser Char
 letter_ = satisfy isAlpha_ <?> "letter_"
