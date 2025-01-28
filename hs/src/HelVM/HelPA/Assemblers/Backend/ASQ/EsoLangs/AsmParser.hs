@@ -31,10 +31,11 @@ itemListParser :: Parser ItemList
 itemListParser = many itemParser <* endLineParser
 
 itemParser :: Parser Item
-itemParser =
-      (ItemLabel             <$> labelParser)
-  <|> (ItemExpression        <$> expressionParser)
-  <|> (ItemString . unEscape <$> stringParser <* skipHorizontalSpace)
+itemParser = choice
+  [ ItemLabel             <$> labelParser
+  , ItemExpression        <$> expressionParser
+  , ItemString . unEscape <$> stringParser <* skipHorizontalSpace
+  ]
 
 expressionParser :: Parser Expression
 expressionParser = (termWithPMExpressionParser <|> termWithoutPMExpressionParser) <* skipHorizontalSpace
@@ -49,11 +50,15 @@ pmExpressionParser :: Parser PMExpression
 pmExpressionParser = PMExpression <$> pmParser <*> expressionParser
 
 pmParser :: Parser PM
-pmParser = (Plus <$ char '+') <|> (Minus <$ char '-')
+pmParser = choice
+  [ Plus <$ char '+'
+  , Minus <$ char '-'
+  ]
 
 termParser :: Parser Term
-termParser =
-      (TermSymbol       <$> integerValueParser2)
-  <|> (TermQuestionMark <$  char '?')
-  <|> (TermMinus        <$> (char '-' *> termParser))
-  <|> (TermExpression   <$> (char '(' *> expressionParser <* char ')'))
+termParser = choice
+  [ TermSymbol       <$> integerValueParser2
+  , TermQuestionMark <$  char '?'
+  , TermMinus        <$> (char '-' *> termParser)
+  , TermExpression   <$> (char '(' *> expressionParser <* char ')')
+  ]

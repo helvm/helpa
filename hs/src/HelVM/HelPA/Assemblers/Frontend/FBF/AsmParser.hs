@@ -21,9 +21,10 @@ instructionListParser :: Parser InstructionList
 instructionListParser = catMaybes <$> many maybeInstructionParser
 
 maybeInstructionParser :: Parser $ Maybe Instruction
-maybeInstructionParser =
-       Just <$> (skipSpace *> instructionParser)
-  <|> (Nothing <$ (skipSpace *> skipComment))
+maybeInstructionParser = choice
+  [ Just <$> (skipSpace *> instructionParser)
+  , Nothing <$ (skipSpace *> skipComment)
+  ]
 
 instructionParser :: Parser $ Instruction
 instructionParser = choice
@@ -36,30 +37,31 @@ microInstructionParser :: Parser $ MicroInstruction
 microInstructionParser = (Compiler <$> compilerParser) <|> (Code <$> codeParser)
 
 compilerParser :: Parser CompilerInstruction
-compilerParser =
-  try zeroOperandCompilerParser
-  <|> naturalOperandCompilerParser
-  <|> tableParser
-  <|> dimParser
+compilerParser = choice
+  [ zeroOperandCompilerParser
+  , naturalOperandCompilerParser
+  , tableParser
+  , dimParser
+  ]
 
 codeParser :: Parser CodeInstruction
-codeParser =
-  try zeroOperandCodeParser
-  <|> wordOperandCodeParser
-  <|> identifierCodeParser
-  <|> integerValueCodeParser
-  <|> integerIdentifierCodeParser
-  <|> identifier2CodeParser
-  <|> integerValueIdentifierCodeParser
-  <|> rTableCodeParser
-  <|> wTableCodeParser
-  <|> integerValue2IdentifierCodeParser
-  <|> eqCodeParser
-  <|> byte2AsciiCodeParser
-  <|> ascii2ByteCodeParser
-  <|> msgParser
-  <|> printParser
-
+codeParser = choice
+  [ zeroOperandCodeParser
+  , wordOperandCodeParser
+  , identifierCodeParser
+  , integerValueCodeParser
+  , integerIdentifierCodeParser
+  , identifier2CodeParser
+  , integerValueIdentifierCodeParser
+  , rTableCodeParser
+  , wTableCodeParser
+  , integerValue2IdentifierCodeParser
+  , eqCodeParser
+  , byte2AsciiCodeParser
+  , ascii2ByteCodeParser
+  , msgParser
+  , printParser
+  ]
 --
 
 blockCompilerParser :: Parser $ Instruction
@@ -80,17 +82,17 @@ call n ps = Call ps n
 --
 
 zeroOperandCompilerParser :: Parser CompilerInstruction
-zeroOperandCompilerParser =
-      parser Echo "#echo"
-  <|> parser ByteCells "#bytecells"
-  <|> parser EndBlock "#endblock"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandCompilerParser = choice
+  [ parser Echo "#echo"
+  , parser ByteCells "#bytecells"
+  , parser EndBlock "#endblock"
+  ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
-naturalOperandCompilerParser =
-      parser LineBreaks "#linebreaks"
-  <|> parser Custom "#custom"
-    where parser f t = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
+naturalOperandCompilerParser = choice
+  [ parser LineBreaks "#linebreaks"
+  , parser Custom "#custom"
+  ] where parser f t = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
 
 lineBreaksParser :: Parser CompilerInstruction
 lineBreaksParser = LineBreaks <$> (asciiCI "#linebreaks" *> skipHorizontalSpace *> naturalParser)
@@ -106,14 +108,14 @@ dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser
 --
 
 zeroOperandCodeParser :: Parser CodeInstruction
-zeroOperandCodeParser =
-      parser Bell "bell"
-  <|> parser Line "line"
-  <|> parser Space "space"
-  <|> parser Tab "tab"
-  <|> parser End "end"
-  <|> parser Rem "rem"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandCodeParser = choice
+  [ parser Bell "bell"
+  , parser Line "line"
+  , parser Space "space"
+  , parser Tab "tab"
+  , parser End "end"
+  , parser Rem "rem"
+  ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 wordOperandCodeParser :: Parser CodeInstruction
 wordOperandCodeParser =
@@ -121,10 +123,10 @@ wordOperandCodeParser =
     where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> wordParser)
 
 identifierCodeParser :: Parser CodeInstruction
-identifierCodeParser =
-      parser Read "read"
-  <|> parser ClearStack "cleanstack"
-    where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+identifierCodeParser = choice
+  [ parser Read "read"
+  , parser ClearStack "cleanstack"
+  ] where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
 
 integerValueCodeParser :: Parser CodeInstruction
 integerValueCodeParser =
@@ -132,11 +134,11 @@ integerValueCodeParser =
     where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
 
 identifier2CodeParser :: Parser CodeInstruction
-identifier2CodeParser =
-      parser Copy "copy"
-  <|> parser CopySize "copysize"
-  <|> parser Pop "pop"
-    where
+identifier2CodeParser = choice
+  [ parser Copy "copy"
+  , parser CopySize "copysize"
+  , parser Pop "pop"
+  ] where
       parser f t = f
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> identifierParser)
@@ -150,11 +152,11 @@ integerValueIdentifierCodeParser =
         <*> (skip1HorizontalSpace *> identifierParser)
 
 integerIdentifierCodeParser :: Parser CodeInstruction
-integerIdentifierCodeParser =
-      parser Inc "inc"
-  <|> parser Dec "dec"
-  <|> parser Set "set"
-    where
+integerIdentifierCodeParser = choice
+  [ parser Inc "inc"
+  , parser Dec "dec"
+  , parser Set "set"
+  ] where
       parser f t = flip f
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> integerParser2)
@@ -172,25 +174,25 @@ wTableCodeParser = flip3 WTable
   <*> (skip1HorizontalSpace *> integerValueParser2)
 
 integerValue2IdentifierCodeParser :: Parser CodeInstruction
-integerValue2IdentifierCodeParser =
-      parser Add "add"
-  <|> parser Sub "sub"
-  <|> parser Multi "multi"
-  <|> parser Mod "mod"
-  <|> parser Div "div"
-  <|> parser Comp "comp"
-    where
+integerValue2IdentifierCodeParser = choice
+  [ parser Add "add"
+  , parser Sub "sub"
+  , parser Multi "multi"
+  , parser Mod "mod"
+  , parser Div "div"
+  , parser Comp "comp"
+  ] where
       parser f t = f
         <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 eqCodeParser :: Parser CodeInstruction
-eqCodeParser =
-      parser UnEq "uneq"
-  <|> parser IfEq "ifeq"
-  <|> parser IfNotEq "ifnoteq"
-    where
+eqCodeParser = choice
+  [ parser UnEq "uneq"
+  , parser IfEq "ifeq"
+  , parser IfNotEq "ifnoteq"
+  ] where
       parser f t = flip (eqBlock f)
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> integerValueParser2)

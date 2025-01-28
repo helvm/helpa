@@ -18,33 +18,35 @@ instructionListParser :: Parser InstructionList
 instructionListParser = catMaybes <$> many maybeInstructionParser
 
 maybeInstructionParser :: Parser $ Maybe Instruction
-maybeInstructionParser =
-       Just <$> (skipSpace *> instructionParser)
-  <|> (Nothing <$ (skipSpace *> skipComment))
+maybeInstructionParser = choice
+  [ Just <$> (skipSpace *> instructionParser)
+  , Nothing <$ (skipSpace *> skipComment)
+  ]
 
 ----
 
 instructionParser :: Parser Instruction
-instructionParser =
-  try zeroOperandInstructionParser
-  <|> naturalOptInstructionParser
-  <|> identifierOperandInstructionParser
-  <|> integerOperandInstructionParser
-  <|> textOperandInstructionParser
-  <|> labelInstructionParser
-  <|> integerValueInstructionParser
-  <|> integerValueAndIdentifierInstructionParser
-  <|> integerValueAndNaturalValueAndIdentifierInstructionParser
-  <|> pFileInstructionParser
-  <|> pLocInstructionParser
-  <|> markInstructionParser
+instructionParser = choice
+  [ zeroOperandInstructionParser
+  , naturalOptInstructionParser
+  , identifierOperandInstructionParser
+  , integerOperandInstructionParser
+  , textOperandInstructionParser
+  , labelInstructionParser
+  , integerValueInstructionParser
+  , integerValueAndIdentifierInstructionParser
+  , integerValueAndNaturalValueAndIdentifierInstructionParser
+  , pFileInstructionParser
+  , pLocInstructionParser
+  , markInstructionParser
+  ]
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser =
-      parser Exit     "exit"
-  <|> parser Dump     "dump"
-  <|> parser PText    ".text"
-    where parser i t = i <$ (asciiCI t *> endWordParser)
+zeroOperandInstructionParser = choice
+  [ parser Exit     "exit"
+  , parser Dump     "dump"
+  , parser PText    ".text"
+  ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOptInstructionParser :: Parser Instruction
 naturalOptInstructionParser =
@@ -87,32 +89,32 @@ labelInstructionParser =
         j = asciiCI t *> skip1HorizontalSpace *> dotOptIdentifierParser
 
 integerValueAndIdentifierInstructionParser :: Parser Instruction
-integerValueAndIdentifierInstructionParser =
-      parser Mov  "mov"
-  <|> parser Add  "add"
-  <|> parser Sub  "sub"
-  <|> parser Load "load"
-  <|> parser Store "store"
-  <|> parser (L CEQ) "eq"
-  <|> parser (L CNE) "ne"
-  <|> parser (L CLT) "lt"
-  <|> parser (L CGT) "gt"
-  <|> parser (L CLE) "le"
-  <|> parser (L CGE) "ge"
-    where
+integerValueAndIdentifierInstructionParser = choice
+  [ parser Mov  "mov"
+  , parser Add  "add"
+  , parser Sub  "sub"
+  , parser Load "load"
+  , parser Store "store"
+  , parser (L CEQ) "eq"
+  , parser (L CNE) "ne"
+  , parser (L CLT) "lt"
+  , parser (L CGT) "gt"
+  , parser (L CLE) "le"
+  , parser (L CGE) "ge"
+  ] where
       parser f t = f
         <$> (asciiCI t *> (skip1HorizontalSpace *> identifierParser))
         <*> (asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerDotOptValueParser)
 
 integerValueAndNaturalValueAndIdentifierInstructionParser :: Parser Instruction
-integerValueAndNaturalValueAndIdentifierInstructionParser =
-      parser (J CEQ) "jeq"
-  <|> parser (J CNE) "jne"
-  <|> parser (J CLT) "jlt"
-  <|> parser (J CGT) "jgt"
-  <|> parser (J CLE) "jle"
-  <|> parser (J CGE) "jge"
-    where
+integerValueAndNaturalValueAndIdentifierInstructionParser = choice
+  [ parser (J CEQ) "jeq"
+  , parser (J CNE) "jne"
+  , parser (J CLT) "jlt"
+  , parser (J CGT) "jgt"
+  , parser (J CLE) "jle"
+  , parser (J CGE) "jge"
+  ] where
       parser f t = f
         <$> (asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser))
         <*> (asciiCI "," *> skip1HorizontalSpace *> identifierParser)

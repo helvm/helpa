@@ -1,6 +1,7 @@
 # 📅 Revision history for HelPA
 
 ## 0.4.6.7 -- 2025-01-28
+* Remove `<|>`
 * Remove `lift4`
 * Use common `Macro`
 

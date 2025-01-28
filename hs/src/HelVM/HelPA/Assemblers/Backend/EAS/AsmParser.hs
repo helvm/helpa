@@ -19,34 +19,35 @@ instructionListParser :: Parser InstructionList
 instructionListParser = skipManyComment *> skipHorizontalSpace *> many (instructionParser <* skipHorizontalSpace)
 
 instructionParser :: Parser Instruction
-instructionParser =
-  try zeroOperandInstructionParser
-  <|> naturalNumberParser
-  <|> unescapedStringParser
-  <|> labelDefinitionParser
-  <|> includeFileParser
-  <|> lineBreakParser
-  <|> commentParser
+instructionParser = choice
+  [ zeroOperandInstructionParser
+  , naturalNumberParser
+  , unescapedStringParser
+  , labelDefinitionParser
+  , includeFileParser
+  , lineBreakParser
+  , commentParser
+  ]
 
 ----
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser =
-      zeroOperandInstruction E ["E", "dividE"]
-  <|> zeroOperandInstruction T ["T", "Transfer"]
-  <|> zeroOperandInstruction A ["A", "Address"]
-  <|> zeroOperandInstruction O ["O", "Output"]
-  <|> zeroOperandInstruction I ["I", "Input"]
-  <|> zeroOperandInstruction S ["S", "Subtract"]
-  <|> zeroOperandInstruction H ["H", "Halibut"]
-    where zeroOperandInstruction i ts = i <$ (asciiCIChoices ts *> endWordParser)
+zeroOperandInstructionParser = choice
+  [ zeroOperandInstruction E ["E", "dividE"]
+  , zeroOperandInstruction T ["T", "Transfer"]
+  , zeroOperandInstruction A ["A", "Address"]
+  , zeroOperandInstruction O ["O", "Output"]
+  , zeroOperandInstruction I ["I", "Input"]
+  , zeroOperandInstruction S ["S", "Subtract"]
+  , zeroOperandInstruction H ["H", "Halibut"]
+  ] where zeroOperandInstruction i ts = i <$ (asciiCIChoices ts *> endWordParser)
 
 naturalNumberParser :: Parser Instruction
-naturalNumberParser = N <$> (
-      labelNaturalValueParser
-  <|> (asciiCI "N" *> skipHorizontalSpace *> labelNaturalValueParser)
-  <|> (asciiCI "Number" *> endWordParser *> skipHorizontalSpace *> labelNaturalValueParser)
-  )
+naturalNumberParser = N <$> choice
+  [ labelNaturalValueParser
+  , asciiCI "N" *> skipHorizontalSpace *> labelNaturalValueParser
+  , asciiCI "Number" *> endWordParser *> skipHorizontalSpace *> labelNaturalValueParser
+  ]
 
 unescapedStringParser :: Parser Instruction
 unescapedStringParser = U . fromString <$> stringParser

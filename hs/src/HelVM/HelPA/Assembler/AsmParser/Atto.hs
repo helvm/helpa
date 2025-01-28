@@ -71,17 +71,18 @@ ordCharLiteralParser2 :: Integral a => Parser a
 ordCharLiteralParser2 = fromIntegral . ord <$> (escapedCharLiteralParser2 <|> charLiteralParser2)
 
 escapedCharLiteralParser2 :: Parser Char
-escapedCharLiteralParser2 =
-      escape '\'' '\''
-  <|> escape '\\' '\\'
-  <|> escape '\0' '0'
-  <|> escape '\a' 'a'
-  <|> escape '\b' 'b'
-  <|> escape '\f' 'f'
-  <|> escape '\n' 'n'
-  <|> escape '\r' 'r'
-  <|> escape '\t' 't'
-  <|> escape '\v' 'v'
+escapedCharLiteralParser2 = choice
+  [ escape '\'' '\''
+  , escape '\\' '\\'
+  , escape '\0' '0'
+  , escape '\a' 'a'
+  , escape '\b' 'b'
+  , escape '\f' 'f'
+  , escape '\n' 'n'
+  , escape '\r' 'r'
+  , escape '\t' 't'
+  , escape '\v' 'v'
+  ]
 
 escape :: Char -> Char -> Parser Char
 escape a b = a <$ char '\'' *> char '\\' *> char b <* char '\'' <* skipHorizontalSpace
