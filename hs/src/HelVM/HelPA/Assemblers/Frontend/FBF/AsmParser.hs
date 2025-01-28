@@ -195,9 +195,7 @@ eqBlock :: (IntegerValue -> Identifier -> InstructionList -> CodeInstruction) ->
 eqBlock f a b = f a b []
 
 byte2AsciiCodeParser :: Parser CodeInstruction
-byte2AsciiCodeParser =
-      parser Byte2Ascii "byte2ascii"
-  <|> parser Byte2Ascii "BYTE2ASCII"
+byte2AsciiCodeParser = parser Byte2Ascii "byte2ascii"
     where
       parser f t = lift4 f (a t) b c d
       a t = asciiCI t *> skip1HorizontalSpace *> integerValueParser2
@@ -206,9 +204,7 @@ byte2AsciiCodeParser =
       d = skip1HorizontalSpace *> identifierParser
 
 ascii2ByteCodeParser :: Parser CodeInstruction
-ascii2ByteCodeParser =
-      parser Ascii2Byte "ascii2byte"
-  <|> parser Ascii2Byte "ASCII2BYTE"
+ascii2ByteCodeParser = parser Ascii2Byte "ascii2byte"
     where
       parser f t = lift4 f (a t) b c d
       a t = asciiCI t *> skip1HorizontalSpace *> integerValueParser2
