@@ -114,10 +114,10 @@ integerValueAndNaturalValueAndIdentifierInstructionParser =
   <|> parser (J CLE) "jle"
   <|> parser (J CGE) "jge"
     where
-      parser f t = lift3 f j d s where
-        j = asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser)
-        d = asciiCI "," *> skip1HorizontalSpace *> identifierParser
-        s = asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerValueParser
+      parser f t = f
+        <$> (asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser))
+        <*> (asciiCI "," *> skip1HorizontalSpace *> identifierParser)
+        <*> (asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerValueParser)
 
 pFileInstructionParser :: Parser Instruction
 pFileInstructionParser = lift2 PFile op1 op2 where
@@ -125,10 +125,10 @@ pFileInstructionParser = lift2 PFile op1 op2 where
   op2 = skip1HorizontalSpace *> textParser
 
 pLocInstructionParser :: Parser Instruction
-pLocInstructionParser = lift3 PLoc op1 op2 op3 where
-  op1 = asciiCI ".loc" *> (skip1HorizontalSpace *> naturalParser)
-  op2 = skip1HorizontalSpace *> naturalParser
-  op3 = skip1HorizontalSpace *> naturalParser
+pLocInstructionParser = PLoc
+  <$> (asciiCI ".loc" *> (skip1HorizontalSpace *> naturalParser))
+  <*> (skip1HorizontalSpace *> naturalParser)
+  <*> (skip1HorizontalSpace *> naturalParser)
 
 markInstructionParser :: Parser Instruction
 markInstructionParser = Mark <$> dotOptLabelParser

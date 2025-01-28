@@ -154,16 +154,16 @@ integerIdentifierCodeParser =
       b = skip1HorizontalSpace *> integerParser2
 
 rTableCodeParser :: Parser CodeInstruction
-rTableCodeParser = lift3 (flip RTable) a b c where
-  a = asciiCI "rtable" *> skip1HorizontalSpace *> identifierParser
-  b = skip1HorizontalSpace *> integerValueParser2
-  c = skip1HorizontalSpace *> identifierParser
+rTableCodeParser = flip RTable
+  <$> (asciiCI "rtable" *> skip1HorizontalSpace *> identifierParser)
+  <*> (skip1HorizontalSpace *> integerValueParser2)
+  <*> (skip1HorizontalSpace *> identifierParser)
 
 wTableCodeParser :: Parser CodeInstruction
-wTableCodeParser = lift3 (flip3 WTable) a b c where
-  a = asciiCI "wtable" *> skip1HorizontalSpace *> identifierParser
-  b = skip1HorizontalSpace *> integerValueParser2
-  c = skip1HorizontalSpace *> integerValueParser2
+wTableCodeParser = flip3 WTable
+  <$> (asciiCI "wtable" *> skip1HorizontalSpace *> identifierParser)
+  <*> (skip1HorizontalSpace *> integerValueParser2)
+  <*> (skip1HorizontalSpace *> integerValueParser2)
 
 integerValue2IdentifierCodeParser :: Parser CodeInstruction
 integerValue2IdentifierCodeParser =
@@ -174,10 +174,10 @@ integerValue2IdentifierCodeParser =
   <|> parser Div "div"
   <|> parser Comp "comp"
     where
-      parser f t = lift3 f (a t) b c
-      a t = asciiCI t *> skip1HorizontalSpace *> integerValueParser2
-      b = skip1HorizontalSpace *> integerValueParser2
-      c = skip1HorizontalSpace *> identifierParser
+      parser f t = f
+        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> identifierParser)
 
 eqCodeParser :: Parser CodeInstruction
 eqCodeParser =
