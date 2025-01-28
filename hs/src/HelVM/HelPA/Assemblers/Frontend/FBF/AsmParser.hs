@@ -197,20 +197,20 @@ eqBlock f a b = f a b []
 byte2AsciiCodeParser :: Parser CodeInstruction
 byte2AsciiCodeParser = parser Byte2Ascii "byte2ascii"
     where
-      parser f t = lift4 f (a t) b c d
-      a t = asciiCI t *> skip1HorizontalSpace *> integerValueParser2
-      b = skip1HorizontalSpace *> identifierParser
-      c = skip1HorizontalSpace *> identifierParser
-      d = skip1HorizontalSpace *> identifierParser
+      parser f t = f
+        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> identifierParser)
+        <*> (skip1HorizontalSpace *> identifierParser)
+        <*> (skip1HorizontalSpace *> identifierParser)
 
 ascii2ByteCodeParser :: Parser CodeInstruction
 ascii2ByteCodeParser = parser Ascii2Byte "ascii2byte"
     where
-      parser f t = lift4 f (a t) b c d
-      a t = asciiCI t *> skip1HorizontalSpace *> integerValueParser2
-      b = skip1HorizontalSpace *> integerValueParser2
-      c = skip1HorizontalSpace *> integerValueParser2
-      d = skip1HorizontalSpace *> identifierParser
+      parser f t = f
+        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> integerValueParser2)
+        <*> (skip1HorizontalSpace *> identifierParser)
 
 msgParser :: Parser CodeInstruction
 msgParser = Msg <$> (asciiCI "msg" *> skipHorizontalSpace *> wordsParser)
