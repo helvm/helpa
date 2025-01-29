@@ -8,6 +8,8 @@ import           HelVM.HelPA.Assemblers.Backend.ASQ.Util.AsmParser
 
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 
+import           HelVM.HelIO.CartesianProduct
+
 import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text
@@ -50,10 +52,10 @@ pmExpressionParser :: Parser PMExpression
 pmExpressionParser = PMExpression <$> pmParser <*> expressionParser
 
 pmParser :: Parser PM
-pmParser = choice
-  [ Plus <$ char '+'
-  , Minus <$ char '-'
-  ]
+pmParser = choiceMap (uncurry parser)
+  [ Plus  >< '+'
+  , Minus >< '-'
+  ] where parser f c = f <$ char c
 
 termParser :: Parser Term
 termParser = choice

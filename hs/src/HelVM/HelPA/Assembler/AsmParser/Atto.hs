@@ -4,16 +4,16 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
-import           HelVM.HelIO.Control.Safe    hiding ((<?>))
+import           HelVM.HelIO.CartesianProduct
+import           HelVM.HelIO.Control.Safe     hiding ((<?>))
 
 import           Control.Type.Operator
 
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 
-
 import           Data.Char
-import qualified Data.Text                   as Text
+import qualified Data.Text                    as Text
 
 parseWholeText :: MonadSafe m => Parser () -> Parser a -> Text -> m [a]
 parseWholeText commentSign instructionParser = parseText (listParser commentSign instructionParser <* skipSpace <* endOfInput)
@@ -99,17 +99,17 @@ ordCharLiteralParser2 :: Integral a => Parser a
 ordCharLiteralParser2 = fromIntegral . ord <$> (escapedCharLiteralParser2 <|> charLiteralParser2)
 
 escapedCharLiteralParser2 :: Parser Char
-escapedCharLiteralParser2 = choice
-  [ escape '\'' '\''
-  , escape '\\' '\\'
-  , escape '\0' '0'
-  , escape '\a' 'a'
-  , escape '\b' 'b'
-  , escape '\f' 'f'
-  , escape '\n' 'n'
-  , escape '\r' 'r'
-  , escape '\t' 't'
-  , escape '\v' 'v'
+escapedCharLiteralParser2 = choiceMap (uncurry escape)
+  [ '\'' >< '\''
+  , '\\' >< '\\'
+  , '\0' >< '0'
+  , '\a' >< 'a'
+  , '\b' >< 'b'
+  , '\f' >< 'f'
+  , '\n' >< 'n'
+  , '\r' >< 'r'
+  , '\t' >< 't'
+  , '\v' >< 'v'
   ]
 
 escape :: Char -> Char -> Parser Char
@@ -157,7 +157,10 @@ skipAllToEndOfLine = skipWhile isNotEndOfLine
 ----
 
 asciiCIChoices :: [Text] -> Parser Text
-asciiCIChoices = choice . map asciiCI
+asciiCIChoices = choiceMap asciiCI
+
+choiceMap :: Alternative f => (a1 -> f a2) -> [a1] -> f a2
+choiceMap f l = choice $ f <$> l
 
 isNotEndOfLine :: Char -> Bool
 isNotEndOfLine = not . isEndOfLine

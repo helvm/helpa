@@ -7,6 +7,8 @@ import           HelVM.HelPA.Assemblers.Backend.EAS.Instruction
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 import           HelVM.HelPA.Assembler.Value
 
+import           HelVM.HelIO.CartesianProduct
+
 import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text                           hiding (D, I)
@@ -32,14 +34,14 @@ instructionParser = choice
 ----
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser = choice
-  [ zeroOperandInstruction E ["E", "dividE"]
-  , zeroOperandInstruction T ["T", "Transfer"]
-  , zeroOperandInstruction A ["A", "Address"]
-  , zeroOperandInstruction O ["O", "Output"]
-  , zeroOperandInstruction I ["I", "Input"]
-  , zeroOperandInstruction S ["S", "Subtract"]
-  , zeroOperandInstruction H ["H", "Halibut"]
+zeroOperandInstructionParser = choiceMap (uncurry zeroOperandInstruction)
+  [ E >< ["E", "dividE"]
+  , T >< ["T", "Transfer"]
+  , A >< ["A", "Address"]
+  , O >< ["O", "Output"]
+  , I >< ["I", "Input"]
+  , S >< ["S", "Subtract"]
+  , H >< ["H", "Halibut"]
   ] where zeroOperandInstruction i ts = i <$ (asciiCIChoices ts *> endWordParser)
 
 naturalNumberParser :: Parser Instruction

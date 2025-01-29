@@ -4,6 +4,8 @@ import           HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
 
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 
+import           HelVM.HelIO.CartesianProduct
+
 import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text
@@ -32,10 +34,10 @@ instructionParser = choice
   ]
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser = choice
-  [ parser Exit     "exit"
-  , parser Dump     "dump"
-  , parser PText    ".text"
+zeroOperandInstructionParser = choiceMap (uncurry parser)
+  [ Exit    >< "exit"
+  , Dump    >< "dump"
+  , PText   >< ".text"
   ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOptInstructionParser :: Parser Instruction
@@ -79,31 +81,31 @@ labelInstructionParser =
         j = asciiCI t *> skip1HorizontalSpace *> dotOptIdentifierParser
 
 integerValueAndIdentifierInstructionParser :: Parser Instruction
-integerValueAndIdentifierInstructionParser = choice
-  [ parser Mov  "mov"
-  , parser Add  "add"
-  , parser Sub  "sub"
-  , parser Load "load"
-  , parser Store "store"
-  , parser (L CEQ) "eq"
-  , parser (L CNE) "ne"
-  , parser (L CLT) "lt"
-  , parser (L CGT) "gt"
-  , parser (L CLE) "le"
-  , parser (L CGE) "ge"
+integerValueAndIdentifierInstructionParser = choiceMap (uncurry parser)
+  [ Mov   >< "mov"
+  , Add   >< "add"
+  , Sub   >< "sub"
+  , Load  >< "load"
+  , Store >< "store"
+  , L CEQ >< "eq"
+  , L CNE >< "ne"
+  , L CLT >< "lt"
+  , L CGT >< "gt"
+  , L CLE >< "le"
+  , L CGE >< "ge"
   ] where
       parser f t = f
         <$> (asciiCI t *> (skip1HorizontalSpace *> identifierParser))
         <*> (asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerDotOptValueParser)
 
 integerValueAndNaturalValueAndIdentifierInstructionParser :: Parser Instruction
-integerValueAndNaturalValueAndIdentifierInstructionParser = choice
-  [ parser (J CEQ) "jeq"
-  , parser (J CNE) "jne"
-  , parser (J CLT) "jlt"
-  , parser (J CGT) "jgt"
-  , parser (J CLE) "jle"
-  , parser (J CGE) "jge"
+integerValueAndNaturalValueAndIdentifierInstructionParser = choiceMap (uncurry parser)
+  [ J CEQ >< "jeq"
+  , J CNE >< "jne"
+  , J CLT >< "jlt"
+  , J CGT >< "jgt"
+  , J CLE >< "jle"
+  , J CGE >< "jge"
   ] where
       parser f t = f
         <$> (asciiCI t *> (skip1HorizontalSpace *> dotOptIdentifierParser))

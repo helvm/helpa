@@ -6,6 +6,8 @@ import           HelVM.HelPA.Assembler.AsmParser.Atto
 import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
 
+import           HelVM.HelIO.CartesianProduct
+
 import           HelVM.HelIO.Control.Safe
 
 import           Control.Type.Operator
@@ -75,16 +77,16 @@ call n ps = Call ps n
 --
 
 zeroOperandCompilerParser :: Parser CompilerInstruction
-zeroOperandCompilerParser = choice
-  [ parser Echo "#echo"
-  , parser ByteCells "#bytecells"
-  , parser EndBlock "#endblock"
+zeroOperandCompilerParser = choiceMap (uncurry parser)
+  [ Echo      >< "#echo"
+  , ByteCells >< "#bytecells"
+  , EndBlock  >< "#endblock"
   ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
-naturalOperandCompilerParser = choice
-  [ parser LineBreaks "#linebreaks"
-  , parser Custom "#custom"
+naturalOperandCompilerParser = choiceMap (uncurry parser)
+  [ LineBreaks >< "#linebreaks"
+  , Custom     >< "#custom"
   ] where parser f t = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
 
 lineBreaksParser :: Parser CompilerInstruction
@@ -101,13 +103,13 @@ dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser
 --
 
 zeroOperandCodeParser :: Parser CodeInstruction
-zeroOperandCodeParser = choice
-  [ parser Bell "bell"
-  , parser Line "line"
-  , parser Space "space"
-  , parser Tab "tab"
-  , parser End "end"
-  , parser Rem "rem"
+zeroOperandCodeParser = choiceMap (uncurry parser)
+  [ Bell  >< "bell"
+  , Line  >< "line"
+  , Space >< "space"
+  , Tab   >< "tab"
+  , End   >< "end"
+  , Rem   >< "rem"
   ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 wordOperandCodeParser :: Parser CodeInstruction
@@ -116,9 +118,9 @@ wordOperandCodeParser =
     where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> wordParser)
 
 identifierCodeParser :: Parser CodeInstruction
-identifierCodeParser = choice
-  [ parser Read "read"
-  , parser ClearStack "cleanstack"
+identifierCodeParser = choiceMap (uncurry parser)
+  [ Read       >< "read"
+  , ClearStack >< "cleanstack"
   ] where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
 
 integerValueCodeParser :: Parser CodeInstruction
@@ -127,10 +129,10 @@ integerValueCodeParser =
     where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
 
 identifier2CodeParser :: Parser CodeInstruction
-identifier2CodeParser = choice
-  [ parser Copy "copy"
-  , parser CopySize "copysize"
-  , parser Pop "pop"
+identifier2CodeParser = choiceMap (uncurry parser)
+  [ Copy     >< "copy"
+  , CopySize >< "copysize"
+  , Pop      >< "pop"
   ] where
       parser f t = f
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
@@ -145,10 +147,10 @@ integerValueIdentifierCodeParser =
         <*> (skip1HorizontalSpace *> identifierParser)
 
 integerIdentifierCodeParser :: Parser CodeInstruction
-integerIdentifierCodeParser = choice
-  [ parser Inc "inc"
-  , parser Dec "dec"
-  , parser Set "set"
+integerIdentifierCodeParser = choiceMap (uncurry parser)
+  [ Inc >< "inc"
+  , Dec >< "dec"
+  , Set >< "set"
   ] where
       parser f t = flip f
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
@@ -167,13 +169,13 @@ wTableCodeParser = flip3 WTable
   <*> (skip1HorizontalSpace *> integerValueParser2)
 
 integerValue2IdentifierCodeParser :: Parser CodeInstruction
-integerValue2IdentifierCodeParser = choice
-  [ parser Add "add"
-  , parser Sub "sub"
-  , parser Multi "multi"
-  , parser Mod "mod"
-  , parser Div "div"
-  , parser Comp "comp"
+integerValue2IdentifierCodeParser = choiceMap (uncurry parser)
+  [ Add   >< "add"
+  , Sub   >< "sub"
+  , Multi >< "multi"
+  , Mod   >< "mod"
+  , Div   >< "div"
+  , Comp  >< "comp"
   ] where
       parser f t = f
         <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
@@ -181,10 +183,10 @@ integerValue2IdentifierCodeParser = choice
         <*> (skip1HorizontalSpace *> identifierParser)
 
 eqCodeParser :: Parser CodeInstruction
-eqCodeParser = choice
-  [ parser UnEq "uneq"
-  , parser IfEq "ifeq"
-  , parser IfNotEq "ifnoteq"
+eqCodeParser = choiceMap (uncurry parser)
+  [ UnEq    >< "uneq"
+  , IfEq    >< "ifeq"
+  , IfNotEq >< "ifnoteq"
   ] where
       parser f t = flip (eqBlock f)
         <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)

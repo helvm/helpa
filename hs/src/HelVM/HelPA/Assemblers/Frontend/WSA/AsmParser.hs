@@ -6,6 +6,8 @@ import           HelVM.HelPA.Assemblers.Frontend.WSA.Instruction
 
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 
+import           HelVM.HelIO.CartesianProduct
+
 import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text
@@ -27,42 +29,42 @@ instructionParser = choice
   ]
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser = choice
-  [ parser Pop        "pop"
-  , parser Dup        "doub"
-  , parser Swap       "swap"
-  , parser Return     "ret"
-  , parser End        "exit"
-  , parser OutputNum  "outn"
-  , parser OutputChar "outc"
-  , parser InputNum   "inn"
-  , parser InputChar  "inc"
+zeroOperandInstructionParser = choiceMap (uncurry parser)
+  [ Pop        >< "pop"
+  , Dup        >< "doub"
+  , Swap       >< "swap"
+  , Return     >< "ret"
+  , End        >< "exit"
+  , OutputNum  >< "outn"
+  , OutputChar >< "outc"
+  , InputNum   >< "inn"
+  , InputChar  >< "inc"
   ] where parser i t = i <$ (asciiCI t *> endWordParser)
 
 maybeOperandInstructionParser :: Parser Instruction
-maybeOperandInstructionParser = choice
-  [ parser Add   "add"
-  , parser Sub   "sub"
-  , parser Mul   "mul"
-  , parser Div   "div"
-  , parser Mod   "mod"
-  , parser Store "store"
-  , parser Load  "retrive"
+maybeOperandInstructionParser = choiceMap (uncurry parser)
+  [ Add   >< "add"
+  , Sub   >< "sub"
+  , Mul   >< "mul"
+  , Div   >< "div"
+  , Mod   >< "mod"
+  , Store >< "store"
+  , Load  >< "retrive"
   ] where parser f t = f <$> (asciiCI t *> optional (skip1HorizontalSpace *> integerParser))
 
 identifierOperandInstructionParser :: Parser Instruction
-identifierOperandInstructionParser = choice
-  [ parser Mark     "label"
-  , parser Call     "call"
-  , parser Branch   "jump"
-  , parser BranchZ  "jumpZ"
-  , parser BranchM  "jumpN"
-  , parser BranchP  "jumpP"
-  , parser BranchNP "jumpNZ"
-  , parser BranchNM "jumpPZ"
-  , parser BranchNZ "jumpNP"
-  , parser BranchNZ "jumpPN"
-  , parser Include  "include"
+identifierOperandInstructionParser = choiceMap (uncurry parser)
+  [ Mark     >< "label"
+  , Call     >< "call"
+  , Branch   >< "jump"
+  , BranchZ  >< "jumpZ"
+  , BranchM  >< "jumpN"
+  , BranchP  >< "jumpP"
+  , BranchNP >< "jumpNZ"
+  , BranchNM >< "jumpPZ"
+  , BranchNZ >< "jumpNP"
+  , BranchNZ >< "jumpPN"
+  , Include  >< "include"
   ] where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
 
 testParser :: Parser Instruction
