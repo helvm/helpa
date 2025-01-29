@@ -1,8 +1,9 @@
 # 📅 Revision history for HelPA
 
-## 0.4.6.7 -- 2025-01-28
+## 0.4.6.7 -- 2025-01-29
+* Refactor `Atto`
 * Remove `<|>`
-* Remove `lift4`
+* Remove `lift4` & `lift3` & `lift2`
 * Use common `Macro`
 
 ## 0.4.6.6 -- 2025-01-26
