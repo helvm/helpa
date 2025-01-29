@@ -14,17 +14,10 @@ import           Data.Char                                       hiding (Space)
 import           Data.Function.Flip
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
---parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <*skipSpace <* endOfInput)
-parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <*skipSpace)
+--parseAssemblyText = parseWholeText commentSign instructionParser
+parseAssemblyText = parseFirstPartOfText commentSign instructionParser
 
-instructionListParser :: Parser InstructionList
-instructionListParser = catMaybes <$> many maybeInstructionParser
-
-maybeInstructionParser :: Parser $ Maybe Instruction
-maybeInstructionParser = choice
-  [ Just <$> (skipSpace *> instructionParser)
-  , Nothing <$ (skipSpace *> skipComment)
-  ]
+----
 
 instructionParser :: Parser $ Instruction
 instructionParser = choice
@@ -244,8 +237,8 @@ wordParser = takeWhile1 (not . isSpace)
 
 --
 
-skipComment :: Parser ()
-skipComment = char commentChar *> char commentChar *> skipAllToEndOfLine
+commentSign :: Parser ()
+commentSign = void $ char commentChar *> char commentChar
 
 endWordParser :: Parser Text
 endWordParser = takeTill isEndWord

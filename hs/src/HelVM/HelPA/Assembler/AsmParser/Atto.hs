@@ -4,11 +4,36 @@ import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
 
+import           HelVM.HelIO.Control.Safe    hiding ((<?>))
+
+import           Control.Type.Operator
+
 import           Data.Attoparsec.Combinator
 import           Data.Attoparsec.Text
 
+
 import           Data.Char
 import qualified Data.Text                   as Text
+
+parseWholeText :: MonadSafe m => Parser () -> Parser a -> Text -> m [a]
+parseWholeText commentSign instructionParser = parseText (listParser commentSign instructionParser <* skipSpace <* endOfInput)
+
+parseFirstPartOfText :: MonadSafe m => Parser () -> Parser a -> Text -> m [a]
+parseFirstPartOfText commentSign instructionParser = parseText (listParser commentSign instructionParser <* skipSpace)
+
+parseText :: MonadSafe m => Parser a -> Text -> m a
+parseText p = liftEitherLegacy . parseOnly p
+
+listParser :: Parser () -> Parser a -> Parser [a]
+listParser commentSign instructionParser = catMaybes <$> many (maybeParser commentSign instructionParser)
+
+maybeParser :: Parser () -> Parser a -> Parser $ Maybe a
+maybeParser commentSign instructionParser = choice
+  [ Nothing <$ (skipSpace *> commentSign *> skipAllToEndOfLine)
+  , Just <$> (skipSpace *> instructionParser)
+  ]
+
+--
 
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
@@ -17,16 +42,19 @@ signedOptIntegerDotOptValueParser :: Parser IntegerValue
 signedOptIntegerDotOptValueParser = Literal <$> signedOptIntegerParser <|> Variable <$> dotOptIdentifierParser
 
 signedOptIntegerValueParser :: Parser IntegerValue
-signedOptIntegerValueParser = Literal <$> signedOptIntegerParser <|> Variable <$> identifierParser
+signedOptIntegerValueParser = variableParser signedOptIntegerParser
 
 signedIntegerValueParser :: Parser IntegerValue
-signedIntegerValueParser = Literal <$> signedIntegerParser <|> Variable <$> identifierParser
+signedIntegerValueParser = variableParser signedIntegerParser
 
 integerValueParser2 :: Parser IntegerValue
-integerValueParser2 = Literal <$> integerParser2 <|> Variable <$> identifierParser
+integerValueParser2 = variableParser integerParser2
 
 naturalValueParser :: Parser NaturalValue
-naturalValueParser = Literal <$> naturalParser <|> Variable <$> identifierParser
+naturalValueParser = variableParser naturalParser
+
+variableParser :: Parser a -> Parser $ Value a
+variableParser p = Literal <$> p <|> Variable <$> identifierParser
 
 dotOptLabelParser :: Parser Identifier
 dotOptLabelParser = (Text.cons '.' <$> dotLabelParser) <|> labelParser

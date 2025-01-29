@@ -8,21 +8,11 @@ import           HelVM.HelPA.Assembler.AsmParser.Atto
 
 import           HelVM.HelIO.Control.Safe
 
-import           Control.Type.Operator
 import           Data.Attoparsec.Text
 import           Data.Char
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
-parseAssemblyText = liftEitherLegacy . parseOnly (instructionListParser <*skipSpace <* endOfInput)
-
-instructionListParser :: Parser InstructionList
-instructionListParser = catMaybes <$> many maybeInstructionParser
-
-maybeInstructionParser :: Parser $ Maybe Instruction
-maybeInstructionParser = choice
-  [ Just <$> (skipSpace *> instructionParser)
-  , Nothing <$ (skipSpace *> skipComment)
-  ]
+parseAssemblyText = parseWholeText commentSign instructionParser
 
 ----
 
@@ -86,8 +76,8 @@ pushSParser = PushS . fromString <$> (asciiCI "pushs" *> skipHorizontalSpace *> 
 
 ----
 
-skipComment :: Parser ()
-skipComment = char commentChar *> skipAllToEndOfLine
+commentSign :: Parser ()
+commentSign = void $ char commentChar
 
 endWordParser :: Parser Text
 endWordParser = takeTill isEndWord
