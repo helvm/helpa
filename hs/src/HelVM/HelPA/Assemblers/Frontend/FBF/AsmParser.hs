@@ -77,99 +77,92 @@ call n ps = Call ps n
 --
 
 zeroOperandCompilerParser :: Parser CompilerInstruction
-zeroOperandCompilerParser = choiceMap (uncurry parser)
+zeroOperandCompilerParser = choiceMap parser
   [ Echo      >< "#echo"
   , ByteCells >< "#bytecells"
   , EndBlock  >< "#endblock"
-  ] where parser i t = i <$ (asciiCI t *> endWordParser)
+  ] where parser = uncurry $ zeroOperandParser endWordParser
 
 naturalOperandCompilerParser :: Parser CompilerInstruction
-naturalOperandCompilerParser = choiceMap (uncurry parser)
+naturalOperandCompilerParser = choiceMap parser
   [ LineBreaks >< "#linebreaks"
   , Custom     >< "#custom"
-  ] where parser f t = f <$> (asciiCI t *> skipHorizontalSpace *> naturalParser)
+  ] where parser (f , t) = mapParser f t $ skipHorizontalSpace *> naturalParser
 
 lineBreaksParser :: Parser CompilerInstruction
-lineBreaksParser = LineBreaks <$> (asciiCI "#linebreaks" *> skipHorizontalSpace *> naturalParser)
+lineBreaksParser = mapParser LineBreaks "#linebreaks" $ skipHorizontalSpace *> naturalParser
 
 tableParser :: Parser CompilerInstruction
-tableParser = flip Table
-  <$> (asciiCI "#table" *> skipHorizontalSpace *> identifierParser)
+tableParser = mapParser (flip Table) "#table"
+      (skipHorizontalSpace *> identifierParser)
   <*> (skipHorizontalSpace *> naturalParser)
 
 dimParser :: Parser CompilerInstruction
-dimParser = Dim <$> (asciiCI "#dim" *> skipHorizontalSpace *> identifiers1Parser)
+dimParser = mapParser Dim "#dim" $ skipHorizontalSpace *> identifiers1Parser
 
 --
 
 zeroOperandCodeParser :: Parser CodeInstruction
-zeroOperandCodeParser = choiceMap (uncurry parser)
+zeroOperandCodeParser = choiceMap parser
   [ Bell  >< "bell"
   , Line  >< "line"
   , Space >< "space"
   , Tab   >< "tab"
   , End   >< "end"
   , Rem   >< "rem"
-  ] where parser i t = i <$ (asciiCI t *> endWordParser)
+  ] where parser = uncurry $ zeroOperandParser endWordParser
 
 wordOperandCodeParser :: Parser CodeInstruction
-wordOperandCodeParser =
-      parser BrainFuck "brainfuck"
-    where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> wordParser)
+wordOperandCodeParser = mapParser BrainFuck "brainfuck" $ skip1HorizontalSpace *> wordParser
 
 identifierCodeParser :: Parser CodeInstruction
-identifierCodeParser = choiceMap (uncurry parser)
+identifierCodeParser = choiceMap parser
   [ Read       >< "read"
   , ClearStack >< "cleanstack"
-  ] where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+  ] where parser (f , t) = mapParser f t $ skip1HorizontalSpace *> identifierParser
 
 integerValueCodeParser :: Parser CodeInstruction
-integerValueCodeParser =
-      parser MoveFrom "movefrom"
-    where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+integerValueCodeParser = mapParser MoveFrom "movefrom" $ skip1HorizontalSpace *> integerValueParser2
 
 identifier2CodeParser :: Parser CodeInstruction
-identifier2CodeParser = choiceMap (uncurry parser)
+identifier2CodeParser = choiceMap parser
   [ Copy     >< "copy"
   , CopySize >< "copysize"
   , Pop      >< "pop"
   ] where
-      parser f t = f
-        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+      parser (f , t) = mapParser f t
+            (skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 integerValueIdentifierCodeParser :: Parser CodeInstruction
-integerValueIdentifierCodeParser =
-      parser Push "push"
-    where
-      parser f t = f
-        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+integerValueIdentifierCodeParser = mapParser Push "push"
+            (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 integerIdentifierCodeParser :: Parser CodeInstruction
-integerIdentifierCodeParser = choiceMap (uncurry parser)
+integerIdentifierCodeParser = choiceMap parser
   [ Inc >< "inc"
   , Dec >< "dec"
   , Set >< "set"
   ] where
-      parser f t = flip f
-        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+      parser (f , t) = mapParser (flip f) t
+            (skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> integerParser2)
 
 rTableCodeParser :: Parser CodeInstruction
-rTableCodeParser = flip RTable
-  <$> (asciiCI "rtable" *> skip1HorizontalSpace *> identifierParser)
+rTableCodeParser = mapParser (flip RTable) "rtable"
+      (skip1HorizontalSpace *> identifierParser)
   <*> (skip1HorizontalSpace *> integerValueParser2)
   <*> (skip1HorizontalSpace *> identifierParser)
 
 wTableCodeParser :: Parser CodeInstruction
-wTableCodeParser = flip3 WTable
-  <$> (asciiCI "wtable" *> skip1HorizontalSpace *> identifierParser)
+wTableCodeParser = mapParser (flip3 WTable) "wtable"
+      (skip1HorizontalSpace *> identifierParser)
   <*> (skip1HorizontalSpace *> integerValueParser2)
   <*> (skip1HorizontalSpace *> integerValueParser2)
 
 integerValue2IdentifierCodeParser :: Parser CodeInstruction
-integerValue2IdentifierCodeParser = choiceMap (uncurry parser)
+integerValue2IdentifierCodeParser = choiceMap parser
   [ Add   >< "add"
   , Sub   >< "sub"
   , Multi >< "multi"
@@ -177,19 +170,19 @@ integerValue2IdentifierCodeParser = choiceMap (uncurry parser)
   , Div   >< "div"
   , Comp  >< "comp"
   ] where
-      parser f t = f
-        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+      parser (f , t) = mapParser f t
+            (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 eqCodeParser :: Parser CodeInstruction
-eqCodeParser = choiceMap (uncurry parser)
+eqCodeParser = choiceMap parser
   [ UnEq    >< "uneq"
   , IfEq    >< "ifeq"
   , IfNotEq >< "ifnoteq"
   ] where
-      parser f t = flip (eqBlock f)
-        <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+      parser (f , t) = mapParser (flip (eqBlock f)) t
+            (skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> integerValueParser2)
 --        <*> (instructionListParser <* skipSpace <* asciiCI "end")
 
@@ -197,28 +190,24 @@ eqBlock :: (IntegerValue -> Identifier -> InstructionList -> CodeInstruction) ->
 eqBlock f a b = f a b []
 
 byte2AsciiCodeParser :: Parser CodeInstruction
-byte2AsciiCodeParser = parser Byte2Ascii "byte2ascii"
-    where
-      parser f t = f
-        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+byte2AsciiCodeParser = mapParser Byte2Ascii "byte2ascii"
+            (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> identifierParser)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 ascii2ByteCodeParser :: Parser CodeInstruction
-ascii2ByteCodeParser = parser Ascii2Byte "ascii2byte"
-    where
-      parser f t = f
-        <$> (asciiCI t *> skip1HorizontalSpace *> integerValueParser2)
+ascii2ByteCodeParser = mapParser Ascii2Byte "ascii2byte"
+            (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> integerValueParser2)
         <*> (skip1HorizontalSpace *> identifierParser)
 
 msgParser :: Parser CodeInstruction
-msgParser = Msg <$> (asciiCI "msg" *> skipHorizontalSpace *> wordsParser)
+msgParser = mapParser Msg "msg" $ skipHorizontalSpace *> wordsParser
 
 printParser :: Parser CodeInstruction
-printParser = Print <$> (asciiCI "print" *> skipHorizontalSpace *> identifiers1Parser)
+printParser = mapParser Print "print" $ skipHorizontalSpace *> identifiers1Parser
 
 --
 
@@ -242,8 +231,8 @@ wordParser = takeWhile1 (not . isSpace)
 commentSign :: Parser ()
 commentSign = void $ char commentChar *> char commentChar
 
-endWordParser :: Parser Text
-endWordParser = takeTill isEndWord
+endWordParser :: Parser ()
+endWordParser = void $ takeTill isEndWord
 
 isEndWord :: Char -> Bool
 isEndWord c = isSpace c || (commentChar == c)

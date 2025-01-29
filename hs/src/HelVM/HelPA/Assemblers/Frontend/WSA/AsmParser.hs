@@ -29,7 +29,7 @@ instructionParser = choice
   ]
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser = choiceMap (uncurry parser)
+zeroOperandInstructionParser = choiceMap parser
   [ Pop        >< "pop"
   , Dup        >< "doub"
   , Swap       >< "swap"
@@ -39,10 +39,10 @@ zeroOperandInstructionParser = choiceMap (uncurry parser)
   , OutputChar >< "outc"
   , InputNum   >< "inn"
   , InputChar  >< "inc"
-  ] where parser i t = i <$ (asciiCI t *> endWordParser)
+  ] where parser = uncurry $ zeroOperandParser endWordParser
 
 maybeOperandInstructionParser :: Parser Instruction
-maybeOperandInstructionParser = choiceMap (uncurry parser)
+maybeOperandInstructionParser = choiceMap parser
   [ Add   >< "add"
   , Sub   >< "sub"
   , Mul   >< "mul"
@@ -50,10 +50,10 @@ maybeOperandInstructionParser = choiceMap (uncurry parser)
   , Mod   >< "mod"
   , Store >< "store"
   , Load  >< "retrive"
-  ] where parser f t = f <$> (asciiCI t *> optional (skip1HorizontalSpace *> integerParser))
+  ] where parser = uncurry $ mapLParser $ optional (skip1HorizontalSpace *> integerParser)
 
 identifierOperandInstructionParser :: Parser Instruction
-identifierOperandInstructionParser = choiceMap (uncurry parser)
+identifierOperandInstructionParser = choiceMap parser
   [ Mark     >< "label"
   , Call     >< "call"
   , Branch   >< "jump"
@@ -65,7 +65,7 @@ identifierOperandInstructionParser = choiceMap (uncurry parser)
   , BranchNZ >< "jumpNP"
   , BranchNZ >< "jumpPN"
   , Include  >< "include"
-  ] where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> identifierParser)
+  ] where parser = uncurry $ mapLParser (skip1HorizontalSpace *> identifierParser)
 
 testParser :: Parser Instruction
 testParser = Test <$> (asciiCI "test" *> skipHorizontalSpace *> integerParser)
@@ -81,8 +81,8 @@ pushSParser = PushS . fromString <$> (asciiCI "pushs" *> skipHorizontalSpace *> 
 commentSign :: Parser ()
 commentSign = void $ char commentChar
 
-endWordParser :: Parser Text
-endWordParser = takeTill isEndWord
+endWordParser :: Parser ()
+endWordParser = void $ takeTill isEndWord
 
 isEndWord :: Char -> Bool
 isEndWord c = isSpace c || (commentChar == c)

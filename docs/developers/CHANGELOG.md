@@ -1,6 +1,7 @@
 # 📅 Revision history for HelPA
 
-## 0.4.6.8 -- 2025-01-29
+## 0.4.6.8 -- 2025-02-04
+* Use `mapParser`
 * Use `choiceMap`
 
 ## 0.4.6.7 -- 2025-01-29
