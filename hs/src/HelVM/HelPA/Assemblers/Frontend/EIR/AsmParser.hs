@@ -34,51 +34,30 @@ instructionParser = choice
   ]
 
 zeroOperandInstructionParser :: Parser Instruction
-zeroOperandInstructionParser = choiceMap (uncurry parser)
+zeroOperandInstructionParser = choiceMap parser
   [ Exit    >< "exit"
   , Dump    >< "dump"
   , PText   >< ".text"
-  ] where parser i t = i <$ (asciiCI t *> endWordParser)
+  ] where parser = uncurry $ zeroOperandParser endWordParser
 
 naturalOptInstructionParser :: Parser Instruction
-naturalOptInstructionParser =
-      parser PData    ".data"
-    where
-      parser f t = f <$> s where
-        s = asciiCI t *> optional (skip1HorizontalSpace *> naturalParser)
+naturalOptInstructionParser = mapParser PData ".data" $ optional (skip1HorizontalSpace *> naturalParser)
 
 identifierOperandInstructionParser :: Parser Instruction
-identifierOperandInstructionParser =
-      parser GetC     "getc"
-    where
-      parser f t = f <$> d where
-        d = asciiCI t *> skip1HorizontalSpace *> identifierParser
+identifierOperandInstructionParser = mapParser GetC "getc" $ skip1HorizontalSpace *> identifierParser
 
 integerOperandInstructionParser :: Parser Instruction
-integerOperandInstructionParser =
-      parser PLong    ".long"
-    where
-      parser f t = f <$> s where
-        s = asciiCI t *> skip1HorizontalSpace *> integerParser
+integerOperandInstructionParser = mapParser PLong ".long" $ skip1HorizontalSpace *> integerParser
+
 
 textOperandInstructionParser :: Parser Instruction
-textOperandInstructionParser =
-      parser PString  ".string"
-    where parser f t = f <$> (asciiCI t *> skip1HorizontalSpace *> textParser)
+textOperandInstructionParser = mapParser PString ".string" $ skip1HorizontalSpace *> textParser
 
 integerValueInstructionParser :: Parser Instruction
-integerValueInstructionParser =
-      parser PutC     "putc"
-    where
-      parser f t = f <$> s where
-        s = asciiCI t *> (skip1HorizontalSpace *> signedOptIntegerValueParser)
+integerValueInstructionParser = mapParser PutC "putc" $ skip1HorizontalSpace *> signedOptIntegerValueParser
 
 labelInstructionParser :: Parser Instruction
-labelInstructionParser =
-      parser Jmp      "jmp"
-    where
-      parser f t = f <$> j where
-        j = asciiCI t *> skip1HorizontalSpace *> dotOptIdentifierParser
+labelInstructionParser = mapParser Jmp "jmp" $ skip1HorizontalSpace *> dotOptIdentifierParser
 
 integerValueAndIdentifierInstructionParser :: Parser Instruction
 integerValueAndIdentifierInstructionParser = choiceMap (uncurry parser)
@@ -113,13 +92,13 @@ integerValueAndNaturalValueAndIdentifierInstructionParser = choiceMap (uncurry p
         <*> (asciiCI "," *> skip1HorizontalSpace *> signedOptIntegerValueParser)
 
 pFileInstructionParser :: Parser Instruction
-pFileInstructionParser = PFile
-  <$> (asciiCI ".file" *> (skip1HorizontalSpace *> naturalParser))
+pFileInstructionParser = mapParser PFile ".file"
+      (skip1HorizontalSpace *> naturalParser)
   <*> (skip1HorizontalSpace *> textParser)
 
 pLocInstructionParser :: Parser Instruction
-pLocInstructionParser = PLoc
-  <$> (asciiCI ".loc" *> (skip1HorizontalSpace *> naturalParser))
+pLocInstructionParser = mapParser PLoc ".loc"
+      (skip1HorizontalSpace *> naturalParser)
   <*> (skip1HorizontalSpace *> naturalParser)
   <*> (skip1HorizontalSpace *> naturalParser)
 
@@ -131,8 +110,8 @@ markInstructionParser = Mark <$> dotOptLabelParser
 commentSign :: Parser ()
 commentSign = void $ char commentChar
 
-endWordParser :: Parser Text
-endWordParser = takeTill isEndWord
+endWordParser :: Parser ()
+endWordParser = void $ takeTill isEndWord
 
 isEndWord :: Char -> Bool
 isEndWord c = isSpace c || (commentChar == c)

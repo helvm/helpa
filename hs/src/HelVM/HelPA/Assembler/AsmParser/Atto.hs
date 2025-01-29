@@ -1,5 +1,6 @@
 module HelVM.HelPA.Assembler.AsmParser.Atto where
 
+import           HelVM.HelPA.Assembler.Extra
 import           HelVM.HelPA.Assembler.Value
 
 import           HelVM.HelIO.ReadText
@@ -34,6 +35,15 @@ maybeParser commentSign instructionParser = choice
   ]
 
 --
+
+zeroOperandParser :: Parser () -> a -> Text -> Parser a
+zeroOperandParser endWordParser i = mapLParser endWordParser (const i)
+
+mapLParser :: Parser a -> (a -> b) -> Text -> Parser b
+mapLParser = slipl mapParser
+
+mapParser :: (a -> b) -> Text -> Parser a -> Parser b
+mapParser f t p = f <$> (asciiCI t *> p)
 
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser

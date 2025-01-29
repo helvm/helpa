@@ -35,3 +35,11 @@ toMap l = fromList $ setDefault =<< l
 
 setDefault :: ([k] , v) -> [(k , v)]
 setDefault (keys , value) = (, value) <$> keys
+
+----
+
+slipr :: (a -> b -> c -> d) -> b -> c -> a -> d
+slipr f b c a = f a b c
+
+slipl :: (a -> b -> c -> d) -> c -> a -> b -> d
+slipl f c a b = f a b c
