@@ -5,7 +5,6 @@ import           HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
 import           HelVM.HelPA.Assembler.AsmParser.Atto
 
 import           HelVM.HelIO.CartesianProduct
-
 import           HelVM.HelIO.Control.Safe
 
 import           Data.Attoparsec.Text

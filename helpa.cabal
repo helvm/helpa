@@ -1,7 +1,7 @@
 cabal-version:         2.4
 
 name:                  helpa
-version:               0.4.6.8
+version:               0.4.6.9
 
 synopsis:              HELPA - Heavenly Esoteric Little Portable Assembler to esoteric languages
 description:           Please see the README on GitHub at <https://github.com/helvm/helpa#readme>
@@ -109,10 +109,11 @@ library
     HelVM.HelPA.Assembler.Macro
     HelVM.HelPA.Assembler.Value
 
-    HelVM.HelPA.Assembler.AsmParser.Atto
-
     HelVM.HelPA.Assembler.API.Separator
     HelVM.HelPA.Assembler.API.SourcePath
+
+    HelVM.HelPA.Assembler.AsmParser.Atto
+    HelVM.HelPA.Assembler.AsmParser.Mega
 
     HelVM.HelPA.Assembler.IO.BusinessIO
 
@@ -163,11 +164,15 @@ library
     HelVM.HelPA.Assemblers.Common.Config
     HelVM.HelPA.Assemblers.Common.DSL
     HelVM.HelPA.Assemblers.Common.Environment
+    HelVM.HelPA.Assemblers.Common.Macro
 
     HelVM.HelPA.Assemblers.Frontend.EIR.AsmParser
     HelVM.HelPA.Assemblers.Frontend.EIR.DSL
     HelVM.HelPA.Assemblers.Frontend.EIR.Instruction
     HelVM.HelPA.Assemblers.Frontend.EIR.Reducer
+
+    HelVM.HelPA.Assemblers.Frontend.Piet.AsmParser
+    HelVM.HelPA.Assemblers.Frontend.Piet.Instruction
 
     HelVM.HelPA.Assemblers.Frontend.SblAsm.AsmParser
     HelVM.HelPA.Assemblers.Frontend.SblAsm.Assembler
@@ -182,6 +187,7 @@ library
 
   build-depends:
       helio
+    , megaparsec
     , attoparsec
     , composition-extra
     , containers
@@ -190,7 +196,6 @@ library
     , mtl
     , split
     , type-operators
-    , utility-ht
   ghc-options:
 
 executable helpa
@@ -203,7 +208,7 @@ executable helpa
   build-depends:
       helio
     , helpa
-    , optparse-applicative >= 0.14.3.0
+    , optparse-applicative
   ghc-options:
     -threaded
     -rtsopts
@@ -246,6 +251,9 @@ test-suite helpa-test
 
     HelVM.HelPA.Assemblers.Frontend.FBF.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.FBF.FileExtra
+
+    HelVM.HelPA.Assemblers.Frontend.Piet.AsmParserSpec
+    HelVM.HelPA.Assemblers.Frontend.Piet.FileExtra
 
     HelVM.HelPA.Assemblers.Frontend.SblAsm.AsmParserSpec
     HelVM.HelPA.Assemblers.Frontend.SblAsm.FileExtra

@@ -11,10 +11,13 @@ reduceExpressions :: MonadSafe m => ExpressionList -> m SymbolList
 reduceExpressions = traverse reduceForTE
 
 reduceForTE :: MonadSafe m => Expression -> m Symbol
-reduceForTE (Expression  Nothing   t) = reduceForTerm t
-reduceForTE (Expression (Just pme) t) = reduceForTE' pme =<< reduceForTerm t where
-  reduceForTE' :: MonadSafe m => PMExpression -> Symbol -> m Symbol
-  reduceForTE' (PMExpression pm e) s = execPM pm s <$> reduceForTE e
+reduceForTE (Expression pme t) = reduceForPmMaybe pme =<< reduceForTerm t
+
+reduceForPmMaybe :: MonadSafe f => Maybe PMExpression -> Symbol -> f Symbol
+reduceForPmMaybe = maybe pure reduceForPm
+
+reduceForPm :: MonadSafe m => PMExpression -> Symbol -> m Symbol
+reduceForPm (PMExpression pm e) s = execPM pm s <$> reduceForTE e
 
 reduceForTerm :: MonadSafe m => Term -> m Symbol
 reduceForTerm (TermSymbol (Literal s)) = pure s

@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.9 -- 2025-02-11
+* Implement `piet` parser
+
 ## 0.4.6.8 -- 2025-02-04
 * Use `mapParser`
 * Use `choiceMap`

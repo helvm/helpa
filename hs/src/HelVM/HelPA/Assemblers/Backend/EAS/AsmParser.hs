@@ -72,9 +72,6 @@ skipManyComment = many (skipComment <* skipMany1EndLine)
 skipComment :: Parser ()
 skipComment = char commentChar *> skipAllToEndOfLine
 
-skipMany1EndLine :: Parser String
-skipMany1EndLine = many1 (char '\n')
-
 ----
 
 endWordParser :: Parser Text

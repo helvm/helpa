@@ -14,7 +14,7 @@ import           HelVM.HelIO.Control.Safe
 import           Control.Type.Operator
 
 reduceQuestionMarks :: MonadSafe m => QuestionMark -> ExpressionList -> m ExpressionList
-reduceQuestionMarks qm l = traverse (reduceQuestionMark qm) $ withSymbols l
+reduceQuestionMarks qm = traverse (reduceQuestionMark qm) . withSymbols
 
 reduceQuestionMark :: MonadSafe m => QuestionMark -> ExpressionWithSymbol -> m Expression
 reduceQuestionMark qm (e, currentAddress) = reduceForTE (makeAddress qm currentAddress) e
@@ -29,8 +29,10 @@ reduceForTE address (Expression pm t) = makeExpression
   <*> reduceForTerm address t
 
 reduceForPmMaybe :: MonadSafe m => Symbol -> Maybe PMExpression -> m $ Maybe PMExpression
-reduceForPmMaybe _        Nothing                   = pure Nothing
-reduceForPmMaybe address (Just (PMExpression pm e)) = Just . PMExpression pm <$> reduceForTE address e
+reduceForPmMaybe address = maybe (pure Nothing) (reduceForPm address)
+
+reduceForPm :: MonadSafe m => Symbol -> PMExpression -> m $ Maybe PMExpression
+reduceForPm address (PMExpression pm e) = Just . PMExpression pm <$> reduceForTE address e
 
 reduceForTerm :: MonadSafe m => Symbol -> Term -> m Term
 reduceForTerm address TermQuestionMark   = pure $ TermSymbol $ Literal address

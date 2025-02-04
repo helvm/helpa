@@ -52,10 +52,10 @@ pmExpressionParser :: Parser PMExpression
 pmExpressionParser = PMExpression <$> pmParser <*> expressionParser
 
 pmParser :: Parser PM
-pmParser = choiceMap (uncurry parser)
+pmParser = choiceMap parser
   [ Plus  >< '+'
   , Minus >< '-'
-  ] where parser f c = f <$ char c
+  ] where parser (f , c) = f <$ char c
 
 termParser :: Parser Term
 termParser = choice

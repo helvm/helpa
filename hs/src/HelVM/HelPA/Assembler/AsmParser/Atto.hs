@@ -45,6 +45,8 @@ mapLParser = slipl mapParser
 mapParser :: (a -> b) -> Text -> Parser a -> Parser b
 mapParser f t p = f <$> (asciiCI t *> p)
 
+--
+
 labelParser2 :: Parser NaturalValue
 labelParser2 = Literal <$> naturalParser <|> Variable <$> labelParser
 
@@ -163,6 +165,9 @@ alphaNumDot_ = satisfy isAlphaNumDot_
 
 skipAllToEndOfLine :: Parser ()
 skipAllToEndOfLine = skipWhile isNotEndOfLine
+
+skipMany1EndLine :: Parser String
+skipMany1EndLine = many1 (char '\n')
 
 ----
 

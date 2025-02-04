@@ -35,8 +35,10 @@ reduceForTE addresses (Expression pm t) = makeExpression
   <*> reduceForTerm addresses t
 
 reduceForPmMaybe :: MonadSafe m => LabelSymbols -> Maybe PMExpression -> m $ Maybe PMExpression
-reduceForPmMaybe _          Nothing                   = pure Nothing
-reduceForPmMaybe addresses (Just (PMExpression pm e)) = Just . PMExpression pm <$> reduceForTE addresses e
+reduceForPmMaybe addresses = maybe (pure Nothing) (reduceForPm addresses)
+
+reduceForPm :: MonadSafe f => LabelSymbols -> PMExpression -> f (Maybe PMExpression)
+reduceForPm addresses (PMExpression pm e) = Just . PMExpression pm <$> reduceForTE addresses e
 
 reduceForTerm :: MonadSafe m => LabelSymbols -> Term -> m Term
 reduceForTerm addresses (TermSymbol (Variable identifier)) = TermSymbol . Literal <$> indexSafeByKey identifier addresses
