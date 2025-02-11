@@ -23,16 +23,31 @@ identifierParser = toText <$> ((:) <$> (letterChar <|> char '_') <*> many (alpha
 stringLiteral :: Parser Text
 stringLiteral = toText <$> (char '"' *> manyTill L.charLiteral (char '"'))
 
-spaceConsumer :: Parser ()
-spaceConsumer = L.space space1 (L.skipLineComment "#") empty
+--
 
-symbol :: Text -> Parser Text
-symbol = L.symbol spaceConsumer
+integerParser :: Parser Integer
+integerParser = L.signed spaceConsumer decimalParser
+
+decimalParser :: Parser Integer
+decimalParser = lexeme L.decimal
+
+--
 
 braced :: Parser a -> Parser a
 braced = between (symbol "{") (symbol "}")
 
 brackets :: Parser a -> Parser a
 brackets = between (symbol "[") (symbol "]")
+
+--
+
+lexeme :: Parser a -> Parser a
+lexeme = L.lexeme spaceConsumer
+
+symbol :: Text -> Parser Text
+symbol = L.symbol spaceConsumer
+
+spaceConsumer :: Parser ()
+spaceConsumer = L.space space1 (L.skipLineComment "#") empty
 
 type Parser = Parsec Void Text

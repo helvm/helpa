@@ -1,0 +1,9 @@
+# track dispatcher
+_track_0:
+# @"State: " 2 1 roll dup outn 32 out 2 1 roll dup outn 10 out
+dup 9 sub bz._track_10
+dup 10 sub bz._track_11
+@"\nYou find yourself in "
+dup
+.btbl _track_1 _track_2 _track_3 _track_4 _track_5 _track_6 _track_7 _track_8 _track_9
+@"error." outn 32 out outn 10 out halt

@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.10 -- 2025-02-12
+* Implement `piet` parser with macros
+
 ## 0.4.6.9 -- 2025-02-11
 * Implement `piet` parser
 

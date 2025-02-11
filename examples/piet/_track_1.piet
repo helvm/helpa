@@ -1,0 +1,11 @@
+.track # 1 - the studio
+@"a rather dark studio.\nThere is an easel here.\nThere is a ladder leading down.\n\n"
+entry:
+"Please select:\n\n1 - paint\n2 - go down ladder\n"
+print
+scan
+.btbl 0f 1f 2f
+
+
+
+

@@ -1,0 +1,9 @@
+macro # print - pop string from stack and print it
+    dup
+ 0: bz.1f.pop
+    2 1 roll
+    out
+    1 sub
+    br.0b.dup
+ 1:
+print def

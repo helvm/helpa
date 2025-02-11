@@ -1,0 +1,27 @@
+.track # 4 - the bedroom
+pop 1 # hallway is the only exit
+2 1 roll dup 3 1 roll
+
+#0 2 1 roll "\n" dup 2 add -1 roll
+
+dup 2 mod bnz.1f
+1 2 1 roll "2 - rip off the bedclothes\n" dup 2 add -1 roll
+1:
+
+1 2 1 roll "\nYour options:\n1 - return to the hallway\n" dup 2 add -1 roll
+2 mod bnz.1f
+1 "Sunbeams warm the carefully made bed.\n"
+b.0f
+
+1:
+1 "The harsh sunlight exposes the unmade bed.\nYou feel a little guilty.\n"
+
+0:
+1 "a cozy bedroom. "
+4: print bnz.4b
+
+scan 1 sub
+.btbl _track_0 1f
+3: 0 "I beg your pardon?\n" b.4b
+1: 2 1 roll dup 3 1 roll 2 mod bnz.3b
+pop 5 b._track_0

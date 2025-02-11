@@ -1,0 +1,14 @@
+macro # readln - read input until carriage return to string on stack
+    0 br.0f
+
+ 1: dup bz.0f
+    2 1 roll pop 1 sub
+
+ 0: 1 add dup
+    in
+    dup 8 sub bz.1b.pop
+    dup 10 sub bz.1f.pop
+    2 1 roll 1 add 1 roll
+    br.0b
+ 1: pop 1 sub
+readln def

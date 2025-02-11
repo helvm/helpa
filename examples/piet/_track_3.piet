@@ -1,0 +1,23 @@
+.track # 3 - the kitchen
+"a well-stocked kitchen.\nIt smells invitingly of apple pancake.\nYour wife is here.\nShe gives you a look.\n"
+
+3:
+print
+@"\nYour options:\n1 - talk to her\n2 - go back to the hallway\n"
+scan 1 sub
+.btbl 0f 4f
+pop "Huh...?\n" b.3b
+0:
+2 1 roll dup 3 1 roll
+dup 4 mod 1 bgt.0f
+pop pop 6 b._track_0
+0: # got brush
+dup 8 mod 3 bgt.0f
+pop pop 7 b._track_0
+0: # got idea
+2 mod bz.0f
+"Wife: I hope you're not going to paint on the bedsheets again.\nYou look guilty.\n" b.3b
+0:
+"Wife: Go on, now, off with you.\n" b.3b
+4:
+pop 1 b._track_0

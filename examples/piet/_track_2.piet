@@ -1,0 +1,10 @@
+.track # 2 - the landing
+@"a dusty, dim hallway.\nThere is a door to the kitchen here.\nThere is a door to the bedroom here.\nThere is a rickety loft ladder here.\n"
+entry:
+@"\nWhere do you want to go today?\n1 - kitchen\n2 - bedroom\n3 - loft\n"
+scan 10 out
+.btbl 0f 1f 2f 3f
+0: "\nPlease select 1, 2 or 3.\n" b.entry
+1: pop 2 b._track_0
+2: pop 3 b._track_0
+3: pop 0 b._track_0

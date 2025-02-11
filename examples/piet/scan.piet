@@ -1,0 +1,10 @@
+macro    # read digit 1..7, returns 1..7 or 0 if we got anything else
+# cope with interpreters that switch meaning of in and inn from spec
+1:
+   in dup 7 ble.1f
+2: in
+   dup 8 sub bz.1b.pop 10 sub bnz.2b
+   48 sub dup 0 bgt.2f pop 0 b.1f
+2: dup 7 ble.1f pop 0 b.1f
+1:
+scan def

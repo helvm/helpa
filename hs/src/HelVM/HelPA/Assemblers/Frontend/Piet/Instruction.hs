@@ -1,18 +1,21 @@
 module HelVM.HelPA.Assemblers.Frontend.Piet.Instruction where
 
+import           HelVM.HelPA.Assembler.Macro
 import           HelVM.HelPA.Assembler.Value
 
 type InstructionList = [Instruction]
 
-data Instruction = Directive Directive | Command Command
+type Instruction = Macro MicroInstruction
+
+data MicroInstruction = Directive Directive | Command Command
   deriving stock (Eq , Read , Show)
 
 data Directive =
     Label Label
   | Halt
-  | Branch (Maybe BranchCondition) BranchLabel
+  | Branch (Maybe Command) (Maybe BranchCondition) BranchLabel
   | BranchTable [BranchLabel]
-  | PushNatural Natural
+  | PushInteger Integer
   | PushString Text
   | Print Text
   | Track
