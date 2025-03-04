@@ -13,8 +13,7 @@ import           Data.Attoparsec.Text
 import           Data.Char
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
---parseAssemblyText = parseWholeText commentSign instructionParser
-parseAssemblyText = parseFirstPartOfText commentSign instructionParser
+parseAssemblyText = parseWholeText commentSign instructionParser
 
 ----
 

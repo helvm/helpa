@@ -20,8 +20,7 @@ import           Data.Char                                         hiding (Space
 import           Data.Function.Flip
 
 parseAssemblyText :: MonadSafe m => Text -> m InstructionList
---parseAssemblyText = parseWholeText commentSign instructionParser
-parseAssemblyText = parseFirstPartOfText commentSign instructionParser
+parseAssemblyText = parseWholeText commentSign instructionParser
 
 ----
 

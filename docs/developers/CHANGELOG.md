@@ -1,5 +1,8 @@
 # 📅 Revision history for HelPA
 
+## 0.4.6.12 -- 2025-03-04
+* Fix `piet` parser
+
 ## 0.4.6.11 -- 2025-03-04
 * Fix `piet` parser
 
